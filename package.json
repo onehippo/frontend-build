@@ -4,6 +4,10 @@
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/joerideg/hippo-build"
+  },
   "scripts": {
     "gulp": "./node_modules/gulp/bin/gulp.js"
   },
