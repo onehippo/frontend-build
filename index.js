@@ -1,5 +1,7 @@
 import autoprefixer from 'gulp-autoprefixer';
 import browserSync from 'browser-sync'
+import buildConfig from './build.config.js';
+import Builder from 'systemjs-builder';
 import concat from 'gulp-concat';
 import debug from 'gulp-debug';
 import del from 'del';
@@ -7,21 +9,19 @@ import esLint from 'gulp-eslint';
 import gulp from 'gulp';
 import gulpif from 'gulp-if';
 import imagemin from 'gulp-imagemin';
+import insert from 'gulp-insert';
+import karma from 'karma';
 import minifyCss from 'gulp-minify-css';
 import minifyHtml from 'gulp-minify-html';
 import ngAnnotate from 'gulp-ng-annotate';
+import plumber from 'gulp-plumber';
+import proxyMiddleware from 'http-proxy-middleware';
 import rev from 'gulp-rev';
 import sass from 'gulp-sass';
 import sassLint from 'gulp-sass-lint';
 import templateCache from 'gulp-angular-templatecache';
 import uglify from 'gulp-uglify';
 import usemin from 'gulp-usemin';
-import plumber from 'gulp-plumber';
-import karma from 'karma';
-import insert from 'gulp-insert';
-import Builder from 'systemjs-builder';
-import proxyMiddleware from 'http-proxy-middleware';
-import buildConfig from './build.config.js';
 
 //TODO: add wiredep
 //TODO: add proxy for server task
