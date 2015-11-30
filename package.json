@@ -12,7 +12,7 @@
     "gulp": "./node_modules/gulp/bin/gulp.js"
   },
   "dependencies": {
-    "babel-core": "5.8.33",
+    "babel": "5.8.34",
     "browser-sync": "2.10.0",
     "del": "2.1.0",
     "gulp": "git://github.com/gulpjs/gulp.git#3311fcab7fe6de65a7a981d2433205c91d151c0a",
