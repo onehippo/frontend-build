@@ -22,6 +22,7 @@ var sassLint = require('gulp-sass-lint');
 var templateCache = require('gulp-angular-templatecache');
 var uglify = require('gulp-uglify');
 var usemin = require('gulp-usemin');
+var wiredep = require('wiredep').stream;
 
 function loadGulpTasks(pkg, customConfig) {
   var cfg = buildConfig(pkg, customConfig);
@@ -149,6 +150,7 @@ function loadGulpTasks(pkg, customConfig) {
     return gulp
       .src(cfg.src.indexHtml)
       .pipe(plumber())
+      .pipe(wiredep())
       .pipe(gulp.dest(cfg.distDir))
       .pipe(browserSyncServer.stream());
   }
@@ -201,7 +203,7 @@ function loadGulpTasks(pkg, customConfig) {
     gulp.watch(cfg.src.images, images);
     gulp.watch(cfg.src.fonts, fonts);
     gulp.watch(cfg.src.bowerLinks, gulp.parallel(build));
-    gulp.watch(cfg.src.indexHtml, dev);
+    gulp.watch([cfg.src.indexHtml, './bower.json'], dev);
     gulp.watch(cfg.src.scripts, gulp.series(scripts, unitTests));
     gulp.watch(cfg.src.unitTests, unitTests);
   }
