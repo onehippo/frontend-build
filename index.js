@@ -182,7 +182,7 @@ function loadGulpTasks(pkg, customConfig) {
         port: 9001
       },
       server: {
-        baseDir: ['./dist/', './']
+        baseDir: [cfg.distDir, './']
       },
       port: 9000
     });
