@@ -14,7 +14,6 @@ var karma = require('karma');
 var minifyCss = require('gulp-minify-css');
 var minifyHtml = require('gulp-minify-html');
 var ngAnnotate = require('gulp-ng-annotate');
-var objectAssign = require('lodash.assign');
 var plumber = require('gulp-plumber');
 var proxyMiddleware = require('http-proxy-middleware');
 var rev = require('gulp-rev');
@@ -24,11 +23,8 @@ var templateCache = require('gulp-angular-templatecache');
 var uglify = require('gulp-uglify');
 var usemin = require('gulp-usemin');
 
-//TODO: add wiredep
-//TODO: add proxy for server task
-
-function loadGulpTasks(customConfig) {
-  var cfg = objectAssign(buildConfig, customConfig);
+function loadGulpTasks(pkg, customConfig) {
+  var cfg = buildConfig(pkg, customConfig);
 
   var systemjs = new Builder('./', {
     transpiler: 'babel'
@@ -83,10 +79,10 @@ function loadGulpTasks(customConfig) {
           ])
           .pipe(plumber())
           .pipe(gulpif('*.html', templateCache({
-            module: cfg.pkg.name
+            module: cfg.projectName
           })))
           .pipe(ngAnnotate())
-          .pipe(concat(cfg.pkg.name + '.js'))
+          .pipe(concat(cfg.projectName + '.js'))
           .pipe(gulp.dest(cfg.dist.scripts))
           .pipe(browserSyncServer.stream());
       })(done);
@@ -186,11 +182,18 @@ function loadGulpTasks(customConfig) {
         port: 9001
       },
       server: {
-        baseDir: ['./dist/', './'],
-        middleware: proxyMiddleware('/rest', cfg.proxy)
+        baseDir: ['./dist/', './']
       },
       port: 9000
     });
+  }
+
+  function server(done) {
+    gulp.series(build, gulp.parallel(localServer, watch))(done);
+  }
+
+  function serverDist(done) {
+    gulp.series(buildDist, gulp.parallel(localServer, watch))(done);
   }
 
   function watch() {
@@ -209,14 +212,6 @@ function loadGulpTasks(customConfig) {
 
   function buildDist(done) {
     gulp.series(build, dist)(done);
-  }
-
-  function server(done) {
-    gulp.series(build, gulp.parallel(localServer, watch))(done);
-  }
-
-  function serverDist(done) {
-    gulp.series(buildDist, gulp.parallel(localServer, watch))(done);
   }
 
   gulp.task(watch);
