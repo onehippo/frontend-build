@@ -1,39 +1,40 @@
-import autoprefixer from 'gulp-autoprefixer';
-import browserSync from 'browser-sync'
-import buildConfig from './build.config.js';
-import Builder from 'systemjs-builder';
-import concat from 'gulp-concat';
-import debug from 'gulp-debug';
-import del from 'del';
-import esLint from 'gulp-eslint';
-import gulp from 'gulp';
-import gulpif from 'gulp-if';
-import imagemin from 'gulp-imagemin';
-import insert from 'gulp-insert';
-import karma from 'karma';
-import minifyCss from 'gulp-minify-css';
-import minifyHtml from 'gulp-minify-html';
-import ngAnnotate from 'gulp-ng-annotate';
-import plumber from 'gulp-plumber';
-import proxyMiddleware from 'http-proxy-middleware';
-import rev from 'gulp-rev';
-import sass from 'gulp-sass';
-import sassLint from 'gulp-sass-lint';
-import templateCache from 'gulp-angular-templatecache';
-import uglify from 'gulp-uglify';
-import usemin from 'gulp-usemin';
+var autoprefixer = require('gulp-autoprefixer');
+var browserSync = require('browser-sync');
+var buildConfig = require('./build.config.js');
+var Builder = require('systemjs-builder');
+var concat = require('gulp-concat');
+var debug = require('gulp-debug');
+var del = require('del');
+var esLint = require('gulp-eslint');
+var gulp = require('gulp');
+var gulpif = require('gulp-if');
+var imagemin = require('gulp-imagemin');
+var insert = require('gulp-insert');
+var karma = require('karma');
+var minifyCss = require('gulp-minify-css');
+var minifyHtml = require('gulp-minify-html');
+var ngAnnotate = require('gulp-ng-annotate');
+var objectAssign = require('lodash.assign');
+var plumber = require('gulp-plumber');
+var proxyMiddleware = require('http-proxy-middleware');
+var rev = require('gulp-rev');
+var sass = require('gulp-sass');
+var sassLint = require('gulp-sass-lint');
+var templateCache = require('gulp-angular-templatecache');
+var uglify = require('gulp-uglify');
+var usemin = require('gulp-usemin');
 
 //TODO: add wiredep
 //TODO: add proxy for server task
 
-export function loadGulpTasks(customConfig) {
-  const cfg = Object.assign(buildConfig, customConfig);
+function loadGulpTasks(customConfig) {
+  var cfg = objectAssign(buildConfig, customConfig);
 
-  const systemjs = new Builder('./', {
+  var systemjs = new Builder('./', {
     transpiler: 'babel'
   });
 
-  const browserSyncServer = browserSync.create();
+  var browserSyncServer = browserSync.create();
 
   function clean() {
     return del([cfg.distDir]).then(function(paths) {
@@ -99,7 +100,7 @@ export function loadGulpTasks(customConfig) {
       .pipe(esLint.format())
       .pipe(esLint.failOnError());
 
-    const Server = new karma.Server({
+    var Server = new karma.Server({
       configFile: __dirname + '/karma.config.js'
     }, done);
 
@@ -114,7 +115,7 @@ export function loadGulpTasks(customConfig) {
       .pipe(esLint.format())
       .pipe(esLint.failOnError());
 
-    const Server = new karma.Server({
+    var Server = new karma.Server({
       configFile: __dirname + '/karma.config.js',
       browsers: ['Chrome'],
       singleRun: false
@@ -226,3 +227,5 @@ export function loadGulpTasks(customConfig) {
   gulp.task(unitTests);
   gulp.task(unitTestsDebug);
 }
+
+module.exports = loadGulpTasks;
