@@ -14,7 +14,6 @@ var minifyCss = require('gulp-minify-css');
 var minifyHtml = require('gulp-minify-html');
 var ngAnnotate = require('gulp-ng-annotate');
 var plumber = require('gulp-plumber');
-var proxyMiddleware = require('http-proxy-middleware');
 var rev = require('gulp-rev');
 var sass = require('gulp-sass');
 var sassLint = require('gulp-sass-lint');
