@@ -8,6 +8,9 @@
     "type": "git",
     "url": "https://github.com/joerideg/hippo-build"
   },
+  "scripts": {
+    "gulp": "./node_modules/gulp/bin/gulp.js"
+  },
   "dependencies": {
     "babel": "5.8.34",
     "browser-sync": "2.10.0",
@@ -40,7 +43,6 @@
     "lodash.assign": "3.2.0",
     "phantomjs": "1.9.19",
     "phantomjs-polyfill": "0.0.1",
-    "systemjs-builder": "0.14.11",
-    "wiredep": "2.2.2"
+    "systemjs-builder": "0.14.11"
   }
 }
