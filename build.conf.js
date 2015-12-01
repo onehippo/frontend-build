@@ -10,7 +10,7 @@
 var objectAssign = require('lodash.assign');
 var appRoot = require('app-root-path');
 
-function buildConfig(customConfig) {
+function buildConfig(pkg, customConfig) {
   console.log(appRoot);
   var cfg = {};
 
