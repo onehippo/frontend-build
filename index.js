@@ -24,7 +24,7 @@ var usemin = require('gulp-usemin');
 function hippoBuild(pkg, customConfig) {
   var cfg = buildConfig(pkg, customConfig);
 
-  var hippoBuildTasks = function (localGulp) {
+  var hippoBuildTasks = function(localGulp) {
     var gulp = localGulp || require('gulp');
 
     var systemjs = new Builder('./', {
@@ -54,6 +54,31 @@ function hippoBuild(pkg, customConfig) {
           outputStyle: 'expanded'
         }))
         .pipe(gulp.dest(cfg.dist.styles))
+        .pipe(browserSyncServer.stream());
+    }
+
+    function images() {
+      return gulp
+        .src(cfg.src.images)
+        .pipe(plumber())
+        .pipe(imagemin())
+        .pipe(gulp.dest(cfg.dist.images))
+        .pipe(browserSyncServer.stream());
+    }
+
+    function fonts() {
+      return gulp
+        .src(cfg.src.fonts)
+        .pipe(plumber())
+        .pipe(gulp.dest(cfg.dist.fonts))
+        .pipe(browserSyncServer.stream());
+    }
+
+    function bowerAssets() {
+      return gulp
+        .src(cfg.bowerAssets)
+        .pipe(plumber())
+        .pipe(gulp.dest(cfg.distDir))
         .pipe(browserSyncServer.stream());
     }
 
@@ -121,31 +146,6 @@ function hippoBuild(pkg, customConfig) {
       server.start();
     }
 
-    function images() {
-      return gulp
-        .src(cfg.src.images)
-        .pipe(plumber())
-        .pipe(imagemin())
-        .pipe(gulp.dest(cfg.dist.images))
-        .pipe(browserSyncServer.stream());
-    }
-
-    function fonts() {
-      return gulp
-        .src(cfg.src.fonts)
-        .pipe(plumber())
-        .pipe(gulp.dest(cfg.dist.fonts))
-        .pipe(browserSyncServer.stream());
-    }
-
-    function bowerAssets() {
-      return gulp
-        .src(cfg.bowerAssets)
-        .pipe(plumber())
-        .pipe(gulp.dest(cfg.distDir))
-        .pipe(browserSyncServer.stream());
-    }
-
     function dev() {
       return gulp
         .src(cfg.src.indexHtml)
@@ -198,16 +198,6 @@ function hippoBuild(pkg, customConfig) {
       gulp.series(buildDist, gulp.parallel(localServer, watch))(done);
     }
 
-    function watch() {
-      gulp.watch(cfg.src.styles, styles);
-      gulp.watch(cfg.src.images, images);
-      gulp.watch(cfg.src.fonts, fonts);
-      gulp.watch(cfg.src.bowerLinks, gulp.parallel(build));
-      gulp.watch(cfg.src.indexHtml, dev);
-      gulp.watch([cfg.src.scripts, cfg.src.templates], gulp.series(scripts, unitTests));
-      gulp.watch(cfg.src.unitTests, unitTests);
-    }
-
     function build(done) {
       gulp.series(clean, gulp.parallel(scripts, styles, images, bowerAssets, dev))(done);
     }
@@ -216,13 +206,30 @@ function hippoBuild(pkg, customConfig) {
       gulp.series(build, dist)(done);
     }
 
-    gulp.task(watch);
+    function watch() {
+      gulp.watch(cfg.src.styles, styles);
+      gulp.watch(cfg.src.images, images);
+      gulp.watch(cfg.src.fonts, fonts);
+      gulp.watch(cfg.src.bowerLinks, gulp.parallel(build));
+      gulp.watch(cfg.src.indexHtml, dev);
+      gulp.watch(cfg.src.scripts, gulp.series(scripts, unitTests));
+      gulp.watch(cfg.src.templates, scripts);
+      gulp.watch(cfg.src.unitTests, unitTests);
+    }
+
+    gulp.task(clean);
+    gulp.task(styles);
+    gulp.task(images);
+    gulp.task(fonts);
+    gulp.task(bowerAssets);
+    gulp.task(scripts);
+    gulp.task(unitTests);
+    gulp.task(unitTestsDebug);
     gulp.task(build);
     gulp.task(buildDist);
     gulp.task(server);
     gulp.task(serverDist);
-    gulp.task(unitTests);
-    gulp.task(unitTestsDebug);
+    gulp.task(watch);
   };
 
   return {
