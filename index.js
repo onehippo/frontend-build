@@ -21,10 +21,10 @@ var templateCache = require('gulp-angular-templatecache');
 var uglify = require('gulp-uglify');
 var usemin = require('gulp-usemin');
 
-function hippoBuild(pkg, customConfig) {
-  var cfg = buildConfig(pkg, customConfig);
+function hippoBuild(customConfig) {
+  var cfg = buildConfig(customConfig);
 
-  var hippoBuildTasks = function(localGulp) {
+  function hippoBuildTasks(localGulp) {
     var gulp = localGulp || require('gulp');
 
     var systemjs = new Builder('./', {
