@@ -8,8 +8,10 @@
  * build tasks.
  */
 var objectAssign = require('lodash.assign');
+var appRoot = require('app-root-path');
 
-function buildConfig(pkg, customConfig) {
+function buildConfig(customConfig) {
+  console.log(appRoot);
   var cfg = {};
 
   cfg.projectName = pkg.name;
