@@ -1,6 +1,6 @@
 var autoprefixer = require('gulp-autoprefixer');
 var browserSync = require('browser-sync');
-var buildConfig = require('./build.config.js');
+var buildConfig = require('./build.conf.js');
 var Builder = require('systemjs-builder');
 var concat = require('gulp-concat');
 var debug = require('gulp-debug');
@@ -21,207 +21,214 @@ var templateCache = require('gulp-angular-templatecache');
 var uglify = require('gulp-uglify');
 var usemin = require('gulp-usemin');
 
-function hippoBuildTasks(pkg, customConfig, localGulp) {
-  var gulp = localGulp || require('gulp');
-
+function hippoBuild(pkg, customConfig) {
   var cfg = buildConfig(pkg, customConfig);
 
-  var systemjs = new Builder('./', {
-    transpiler: 'babel'
-  });
+  var hippoBuildTasks = function (localGulp) {
+    var gulp = localGulp || require('gulp');
 
-  var browserSyncServer = browserSync.create();
-
-  function clean() {
-    return del([cfg.distDir]);
-  }
-
-  function styles() {
-    return gulp
-      .src(cfg.src.indexStyles)
-      .pipe(plumber())
-      .pipe(sassLint({
-        rules: cfg.sassLintRules
-      }))
-      .pipe(sassLint.format())
-      .pipe(sassLint.failOnError())
-      .pipe(autoprefixer({
-        browsers: cfg.supportedBrowsers
-      }))
-      .pipe(sass({
-        sourceMapEmbed: true,
-        outputStyle: 'expanded'
-      }))
-      .pipe(gulp.dest(cfg.dist.styles))
-      .pipe(browserSyncServer.stream());
-  }
-
-  function scripts(done) {
-    gulp.series(
-      function lintES6() {
-        return gulp
-          .src(cfg.src.scripts)
-          .pipe(plumber())
-          .pipe(esLint(cfg.esLintRules))
-          .pipe(esLint.format())
-          .pipe(esLint.failOnError());
-      },
-      function transpile() {
-        return systemjs.buildStatic(cfg.src.indexScript, cfg.dist.indexScript, {
-          sourceMaps: 'inline'
-        });
-      },
-      function templatesNgAnnotateConcat() {
-        return gulp
-          .src([
-            cfg.dist.indexScript,
-            cfg.src.templates
-          ])
-          .pipe(plumber())
-          .pipe(gulpif('*.html', templateCache({
-            module: cfg.projectName
-          })))
-          .pipe(ngAnnotate())
-          .pipe(concat(cfg.projectName + '.js'))
-          .pipe(gulp.dest(cfg.dist.scripts))
-          .pipe(browserSyncServer.stream());
-      })(done);
-  }
-
-  function unitTests(done) {
-    gulp
-      .src(cfg.src.unitTests)
-      .pipe(plumber())
-      .pipe(esLint(cfg.esLintRules))
-      .pipe(esLint.format())
-      .pipe(esLint.failOnError());
-
-    var Server = new karma.Server({
-      configFile: __dirname + '/karma.config.js'
-    }, done);
-
-    Server.start();
-  }
-
-  function unitTestsDebug(done) {
-    gulp
-      .src(cfg.src.unitTests)
-      .pipe(plumber())
-      .pipe(esLint())
-      .pipe(esLint.format())
-      .pipe(esLint.failOnError());
-
-    var Server = new karma.Server({
-      configFile: __dirname + '/karma.config.js',
-      browsers: ['Chrome'],
-      singleRun: false
-    }, done);
-
-    Server.start();
-  }
-
-  function images() {
-    return gulp
-      .src(cfg.src.images)
-      .pipe(plumber())
-      .pipe(imagemin())
-      .pipe(gulp.dest(cfg.dist.images))
-      .pipe(browserSyncServer.stream());
-  }
-
-  function fonts() {
-    return gulp
-      .src(cfg.src.fonts)
-      .pipe(plumber())
-      .pipe(gulp.dest(cfg.dist.fonts))
-      .pipe(browserSyncServer.stream());
-  }
-
-  function bowerAssets() {
-    return gulp
-      .src(cfg.bowerAssets)
-      .pipe(plumber())
-      .pipe(gulp.dest(cfg.distDir))
-      .pipe(browserSyncServer.stream());
-  }
-
-  function dev() {
-    return gulp
-      .src(cfg.src.indexHtml)
-      .pipe(plumber())
-      .pipe(gulp.dest(cfg.distDir))
-      .pipe(browserSyncServer.stream());
-  }
-
-  function dist() {
-    return gulp
-      .src(cfg.dist.indexHtml)
-      .pipe(usemin({
-        html: [
-          minifyHtml()
-        ],
-        css: [
-          minifyCss()
-        ],
-        inlinecss: [
-          minifyCss()
-        ],
-        js: [
-          uglify()
-        ],
-        inlinejs: [
-          uglify()
-        ]
-      }))
-      .pipe(gulp.dest(cfg.distDir));
-  }
-
-  function localServer() {
-    browserSyncServer.init({
-      ui: {
-        port: 9001
-      },
-      server: {
-        baseDir: [cfg.distDir, './'],
-        middleware: cfg.serverMiddlewares
-      },
-      port: 9000
+    var systemjs = new Builder('./', {
+      transpiler: 'babel'
     });
-  }
 
-  function server(done) {
-    gulp.series(build, gulp.parallel(localServer, watch))(done);
-  }
+    var browserSyncServer = browserSync.create();
 
-  function serverDist(done) {
-    gulp.series(buildDist, gulp.parallel(localServer, watch))(done);
-  }
+    function clean() {
+      return del([cfg.distDir]);
+    }
 
-  function watch() {
-    gulp.watch(cfg.src.styles, styles);
-    gulp.watch(cfg.src.images, images);
-    gulp.watch(cfg.src.fonts, fonts);
-    gulp.watch(cfg.src.bowerLinks, gulp.parallel(build));
-    gulp.watch(cfg.src.indexHtml, dev);
-    gulp.watch(cfg.src.scripts, gulp.series(scripts, unitTests));
-    gulp.watch(cfg.src.unitTests, unitTests);
-  }
+    function styles() {
+      return gulp
+        .src(cfg.src.indexStyles)
+        .pipe(plumber())
+        .pipe(sassLint({
+          rules: cfg.sassLintRules
+        }))
+        .pipe(sassLint.format())
+        .pipe(sassLint.failOnError())
+        .pipe(autoprefixer({
+          browsers: cfg.supportedBrowsers
+        }))
+        .pipe(sass({
+          sourceMapEmbed: true,
+          outputStyle: 'expanded'
+        }))
+        .pipe(gulp.dest(cfg.dist.styles))
+        .pipe(browserSyncServer.stream());
+    }
 
-  function build(done) {
-    gulp.series(clean, gulp.parallel(scripts, styles, images, bowerAssets, dev))(done);
-  }
+    function scripts(done) {
+      gulp.series(
+        function lintES6() {
+          return gulp
+            .src(cfg.src.scripts)
+            .pipe(plumber())
+            .pipe(esLint(cfg.esLintRules))
+            .pipe(esLint.format())
+            .pipe(esLint.failOnError());
+        },
+        function transpile() {
+          return systemjs.buildStatic(cfg.src.indexScript, cfg.dist.indexScript, {
+            sourceMaps: 'inline'
+          });
+        },
+        function templatesNgAnnotateConcat() {
+          return gulp
+            .src([
+              cfg.dist.indexScript,
+              cfg.src.templates
+            ])
+            .pipe(plumber())
+            .pipe(gulpif('*.html', templateCache({
+              module: cfg.projectName
+            })))
+            .pipe(ngAnnotate())
+            .pipe(concat(cfg.projectName + '.js'))
+            .pipe(gulp.dest(cfg.dist.scripts))
+            .pipe(browserSyncServer.stream());
+        })(done);
+    }
 
-  function buildDist(done) {
-    gulp.series(build, dist)(done);
-  }
+    function unitTests(done) {
+      gulp
+        .src(cfg.src.unitTests)
+        .pipe(plumber())
+        .pipe(esLint(cfg.esLintRules))
+        .pipe(esLint.format())
+        .pipe(esLint.failOnError());
 
-  gulp.task(watch);
-  gulp.task(build);
-  gulp.task(buildDist);
-  gulp.task(server);
-  gulp.task(serverDist);
-  gulp.task(unitTests);
-  gulp.task(unitTestsDebug);
+      var server = new karma.Server({
+        configFile: cfg.karmaConf
+      }, done);
+
+      server.start();
+    }
+
+    function unitTestsDebug(done) {
+      gulp
+        .src(cfg.src.unitTests)
+        .pipe(plumber())
+        .pipe(esLint())
+        .pipe(esLint.format())
+        .pipe(esLint.failOnError());
+
+      var server = new karma.Server({
+        configFile: cfg.karmaConf,
+        browsers: ['Chrome'],
+        singleRun: false
+      }, done);
+
+      server.start();
+    }
+
+    function images() {
+      return gulp
+        .src(cfg.src.images)
+        .pipe(plumber())
+        .pipe(imagemin())
+        .pipe(gulp.dest(cfg.dist.images))
+        .pipe(browserSyncServer.stream());
+    }
+
+    function fonts() {
+      return gulp
+        .src(cfg.src.fonts)
+        .pipe(plumber())
+        .pipe(gulp.dest(cfg.dist.fonts))
+        .pipe(browserSyncServer.stream());
+    }
+
+    function bowerAssets() {
+      return gulp
+        .src(cfg.bowerAssets)
+        .pipe(plumber())
+        .pipe(gulp.dest(cfg.distDir))
+        .pipe(browserSyncServer.stream());
+    }
+
+    function dev() {
+      return gulp
+        .src(cfg.src.indexHtml)
+        .pipe(plumber())
+        .pipe(gulp.dest(cfg.distDir))
+        .pipe(browserSyncServer.stream());
+    }
+
+    function dist() {
+      return gulp
+        .src(cfg.dist.indexHtml)
+        .pipe(usemin({
+          html: [
+            minifyHtml()
+          ],
+          css: [
+            minifyCss()
+          ],
+          inlinecss: [
+            minifyCss()
+          ],
+          js: [
+            uglify()
+          ],
+          inlinejs: [
+            uglify()
+          ]
+        }))
+        .pipe(gulp.dest(cfg.distDir));
+    }
+
+    function localServer() {
+      browserSyncServer.init({
+        ui: {
+          port: 9001
+        },
+        server: {
+          baseDir: [cfg.distDir, './'],
+          middleware: cfg.serverMiddlewares
+        },
+        port: 9000
+      });
+    }
+
+    function server(done) {
+      gulp.series(build, gulp.parallel(localServer, watch))(done);
+    }
+
+    function serverDist(done) {
+      gulp.series(buildDist, gulp.parallel(localServer, watch))(done);
+    }
+
+    function watch() {
+      gulp.watch(cfg.src.styles, styles);
+      gulp.watch(cfg.src.images, images);
+      gulp.watch(cfg.src.fonts, fonts);
+      gulp.watch(cfg.src.bowerLinks, gulp.parallel(build));
+      gulp.watch(cfg.src.indexHtml, dev);
+      gulp.watch(cfg.src.scripts, gulp.series(scripts, unitTests));
+      gulp.watch(cfg.src.unitTests, unitTests);
+    }
+
+    function build(done) {
+      gulp.series(clean, gulp.parallel(scripts, styles, images, bowerAssets, dev))(done);
+    }
+
+    function buildDist(done) {
+      gulp.series(build, dist)(done);
+    }
+
+    gulp.task(watch);
+    gulp.task(build);
+    gulp.task(buildDist);
+    gulp.task(server);
+    gulp.task(serverDist);
+    gulp.task(unitTests);
+    gulp.task(unitTestsDebug);
+  };
+
+  return {
+    hippoBuildTasks: hippoBuildTasks,
+    buildConfig: cfg
+  }
 }
 
-module.exports = hippoBuildTasks;
+module.exports = hippoBuild;
