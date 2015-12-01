@@ -13,7 +13,7 @@ var appRoot = require('app-root-path');
 function buildConfig(customConfig) {
   var cfg = {};
 
-  cfg.projectName = require(appRoot + 'package.json').name;
+  cfg.projectName = require(appRoot + '/package.json').name;
   cfg.bowerDir = 'bower_components/';
   cfg.npmDir = 'node_modules/';
 
