@@ -15,9 +15,6 @@ function buildConfig(pkg, customConfig) {
   cfg.projectName = pkg.name;
   cfg.bowerDir = 'bower_components/';
   cfg.npmDir = 'node_modules/';
-  cfg.bowerAssets = [cfg.bowerDir + 'hippo-theme/dist/**/*.{svg,woff,woff2,ttf,eot,png}'];
-  cfg.bowerLinks = [cfg.bowerDir + 'hippo-theme/dist/**'];
-  cfg.supportedBrowsers = ['last 1 Chrome versions', 'last 1 Firefox versions', 'Safari >= 7', 'Explorer >= 10'];
 
   cfg.srcDir = 'src/';
   cfg.src = {};
@@ -39,6 +36,24 @@ function buildConfig(pkg, customConfig) {
   cfg.dist.scripts = cfg.distDir + 'scripts/';
   cfg.dist.indexScript = cfg.distDir + 'scripts/' + cfg.projectName + '.js';
   cfg.dist.images = cfg.distDir + 'images/';
+
+  cfg.bowerAssets = [cfg.bowerDir + 'hippo-theme/dist/**/*.{svg,woff,woff2,ttf,eot,png}'];
+  cfg.bowerLinks = [cfg.bowerDir + 'hippo-theme/dist/**'];
+  cfg.supportedBrowsers = ['last 1 Chrome versions', 'last 1 Firefox versions', 'Safari >= 7', 'Explorer >= 10'];
+  cfg.serverMiddlewares = [];
+  cfg.sassLintRules = {
+    'force-element-nesting': 0
+  };
+  cfg.esLintRules = {
+    "ecmaFeatures": {
+      "modules": true
+    },
+    "env": {
+      "browser": true,
+      "node": true,
+      "es6": true
+    }
+  };
 
   return objectAssign(cfg, customConfig);
 }

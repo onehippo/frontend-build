@@ -6,7 +6,6 @@ var concat = require('gulp-concat');
 var debug = require('gulp-debug');
 var del = require('del');
 var esLint = require('gulp-eslint');
-var gulp = require('gulp');
 var gulpif = require('gulp-if');
 var imagemin = require('gulp-imagemin');
 var insert = require('gulp-insert');
@@ -23,7 +22,9 @@ var templateCache = require('gulp-angular-templatecache');
 var uglify = require('gulp-uglify');
 var usemin = require('gulp-usemin');
 
-function loadGulpTasks(pkg, customConfig) {
+function hippoBuildTasks(pkg, customConfig, localGulp) {
+  var gulp = localGulp || require('gulp');
+
   var cfg = buildConfig(pkg, customConfig);
 
   var systemjs = new Builder('./', {
@@ -33,16 +34,16 @@ function loadGulpTasks(pkg, customConfig) {
   var browserSyncServer = browserSync.create();
 
   function clean() {
-    return del([cfg.distDir]).then(function(paths) {
-      console.log('Deleted files/folders:\n', paths.join('\n'));
-    });
+    return del([cfg.distDir]);
   }
 
   function styles() {
     return gulp
       .src(cfg.src.indexStyles)
       .pipe(plumber())
-      .pipe(sassLint())
+      .pipe(sassLint({
+        rules: cfg.sassLintRules
+      }))
       .pipe(sassLint.format())
       .pipe(sassLint.failOnError())
       .pipe(autoprefixer({
@@ -62,7 +63,7 @@ function loadGulpTasks(pkg, customConfig) {
         return gulp
           .src(cfg.src.scripts)
           .pipe(plumber())
-          .pipe(esLint())
+          .pipe(esLint(cfg.esLintRules))
           .pipe(esLint.format())
           .pipe(esLint.failOnError());
       },
@@ -92,7 +93,7 @@ function loadGulpTasks(pkg, customConfig) {
     gulp
       .src(cfg.src.unitTests)
       .pipe(plumber())
-      .pipe(esLint())
+      .pipe(esLint(cfg.esLintRules))
       .pipe(esLint.format())
       .pipe(esLint.failOnError());
 
@@ -182,7 +183,8 @@ function loadGulpTasks(pkg, customConfig) {
         port: 9001
       },
       server: {
-        baseDir: [cfg.distDir, './']
+        baseDir: [cfg.distDir, './'],
+        middleware: cfg.serverMiddlewares
       },
       port: 9000
     });
@@ -223,4 +225,4 @@ function loadGulpTasks(pkg, customConfig) {
   gulp.task(unitTestsDebug);
 }
 
-module.exports = loadGulpTasks;
+module.exports = hippoBuildTasks;
