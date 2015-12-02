@@ -11,16 +11,9 @@ var objectAssign = require('lodash.assign');
 var appRootDir = require('app-root-dir');
 
 function buildConfig(customConfig) {
-  console.log(__dirname);
-  console.log(appRootDir.get());
-
-  if(!customConfig || !customConfig.projectRoot) {
-    throw 'You must specify the projectRoot as "__dirname" in the custom config';
-  }
-
   var cfg = {};
 
-  cfg.projectName = require(customConfig.projectRoot + '/package.json').name;
+  cfg.projectName = require(appRootDir.get() + '/package.json').name;
   cfg.bowerDir = 'bower_components/';
   cfg.npmDir = 'node_modules/';
 
@@ -45,7 +38,7 @@ function buildConfig(customConfig) {
   cfg.dist.indexScript = cfg.distDir + 'scripts/' + cfg.projectName + '.js';
   cfg.dist.images = cfg.distDir + 'images/';
 
-  cfg.karmaConf = customConfig.projectRoot + '/karma.conf.js';
+  cfg.karmaConf = appRootDir.get() + '/karma.conf.js';
   cfg.bowerAssets = [cfg.bowerDir + 'hippo-theme/dist/**/*.{svg,woff,woff2,ttf,eot,png}'];
   cfg.bowerLinks = [cfg.bowerDir + 'hippo-theme/dist/**'];
   cfg.supportedBrowsers = ['last 1 Chrome versions', 'last 1 Firefox versions', 'Safari >= 7', 'Explorer >= 10'];
