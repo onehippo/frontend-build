@@ -41,5 +41,8 @@
     "phantomjs": "1.9.19",
     "phantomjs-polyfill": "0.0.1",
     "systemjs-builder": "0.14.11"
+  },
+  "devDependencies": {
+    "app-root-path": "^1.0.0"
   }
 }

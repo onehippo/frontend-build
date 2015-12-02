@@ -20,8 +20,12 @@ var sassLint = require('gulp-sass-lint');
 var templateCache = require('gulp-angular-templatecache');
 var uglify = require('gulp-uglify');
 var usemin = require('gulp-usemin');
+var appRoot = require('app-root-path');
 
 function buildTasks(customConfig, localGulp) {
+  console.log(__dirname);
+  console.log(appRoot);
+
   var cfg = buildConfig(customConfig);
   var gulp = localGulp || require('gulp');
 
