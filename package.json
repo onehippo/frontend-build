@@ -6,7 +6,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/joerideg/hippo-build"
+    "url": "https://github.com/onehippo/hippo-build"
   },
   "dependencies": {
     "babel-core": "5.8.34",
