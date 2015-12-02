@@ -21,13 +21,8 @@ var templateCache = require('gulp-angular-templatecache');
 var uglify = require('gulp-uglify');
 var usemin = require('gulp-usemin');
 
-function config(customConfig) {
-  return buildConfig(customConfig);
-}
-
-function tasks(customConfig, localGulp) {
-  var cfg = config(customConfig);
-
+function buildTasks(customConfig, localGulp) {
+  var cfg = buildConfig(customConfig);
   var gulp = localGulp || require('gulp');
 
   var systemjs = new Builder('./', {
@@ -220,20 +215,20 @@ function tasks(customConfig, localGulp) {
     gulp.watch(cfg.src.unitTests, unitTests);
   }
 
-  gulp.task(clean);
-  gulp.task(styles);
-  gulp.task(images);
-  gulp.task(fonts);
   gulp.task(bowerAssets);
-  gulp.task(scripts);
-  gulp.task(unitTests);
-  gulp.task(unitTestsDebug);
   gulp.task(build);
   gulp.task(buildDist);
+  gulp.task(clean);
+  gulp.task(fonts);
+  gulp.task(images);
+  gulp.task(scripts);
   gulp.task(server);
   gulp.task(serverDist);
+  gulp.task(styles);
+  gulp.task(unitTests);
+  gulp.task(unitTestsDebug);
   gulp.task(watch);
 }
 
-module.exports.buildTasks = tasks;
-module.exports.buildConfig = config;
+module.exports.buildTasks = buildTasks;
+module.exports.buildConfig = buildConfig;
