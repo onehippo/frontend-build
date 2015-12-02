@@ -9,6 +9,7 @@
     "url": "https://github.com/onehippo/hippo-build"
   },
   "dependencies": {
+    "app-root-dir": "^1.0.2",
     "babel-core": "5.8.34",
     "browser-sync": "2.10.0",
     "del": "2.1.0",
@@ -41,8 +42,5 @@
     "phantomjs": "1.9.19",
     "phantomjs-polyfill": "0.0.1",
     "systemjs-builder": "0.14.11"
-  },
-  "devDependencies": {
-    "app-root-path": "^1.0.0"
   }
 }

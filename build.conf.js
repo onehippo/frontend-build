@@ -8,11 +8,11 @@
  * build tasks.
  */
 var objectAssign = require('lodash.assign');
-var appRoot = require('app-root-path');
+var appRootDir = require('app-root-dir');
 
 function buildConfig(customConfig) {
   console.log(__dirname);
-  console.log(appRoot);
+  console.log(appRootDir.get());
 
   if(!customConfig || !customConfig.projectRoot) {
     throw 'You must specify the projectRoot as "__dirname" in the custom config';
