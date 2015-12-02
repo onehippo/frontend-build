@@ -11,7 +11,7 @@ var objectAssign = require('lodash.assign');
 
 function buildConfig(customConfig) {
   if(!customConfig || !customConfig.projectRoot) {
-    throw 'You must specify the projectRoot in the custom config';
+    throw 'You must specify the projectRoot as "__dirname" in the custom config';
   }
 
   var cfg = {};
