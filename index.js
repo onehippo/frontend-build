@@ -219,8 +219,11 @@ function buildTasks(customConfig, localGulp) {
   gulp.task(build);
   gulp.task(buildDist);
   gulp.task(clean);
+  gulp.task(dev);
+  gulp.task(dist);
   gulp.task(fonts);
   gulp.task(images);
+  gulp.task(localServer);
   gulp.task(scripts);
   gulp.task(server);
   gulp.task(serverDist);
