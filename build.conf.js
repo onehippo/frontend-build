@@ -8,12 +8,13 @@ var appRootDir = require('app-root-dir');
 
 function buildConfig(customConfig) {
   var cfg = {};
+  var customCfg = customConfig || {};
 
   cfg.projectName = require(appRootDir.get() + '/package.json').name;
-  cfg.bowerDir = 'bower_components/';
-  cfg.npmDir = 'node_modules/';
+  cfg.bowerDir = customCfg.bowerDir || 'bower_components/';
+  cfg.npmDir = customCfg.npmDir || 'node_modules/';
 
-  cfg.srcDir = 'src/';
+  cfg.srcDir = customCfg.srcDir || 'src/';
   cfg.src = {};
   cfg.src.styles = cfg.srcDir + 'styles/**.*.scss';
   cfg.src.indexStyles = cfg.srcDir + 'styles/' + cfg.projectName + '.scss';
@@ -25,7 +26,7 @@ function buildConfig(customConfig) {
   cfg.src.templates = cfg.srcDir + 'angularjs/**/*.html';
   cfg.src.indexHtml = cfg.srcDir + 'index.html';
 
-  cfg.distDir = 'dist/';
+  cfg.distDir = customCfg.distDir || 'dist/';
   cfg.dist = {};
   cfg.dist.indexHtml = cfg.distDir + 'index.html';
   cfg.dist.styles = cfg.distDir + 'styles/';
@@ -53,7 +54,7 @@ function buildConfig(customConfig) {
     }
   };
 
-  return objectAssign(cfg, customConfig);
+  return objectAssign(cfg, customCfg);
 }
 
 module.exports = buildConfig;
