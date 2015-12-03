@@ -1,11 +1,7 @@
 /*
  * This file/module contains all configuration for the build process.
- */
-
-/*
- * This is a collection of patterns.
- * These paths are used in the configuration of
- * build tasks.
+ *
+ * This is a collection of patterns. These paths are used in the configuration of build tasks.
  */
 var objectAssign = require('lodash.assign');
 var appRootDir = require('app-root-dir');
