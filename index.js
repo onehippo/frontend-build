@@ -210,7 +210,7 @@ function buildTasks(customConfig, localGulp) {
     gulp.watch(cfg.src.fonts, fonts);
     gulp.watch(cfg.src.bowerLinks, gulp.parallel(build));
     gulp.watch(cfg.src.indexHtml, dev);
-    gulp.watch(cfg.src.scripts, scripts);
+    gulp.watch(cfg.src.scripts, gulp.series(scripts, unitTests));
     gulp.watch(cfg.src.templates, scripts);
     gulp.watch(cfg.src.unitTests, unitTests);
   }
