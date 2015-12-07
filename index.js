@@ -24,11 +24,6 @@ var usemin = require('gulp-usemin');
 function buildTasks(customConfig, localGulp) {
   var cfg = buildConfig(customConfig);
   var gulp = localGulp || require('gulp');
-
-  var systemjs = new Builder('./', {
-    transpiler: 'babel'
-  });
-
   var browserSyncServer = browserSync.create();
 
   function clean() {
@@ -91,6 +86,10 @@ function buildTasks(customConfig, localGulp) {
           .pipe(esLint.failOnError());
       },
       function transpile() {
+        var systemjs = new Builder('./', {
+          transpiler: 'babel'
+        });
+
         return systemjs.buildStatic(cfg.src.indexScript, cfg.dist.indexScript, {
           sourceMaps: 'inline'
         });
@@ -176,7 +175,9 @@ function buildTasks(customConfig, localGulp) {
   }
 
   function copyDistToTarget() {
-    return gulp.src(cfg.distDir + '/**', { since: gulp.lastRun(copyDistToTarget) })
+    return gulp.src(cfg.distDir + '/**', {
+        since: gulp.lastRun(copyDistToTarget)
+      })
       .pipe(gulp.dest(cfg.targetDir));
   }
 
@@ -223,7 +224,7 @@ function buildTasks(customConfig, localGulp) {
     gulp.watch(cfg.src.unitTests, unitTests);
 
     // See comment in build.conf.js
-    if(cfg.env.windows) {
+    if (cfg.env.windows) {
       gulp.watch(cfg.src.scripts, scripts);
     } else {
       gulp.watch(cfg.src.scripts, gulp.series(scripts, unitTests));
