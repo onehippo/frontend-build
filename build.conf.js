@@ -13,6 +13,7 @@ function buildConfig(customConfig) {
   cfg.projectName = require(appRootDir.get() + '/package.json').name;
   cfg.bowerDir = customCfg.bowerDir || 'bower_components/';
   cfg.npmDir = customCfg.npmDir || 'node_modules/';
+  cfg.targetDir = customCfg.targetDir || 'target/classes/angular/' + cfg.projectName;
 
   cfg.srcDir = customCfg.srcDir || 'src/';
   cfg.src = {};
@@ -35,6 +36,8 @@ function buildConfig(customConfig) {
   cfg.dist.indexScript = cfg.distDir + 'scripts/' + cfg.projectName + '.js';
   cfg.dist.images = cfg.distDir + 'images/';
 
+  // When set to true all files in the 'dist' folder are copied to the 'target' folder
+  cfg.maven = false;
   cfg.karmaConf = appRootDir.get() + '/karma.conf.js';
   cfg.bowerAssets = [cfg.bowerDir + 'hippo-theme/dist/**/*.{svg,woff,woff2,ttf,eot,png}'];
   cfg.bowerLinks = [cfg.bowerDir + 'hippo-theme/dist/**'];

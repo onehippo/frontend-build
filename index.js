@@ -175,6 +175,11 @@ function buildTasks(customConfig, localGulp) {
       .pipe(gulp.dest(cfg.distDir));
   }
 
+  function copyDistToTarget() {
+    return gulp.src(cfg.distDir + '/**', { since: gulp.lastRun(copyDistToTarget) })
+      .pipe(gulp.dest(cfg.targetDir));
+  }
+
   function localServer() {
     browserSyncServer.init({
       ui: {
@@ -201,7 +206,11 @@ function buildTasks(customConfig, localGulp) {
   }
 
   function buildDist(done) {
-    gulp.series(build, dist)(done);
+    if (cfg.maven) {
+      gulp.series(build, dist, copyDistToTarget)(done);
+    } else {
+      gulp.series(build, dist)(done);
+    }
   }
 
   function watch() {
@@ -213,6 +222,10 @@ function buildTasks(customConfig, localGulp) {
     gulp.watch(cfg.src.scripts, gulp.series(scripts, unitTests));
     gulp.watch(cfg.src.templates, scripts);
     gulp.watch(cfg.src.unitTests, unitTests);
+
+    if (cfg.maven) {
+      gulp.watch(cfg.distDir, copyDistToTarget);
+    }
   }
 
   gulp.task(bowerAssets);
