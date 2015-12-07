@@ -16,7 +16,7 @@ function buildConfig(customConfig) {
 
   cfg.srcDir = customCfg.srcDir || 'src/';
   cfg.src = {};
-  cfg.src.styles = cfg.srcDir + 'styles/**.*.scss';
+  cfg.src.styles = cfg.srcDir + 'styles/**/*.scss';
   cfg.src.indexStyles = cfg.srcDir + 'styles/' + cfg.projectName + '.scss';
   cfg.src.images = cfg.srcDir + 'images/**/*.{png,jpg,gif,ico}';
   cfg.src.fonts = cfg.srcDir + 'fonts/**/*';
