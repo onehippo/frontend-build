@@ -23,8 +23,9 @@ function buildConfig(customConfig) {
 
   cfg.projectName = require(appRootDir.get() + '/package.json').name;
   cfg.bowerDir = customCfg.bowerDir || 'bower_components/';
+  cfg.bowerComponents = cfg.bowerDir + '**';
   cfg.npmDir = customCfg.npmDir || 'node_modules/';
-  cfg.targetDir = customCfg.targetDir || 'target/classes/angular/' + cfg.projectName;
+  cfg.targetBowerDir = customCfg.targetBowerDir || 'target/classes/angular/' + cfg.projectName + '/bower_components/';
 
   cfg.srcDir = customCfg.srcDir || 'src/';
   cfg.src = {};

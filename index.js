@@ -75,6 +75,15 @@ function buildTasks(customConfig, localGulp) {
       .pipe(browserSyncServer.stream());
   }
 
+  function symlinkBower() {
+    return gulp.src(cfg.bowerComponents)
+      .pipe(gulp.symlink(cfg.targetBowerDir));
+  }
+
+  function unlinkBower() {
+    return del([cfg.targetBowerDir]);
+  }
+
   function scripts(done) {
     gulp.series(
       function lintES6() {
@@ -159,26 +168,21 @@ function buildTasks(customConfig, localGulp) {
           minifyHtml()
         ],
         css: [
-          minifyCss()
+          minifyCss(),
+          rev()
         ],
         inlinecss: [
           minifyCss()
         ],
         js: [
-          uglify()
+          uglify(),
+          rev()
         ],
         inlinejs: [
           uglify()
         ]
       }))
       .pipe(gulp.dest(cfg.distDir));
-  }
-
-  function copyDistToTarget() {
-    return gulp.src(cfg.distDir + '/**', {
-        since: gulp.lastRun(copyDistToTarget)
-      })
-      .pipe(gulp.dest(cfg.targetDir));
   }
 
   function localServer() {
@@ -203,12 +207,16 @@ function buildTasks(customConfig, localGulp) {
   }
 
   function build(done) {
-    gulp.series(clean, gulp.parallel(scripts, styles, images, bowerAssets, dev))(done);
+    if (cfg.env.maven) {
+      gulp.series(clean, gulp.parallel(scripts, styles, images, bowerAssets, dev, symlinkBower))(done);
+    } else {
+      gulp.series(clean, gulp.parallel(scripts, styles, images, bowerAssets, dev))(done);
+    }
   }
 
   function buildDist(done) {
     if (cfg.env.maven) {
-      gulp.series(build, dist, copyDistToTarget)(done);
+      gulp.series(build, dist, unlinkBower)(done);
     } else {
       gulp.series(build, dist)(done);
     }
@@ -218,21 +226,20 @@ function buildTasks(customConfig, localGulp) {
     gulp.watch(cfg.src.styles, styles);
     gulp.watch(cfg.src.images, images);
     gulp.watch(cfg.src.fonts, fonts);
-    gulp.watch(cfg.src.bowerLinks, gulp.parallel(build));
+    gulp.watch(cfg.src.bowerLinks, build);
     gulp.watch(cfg.src.indexHtml, dev);
     gulp.watch(cfg.src.templates, scripts);
     gulp.watch(cfg.src.unitTests, unitTests);
+
+    if (cfg.env.maven) {
+      gulp.watch(cfg.bowerComponents, symlinkBower);
+    }
 
     // See comment in build.conf.js
     if (cfg.env.windows) {
       gulp.watch(cfg.src.scripts, scripts);
     } else {
       gulp.watch(cfg.src.scripts, gulp.series(scripts, unitTests));
-    }
-
-    // See comment in build.conf.js
-    if (cfg.env.maven) {
-      gulp.watch(cfg.distDir, copyDistToTarget);
     }
   }
 
@@ -249,8 +256,10 @@ function buildTasks(customConfig, localGulp) {
   gulp.task(server);
   gulp.task(serverDist);
   gulp.task(styles);
+  gulp.task(symlinkBower);
   gulp.task(unitTests);
   gulp.task(unitTestsDebug);
+  gulp.task(unlinkBower);
   gulp.task(watch);
 }
 
