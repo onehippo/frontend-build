@@ -219,11 +219,18 @@ function buildTasks(customConfig, localGulp) {
     gulp.watch(cfg.src.fonts, fonts);
     gulp.watch(cfg.src.bowerLinks, gulp.parallel(build));
     gulp.watch(cfg.src.indexHtml, dev);
-    gulp.watch(cfg.src.scripts, gulp.series(scripts, unitTests));
     gulp.watch(cfg.src.templates, scripts);
     gulp.watch(cfg.src.unitTests, unitTests);
 
-    if (cfg.maven) {
+    // See comment in build.conf.js
+    if(cfg.env.windows) {
+      gulp.watch(cfg.src.scripts, scripts);
+    } else {
+      gulp.watch(cfg.src.scripts, gulp.series(scripts, unitTests));
+    }
+
+    // See comment in build.conf.js
+    if (cfg.env.maven) {
       gulp.watch(cfg.distDir, copyDistToTarget);
     }
   }

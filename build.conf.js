@@ -10,6 +10,17 @@ function buildConfig(customConfig) {
   var cfg = {};
   var customCfg = customConfig || {};
 
+  cfg.env = {};
+
+  // When set to true all files in the 'dist' folder are copied to the 'target' folder
+  cfg.env.maven = false;
+  /*
+   Karma currently starts up very slow in windows. Disabling running unittests after scripts
+   have changed on windows is the workaround.
+   TODO: check for fix for karma on windows
+   */
+  cfg.env.windows = false;
+
   cfg.projectName = require(appRootDir.get() + '/package.json').name;
   cfg.bowerDir = customCfg.bowerDir || 'bower_components/';
   cfg.npmDir = customCfg.npmDir || 'node_modules/';
@@ -36,8 +47,6 @@ function buildConfig(customConfig) {
   cfg.dist.indexScript = cfg.distDir + 'scripts/' + cfg.projectName + '.js';
   cfg.dist.images = cfg.distDir + 'images/';
 
-  // When set to true all files in the 'dist' folder are copied to the 'target' folder
-  cfg.maven = false;
   cfg.karmaConf = appRootDir.get() + '/karma.conf.js';
   cfg.bowerAssets = [cfg.bowerDir + 'hippo-theme/dist/**/*.{svg,woff,woff2,ttf,eot,png}'];
   cfg.bowerLinks = [cfg.bowerDir + 'hippo-theme/dist/**'];
