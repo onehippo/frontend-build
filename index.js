@@ -206,7 +206,7 @@ function buildTasks(customConfig, localGulp) {
   }
 
   function buildDist(done) {
-    if (cfg.maven) {
+    if (cfg.env.maven) {
       gulp.series(build, dist, copyDistToTarget)(done);
     } else {
       gulp.series(build, dist)(done);
