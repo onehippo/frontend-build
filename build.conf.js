@@ -66,6 +66,10 @@ function buildConfig(customConfig) {
       "es6": true
     }
   };
+  cfg.systemjsOptions = {
+    transpiler: 'babel',
+    defaultJSExtensions: true
+  };
 
   return objectAssign(cfg, customCfg);
 }

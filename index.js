@@ -95,9 +95,9 @@ function buildTasks(customConfig, localGulp) {
           .pipe(esLint.failOnError());
       },
       function transpile() {
-        var systemjs = new Builder('./', {
-          transpiler: 'babel'
-        });
+        var systemjs = new Builder();
+
+        systemjs.config(cfg.systemjsOptions);
 
         return systemjs.buildStatic(cfg.src.indexScript, cfg.dist.indexScript, {
           sourceMaps: 'inline'
