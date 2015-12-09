@@ -215,9 +215,9 @@ function buildTasks(customConfig, localGulp) {
 
   function build(done) {
     if (cfg.env.maven) {
-      gulp.series(clean, gulp.parallel(scripts, styles, images, bowerAssets, dev, symlinkBower))(done);
+      gulp.series(clean, gulp.parallel(scripts, styles, images, bowerAssets, i18n, dev, symlinkBower))(done);
     } else {
-      gulp.series(clean, gulp.parallel(scripts, styles, images, bowerAssets, dev))(done);
+      gulp.series(clean, gulp.parallel(scripts, styles, images, bowerAssets, i18n, dev))(done);
     }
   }
 
@@ -237,6 +237,7 @@ function buildTasks(customConfig, localGulp) {
     gulp.watch(cfg.src.indexHtml, dev);
     gulp.watch(cfg.src.templates, scripts);
     gulp.watch(cfg.src.unitTests, unitTests);
+    gulp.watch(cfg.src.i18n, i18n);
 
     if (cfg.env.maven) {
       gulp.watch(cfg.bowerComponents, symlinkBower);
