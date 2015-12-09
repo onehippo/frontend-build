@@ -152,6 +152,13 @@ function buildTasks(customConfig, localGulp) {
     server.start();
   }
 
+  function i18n() {
+    return gulp
+      .src(cfg.src.i18n)
+      .pipe(plumber())
+      .pipe(gulp.dest(cfg.dist.i18n));
+  }
+
   function dev() {
     return gulp
       .src(cfg.src.indexHtml)
@@ -250,6 +257,7 @@ function buildTasks(customConfig, localGulp) {
   gulp.task(dev);
   gulp.task(dist);
   gulp.task(fonts);
+  gulp.task(i18n);
   gulp.task(images);
   gulp.task(localServer);
   gulp.task(scripts);

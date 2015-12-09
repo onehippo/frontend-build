@@ -37,6 +37,7 @@ function buildConfig(customConfig) {
   cfg.src.unitTests = cfg.srcDir + 'angularjs/**/*.spec.js';
   cfg.src.scripts = cfg.srcDir + 'angularjs/**/!(*.spec).js';
   cfg.src.templates = cfg.srcDir + 'angularjs/**/*.html';
+  cfg.src.i18n = cfg.srcDir + 'i18n/**';
   cfg.src.indexHtml = cfg.srcDir + 'index.html';
 
   cfg.distDir = customCfg.distDir || 'dist/';
@@ -47,6 +48,7 @@ function buildConfig(customConfig) {
   cfg.dist.scripts = cfg.distDir + 'scripts/';
   cfg.dist.indexScript = cfg.distDir + 'scripts/' + cfg.projectName + '.js';
   cfg.dist.images = cfg.distDir + 'images/';
+  cfg.dist.i18n = cfg.distDir + 'i18n/';
 
   cfg.karmaConf = appRootDir.get() + '/karma.conf.js';
   cfg.bowerAssets = [cfg.bowerDir + 'hippo-theme/dist/**/*.{svg,woff,woff2,ttf,eot,png}'];
