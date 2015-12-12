@@ -32,13 +32,15 @@ function buildConfig(customConfig) {
    */
   cfg.env.windows = false;
 
-  cfg.projectName = require(appRootDir.get() + '/package.json').name;
-  cfg.bowerDir = customCfg.bowerDir || 'bower_components/';
-  cfg.bowerComponents = cfg.bowerDir + '**';
-  cfg.npmDir = customCfg.npmDir || 'node_modules/';
-  cfg.targetBowerDir = customCfg.targetBowerDir || 'target/classes/angular/' + cfg.projectName + '/bower_components/';
+  cfg.srcDir = customCfg.srcDir || './src/';
+  cfg.distDir = customCfg.distDir || './dist/';
+  cfg.bowerDir = customCfg.bowerDir || './bower_components/';
+  cfg.npmDir = customCfg.npmDir || './node_modules/';
+  cfg.targetBowerDir = customCfg.targetBowerDir || cfg.distDir + cfg.projectName + cfg.bowerDir;
+  cfg.targetNpmDir = customCfg.npmDir || cfg.npmDir + cfg.projectName + +cfg.npmDir;
 
-  cfg.srcDir = customCfg.srcDir || 'src/';
+  cfg.projectName = require(appRootDir.get() + '/package.json').name;
+
   cfg.src = {};
   cfg.src.styles = cfg.srcDir + 'styles/**/*.scss';
   cfg.src.indexStyles = cfg.srcDir + 'styles/' + cfg.projectName + '.scss';
@@ -51,7 +53,6 @@ function buildConfig(customConfig) {
   cfg.src.i18n = cfg.srcDir + 'i18n/**';
   cfg.src.indexHtml = cfg.srcDir + 'index.html';
 
-  cfg.distDir = customCfg.distDir || 'dist/';
   cfg.dist = {};
   cfg.dist.indexHtml = cfg.distDir + 'index.html';
   cfg.dist.styles = cfg.distDir + 'styles/';
@@ -81,10 +82,7 @@ function buildConfig(customConfig) {
   };
   cfg.systemjsOptions = {
     transpiler: 'babel',
-    defaultJSExtensions: true,
-    // babelOptions: {
-    //   externalHelpers: false
-    // }
+    defaultJSExtensions: true
   };
 
   return objectAssign(cfg, customCfg);

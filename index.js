@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+var path = require('path');
 var autoprefixer = require('gulp-autoprefixer');
 var browserSync = require('browser-sync');
 var buildConfig = require('./build.conf.js');
@@ -91,13 +92,19 @@ function buildTasks(customConfig, localGulp) {
       .pipe(browserSyncServer.stream());
   }
 
-  function symlinkBower() {
-    return gulp.src(cfg.bowerComponents)
-      .pipe(gulp.symlink(cfg.targetBowerDir));
+  function symlinkDependencies() {
+    return gulp.src([
+        path.basename(cfg.bowerDir),
+        path.basename(cfg.npmDir)
+      ])
+      .pipe(gulp.symlink(cfg.distDir));
   }
 
-  function unlinkBower() {
-    return del([cfg.targetBowerDir]);
+  function unlinkDependencies() {
+    return del([
+      cfg.targetBowerDir,
+      cfg.targetNpmDir
+    ]);
   }
 
   function scripts(done) {
@@ -231,7 +238,7 @@ function buildTasks(customConfig, localGulp) {
 
   function build(done) {
     if (cfg.env.maven) {
-      gulp.series(clean, gulp.parallel(scripts, styles, images, bowerAssets, i18n, dev, symlinkBower))(done);
+      gulp.series(clean, gulp.parallel(scripts, styles, images, bowerAssets, i18n, dev, symlinkDependencies))(done);
     } else {
       gulp.series(clean, gulp.parallel(scripts, styles, images, bowerAssets, i18n, dev))(done);
     }
@@ -239,7 +246,7 @@ function buildTasks(customConfig, localGulp) {
 
   function buildDist(done) {
     if (cfg.env.maven) {
-      gulp.series(build, dist, unlinkBower)(done);
+      gulp.series(build, dist, unlinkDependencies)(done);
     } else {
       gulp.series(build, dist)(done);
     }
@@ -254,10 +261,6 @@ function buildTasks(customConfig, localGulp) {
     gulp.watch(cfg.src.templates, scripts);
     gulp.watch(cfg.src.unitTests, unitTests);
     gulp.watch(cfg.src.i18n, i18n);
-
-    if (cfg.env.maven) {
-      gulp.watch(cfg.bowerComponents, symlinkBower);
-    }
 
     // See comment in build.conf.js
     if (cfg.env.windows) {
@@ -281,10 +284,10 @@ function buildTasks(customConfig, localGulp) {
   gulp.task(server);
   gulp.task(serverDist);
   gulp.task(styles);
-  gulp.task(symlinkBower);
+  gulp.task(symlinkDependencies);
   gulp.task(unitTests);
   gulp.task(unitTestsDebug);
-  gulp.task(unlinkBower);
+  gulp.task(unlinkDependencies);
   gulp.task(watch);
 }
 
