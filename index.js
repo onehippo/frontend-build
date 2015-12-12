@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-var path = require('path');
 var autoprefixer = require('gulp-autoprefixer');
 var browserSync = require('browser-sync');
 var buildConfig = require('./build.conf.js');
@@ -30,6 +29,7 @@ var karma = require('karma');
 var minifyCss = require('gulp-minify-css');
 var minifyHtml = require('gulp-minify-html');
 var ngAnnotate = require('gulp-ng-annotate');
+var path = require('path');
 var plumber = require('gulp-plumber');
 var rev = require('gulp-rev');
 var sass = require('gulp-sass');
@@ -109,7 +109,7 @@ function buildTasks(customConfig, localGulp) {
 
   function scripts(done) {
     gulp.series(
-      function lintES6() {
+      function lint() {
         return gulp
           .src(cfg.src.scripts)
           .pipe(plumber())
@@ -121,10 +121,10 @@ function buildTasks(customConfig, localGulp) {
         var systemjs = new Builder();
         systemjs.config(cfg.systemjsOptions);
         return systemjs.bundle(cfg.src.indexScript, cfg.dist.indexScript, {
-          sourceMaps: 'inline'
+          sourceMaps: true
         });
       },
-      function templatesNgAnnotateConcat() {
+      function html2js() {
         return gulp
           .src([
             cfg.dist.indexScript,
@@ -135,9 +135,15 @@ function buildTasks(customConfig, localGulp) {
             module: cfg.projectName + '-templates',
             standalone: true
           })))
-          .pipe(ngAnnotate())
           .pipe(insert.append('System.import("' + cfg.src.indexScript + '");'))
           .pipe(concat(cfg.projectName + '.js'))
+          .pipe(gulp.dest(cfg.dist.scripts));
+      },
+      function annotate() {
+        return gulp
+          .src(cfg.dist.indexScript)
+          .pipe(plumber())
+          .pipe(ngAnnotate())
           .pipe(gulp.dest(cfg.dist.scripts))
           .pipe(browserSyncServer.stream());
       })(done);
@@ -261,13 +267,6 @@ function buildTasks(customConfig, localGulp) {
     gulp.watch(cfg.src.templates, scripts);
     gulp.watch(cfg.src.unitTests, unitTests);
     gulp.watch(cfg.src.i18n, i18n);
-
-    // See comment in build.conf.js
-    if (cfg.env.windows) {
-      gulp.watch(cfg.src.scripts, scripts);
-    } else {
-      gulp.watch(cfg.src.scripts, gulp.series(scripts, unitTests));
-    }
   }
 
   gulp.task(bowerAssets);

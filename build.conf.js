@@ -22,15 +22,8 @@ function buildConfig(customConfig) {
   var customCfg = customConfig || {};
 
   cfg.env = {};
-
   // When set to true all files in the 'dist' folder are copied to the 'target' folder
   cfg.env.maven = false;
-  /*
-   Karma currently starts up very slow in windows. Disabling running unittests after scripts
-   have changed on windows is the workaround.
-   TODO: check for fix for karma on windows
-   */
-  cfg.env.windows = false;
 
   cfg.srcDir = customCfg.srcDir || './src/';
   cfg.distDir = customCfg.distDir || './dist/';
