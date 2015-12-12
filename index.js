@@ -112,10 +112,8 @@ function buildTasks(customConfig, localGulp) {
       },
       function transpile() {
         var systemjs = new Builder();
-
         systemjs.config(cfg.systemjsOptions);
-
-        return systemjs.buildStatic(cfg.src.indexScript, cfg.dist.indexScript, {
+        return systemjs.bundle(cfg.src.indexScript, cfg.dist.indexScript, {
           sourceMaps: 'inline'
         });
       },
@@ -127,9 +125,11 @@ function buildTasks(customConfig, localGulp) {
           ])
           .pipe(plumber())
           .pipe(gulpif('*.html', templateCache({
-            module: cfg.projectName
+            module: cfg.projectName + '-templates',
+            standalone: true
           })))
           .pipe(ngAnnotate())
+          .pipe(insert.append('System.import("' + cfg.src.indexScript + '");'))
           .pipe(concat(cfg.projectName + '.js'))
           .pipe(gulp.dest(cfg.dist.scripts))
           .pipe(browserSyncServer.stream());
