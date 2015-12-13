@@ -120,7 +120,8 @@ function buildTasks(customConfig, localGulp) {
           .pipe(esLint.failOnError());
       },
       function transpile() {
-        var systemjs = new Builder('./', cfg.systemjsConfig);
+        var systemjs = new Builder();
+        systemjs.config(cfg.systemjsOptions);
         return systemjs.bundle(cfg.src.indexScript, cfg.dist.indexScript, {
           sourceMaps: true
         });
