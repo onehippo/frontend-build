@@ -55,7 +55,7 @@ function buildConfig(customConfig) {
   cfg.dist.images = cfg.distDir + 'images/';
   cfg.dist.i18n = cfg.distDir + 'i18n/';
 
-  cfg.karmaConf = appRootDir.get() + '/karma.conf.js';
+  cfg.karmaConfig = appRootDir.get() + '/karma.conf.js';
   cfg.bowerAssets = [cfg.bowerDir + 'hippo-theme/dist/**/*.{svg,woff,woff2,ttf,eot,png}'];
   cfg.bowerLinks = [cfg.bowerDir + 'hippo-theme/dist/**'];
   cfg.supportedBrowsers = ['last 1 Chrome versions', 'last 1 Firefox versions', 'Safari >= 7', 'Explorer >= 10'];
@@ -73,10 +73,7 @@ function buildConfig(customConfig) {
       "es6": true
     }
   };
-  cfg.systemjsOptions = {
-    transpiler: 'babel',
-    defaultJSExtensions: true
-  };
+  cfg.systemjsConfig = appRootDir.get() + '/system.conf.js';
 
   return objectAssign(cfg, customCfg);
 }

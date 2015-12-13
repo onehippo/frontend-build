@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+var sourceMaps = require('gulp-sourcemaps');
 var autoprefixer = require('gulp-autoprefixer');
 var browserSync = require('browser-sync');
 var buildConfig = require('./build.conf.js');
@@ -56,13 +57,14 @@ function buildTasks(customConfig, localGulp) {
       }))
       .pipe(sassLint.format())
       .pipe(sassLint.failOnError())
+      .pipe(sourceMaps.init())
       .pipe(autoprefixer({
         browsers: cfg.supportedBrowsers
       }))
       .pipe(sass({
-        sourceMapEmbed: true,
         outputStyle: 'expanded'
       }))
+      .pipe(sourceMaps.write('./'))
       .pipe(gulp.dest(cfg.dist.styles))
       .pipe(browserSyncServer.stream());
   }
@@ -118,11 +120,17 @@ function buildTasks(customConfig, localGulp) {
           .pipe(esLint.failOnError());
       },
       function transpile() {
-        var systemjs = new Builder();
-        systemjs.config(cfg.systemjsOptions);
+        var systemjs = new Builder('./', cfg.systemjsConfig);
         return systemjs.bundle(cfg.src.indexScript, cfg.dist.indexScript, {
           sourceMaps: true
         });
+      },
+      function annotate() {
+        return gulp
+          .src(cfg.dist.indexScript)
+          .pipe(plumber())
+          .pipe(ngAnnotate())
+          .pipe(gulp.dest(cfg.dist.scripts));
       },
       function html2js() {
         return gulp
@@ -135,15 +143,8 @@ function buildTasks(customConfig, localGulp) {
             module: cfg.projectName + '-templates',
             standalone: true
           })))
-          .pipe(insert.append('System.import("' + cfg.src.indexScript + '");'))
           .pipe(concat(cfg.projectName + '.js'))
-          .pipe(gulp.dest(cfg.dist.scripts));
-      },
-      function annotate() {
-        return gulp
-          .src(cfg.dist.indexScript)
-          .pipe(plumber())
-          .pipe(ngAnnotate())
+          .pipe(insert.append('System.import("' + cfg.src.indexScript + '");'))
           .pipe(gulp.dest(cfg.dist.scripts))
           .pipe(browserSyncServer.stream());
       })(done);
@@ -158,7 +159,7 @@ function buildTasks(customConfig, localGulp) {
       .pipe(esLint.failOnError());
 
     var server = new karma.Server({
-      configFile: cfg.karmaConf
+      configFile: cfg.karmaConfig
     }, done);
 
     server.start();
@@ -204,18 +205,20 @@ function buildTasks(customConfig, localGulp) {
           minifyHtml()
         ],
         css: [
+          sourceMaps.init({
+            loadMaps: true
+          }),
           minifyCss(),
-          rev()
-        ],
-        inlinecss: [
-          minifyCss()
+          rev(),
+          sourceMaps.write('./')
         ],
         js: [
+          sourceMaps.init({
+            loadMaps: true
+          }),
           uglify(),
-          rev()
-        ],
-        inlinejs: [
-          uglify()
+          rev(),
+          sourceMaps.write('./')
         ]
       }))
       .pipe(gulp.dest(cfg.distDir));
@@ -264,6 +267,7 @@ function buildTasks(customConfig, localGulp) {
     gulp.watch(cfg.src.fonts, fonts);
     gulp.watch(cfg.src.bowerLinks, build);
     gulp.watch(cfg.src.indexHtml, dev);
+    gulp.watch(cfg.src.scripts, gulp.series(scripts, unitTests));
     gulp.watch(cfg.src.templates, scripts);
     gulp.watch(cfg.src.unitTests, unitTests);
     gulp.watch(cfg.src.i18n, i18n);
