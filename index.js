@@ -64,7 +64,7 @@ function buildTasks(customConfig, localGulp) {
       .pipe(sass({
         outputStyle: 'expanded'
       }))
-      .pipe(sourceMaps.write('./'))
+      .pipe(sourceMaps.write())
       .pipe(gulp.dest(cfg.dist.styles))
       .pipe(bsServer.stream());
   }
