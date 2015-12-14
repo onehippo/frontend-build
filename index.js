@@ -42,7 +42,7 @@ var usemin = require('gulp-usemin');
 function buildTasks(customConfig, localGulp) {
   var cfg = buildConfig(customConfig);
   var gulp = localGulp || require('gulp');
-  var browserSyncServer = browserSync.create();
+  var bsServer = browserSync.create();
 
   function clean() {
     return del([cfg.distDir]);
@@ -175,9 +175,10 @@ function buildTasks(customConfig, localGulp) {
       .pipe(esLint.failOnError());
 
     var server = new karma.Server({
-      configFile: cfg.karmaConf,
+      configFile: cfg.karmaConfig,
       browsers: ['Chrome'],
-      singleRun: false
+      singleRun: false,
+      autoWatch: true
     }, done);
 
     server.start();
@@ -222,28 +223,33 @@ function buildTasks(customConfig, localGulp) {
           sourceMaps.write('./')
         ]
       }))
-      .pipe(gulp.dest(cfg.distDir));
+      .pipe(gulp.dest(cfg.distDir))
+      .pipe(bsServer.stream());
   }
 
-  function localServer() {
-    browserSyncServer.init({
-      ui: {
-        port: 9001
-      },
-      server: {
-        baseDir: [cfg.distDir, './'],
-        middleware: cfg.serverMiddlewares
-      },
-      port: 9000
-    });
+  function bsServerSync() {
+    if(cfg.env.maven) {
+      bsServer.init();
+    } else {
+      bsServer.init({
+        ui: {
+          port: 9001
+        },
+        server: {
+          baseDir: [cfg.distDir, './'],
+          middleware: cfg.serverMiddlewares
+        },
+        port: 9000
+      });
+    }
   }
 
-  function server(done) {
-    gulp.series(build, gulp.parallel(localServer, watch))(done);
+  function serve(done) {
+    gulp.series(build, gulp.parallel(bsServerSync, watch))(done);
   }
 
-  function serverDist(done) {
-    gulp.series(buildDist, gulp.parallel(localServer, watch))(done);
+  function serveDist(done) {
+    gulp.series(buildDist, gulp.parallel(bsServerSync, watch))(done);
   }
 
   function build(done) {
@@ -283,10 +289,10 @@ function buildTasks(customConfig, localGulp) {
   gulp.task(fonts);
   gulp.task(i18n);
   gulp.task(images);
-  gulp.task(localServer);
+  gulp.task(bsServerSync);
   gulp.task(scripts);
-  gulp.task(server);
-  gulp.task(serverDist);
+  gulp.task(serve);
+  gulp.task(serveDist);
   gulp.task(styles);
   gulp.task(symlinkDependencies);
   gulp.task(unitTests);
