@@ -66,7 +66,7 @@ function buildTasks(customConfig, localGulp) {
       }))
       .pipe(sourceMaps.write('./'))
       .pipe(gulp.dest(cfg.dist.styles))
-      .pipe(browserSyncServer.stream());
+      .pipe(bsServer.stream());
   }
 
   function images() {
@@ -75,7 +75,7 @@ function buildTasks(customConfig, localGulp) {
       .pipe(plumber())
       .pipe(imagemin())
       .pipe(gulp.dest(cfg.dist.images))
-      .pipe(browserSyncServer.stream());
+      .pipe(bsServer.stream());
   }
 
   function fonts() {
@@ -83,7 +83,7 @@ function buildTasks(customConfig, localGulp) {
       .src(cfg.src.fonts)
       .pipe(plumber())
       .pipe(gulp.dest(cfg.dist.fonts))
-      .pipe(browserSyncServer.stream());
+      .pipe(bsServer.stream());
   }
 
   function bowerAssets() {
@@ -91,7 +91,7 @@ function buildTasks(customConfig, localGulp) {
       .src(cfg.bowerAssets)
       .pipe(plumber())
       .pipe(gulp.dest(cfg.distDir))
-      .pipe(browserSyncServer.stream());
+      .pipe(bsServer.stream());
   }
 
   function symlinkDependencies() {
@@ -147,7 +147,7 @@ function buildTasks(customConfig, localGulp) {
           .pipe(concat(cfg.projectName + '.js'))
           .pipe(insert.append('System.import("' + cfg.src.indexScript + '");'))
           .pipe(gulp.dest(cfg.dist.scripts))
-          .pipe(browserSyncServer.stream());
+          .pipe(bsServer.stream());
       })(done);
   }
 
@@ -196,7 +196,7 @@ function buildTasks(customConfig, localGulp) {
       .src(cfg.src.indexHtml)
       .pipe(plumber())
       .pipe(gulp.dest(cfg.distDir))
-      .pipe(browserSyncServer.stream());
+      .pipe(bsServer.stream());
   }
 
   function dist() {
