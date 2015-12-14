@@ -123,14 +123,18 @@ function buildTasks(customConfig, localGulp) {
         var systemjs = new Builder();
         systemjs.config(cfg.systemjsOptions);
         return systemjs.bundle(cfg.src.indexScript, cfg.dist.indexScript, {
-          sourceMaps: true
+          sourceMaps: 'inline'
         });
       },
       function annotate() {
         return gulp
           .src(cfg.dist.indexScript)
           .pipe(plumber())
-          .pipe(ngAnnotate())
+          .pipe(ngAnnotate({
+            map: {
+              inline: true
+            }
+          }))
           .pipe(gulp.dest(cfg.dist.scripts));
       },
       function html2js() {
@@ -207,17 +211,13 @@ function buildTasks(customConfig, localGulp) {
           minifyHtml()
         ],
         css: [
-          sourceMaps.init({
-            loadMaps: true
-          }),
+          sourceMaps.init(),
           minifyCss(),
           rev(),
           sourceMaps.write('./')
         ],
         js: [
-          sourceMaps.init({
-            loadMaps: true
-          }),
+          sourceMaps.init(),
           uglify(),
           rev(),
           sourceMaps.write('./')
