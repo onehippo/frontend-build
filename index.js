@@ -211,7 +211,9 @@ function buildTasks(customConfig, localGulp) {
           minifyHtml()
         ],
         css: [
-          sourceMaps.init(),
+          sourceMaps.init({
+            loadMaps: true
+          }),
           minifyCss(),
           rev(),
           sourceMaps.write('./')
