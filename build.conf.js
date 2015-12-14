@@ -73,7 +73,10 @@ function buildConfig(customConfig) {
       "es6": true
     }
   };
-  cfg.systemjsConfig = appRootDir.get() + '/system.conf.js';
+  cfg.systemjsOptions = {
+    transpiler: 'babel',
+    defaultJSExtensions: true
+  };
 
   return objectAssign(cfg, customCfg);
 }
