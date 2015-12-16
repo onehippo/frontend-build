@@ -146,6 +146,9 @@ function buildTasks(customConfig, localGulp) {
           ])
           .pipe(plumber())
           .pipe(gulpif('*.html', templateCache({
+            transformUrl: function(url) {
+              return url.replace('angularjs/', '');
+            },
             module: cfg.projectName + '-templates',
             standalone: true
           })))
@@ -229,7 +232,7 @@ function buildTasks(customConfig, localGulp) {
   }
 
   function bsServerSync() {
-    if(cfg.env.maven) {
+    if (cfg.env.maven) {
       bsServer.init();
     } else {
       bsServer.init({

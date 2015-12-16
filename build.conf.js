@@ -40,8 +40,8 @@ function buildConfig(customConfig) {
   cfg.src.fonts = cfg.srcDir + 'fonts/**/*';
   cfg.src.indexScript = cfg.srcDir + 'angularjs/' + cfg.projectName + '.js';
   cfg.src.unitTests = cfg.srcDir + '**/*.spec.js';
-  cfg.src.scripts = cfg.srcDir + 'angularjs/**/!(*.spec).js';
-  cfg.src.templates = cfg.srcDir + 'angularjs/**/*.html';
+  cfg.src.scripts = cfg.srcDir + '**/!(*.spec).js';
+  cfg.src.templates = cfg.srcDir + '**/!(index).html';
   cfg.src.i18n = cfg.srcDir + 'i18n/**';
   cfg.src.indexHtml = cfg.srcDir + 'index.html';
 
