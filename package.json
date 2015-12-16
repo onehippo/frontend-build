@@ -12,6 +12,7 @@
     "app-root-dir": "1.0.2",
     "babel-core": "5.8.34",
     "browser-sync": "2.10.0",
+    "debounce": "1.0.0",
     "del": "2.2.0",
     "gulp": "git://github.com/gulpjs/gulp.git#3311fcab7fe6de65a7a981d2433205c91d151c0a",
     "gulp-angular-templatecache": "1.8.0",

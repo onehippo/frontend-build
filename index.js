@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+var debounce = require('debounce');
 var sourceMaps = require('gulp-sourcemaps');
 var autoprefixer = require('gulp-autoprefixer');
 var browserSync = require('browser-sync');
@@ -274,9 +275,11 @@ function buildTasks(customConfig, localGulp) {
     gulp.watch(cfg.src.fonts, fonts);
     gulp.watch(cfg.src.bowerLinks, build);
     gulp.watch(cfg.src.indexHtml, dev);
-    gulp.watch(cfg.src.scripts, gulp.series(scripts, unitTests));
-    gulp.watch(cfg.src.templates, scripts);
-    gulp.watch(cfg.src.unitTests, unitTests);
+    gulp.watch([
+      cfg.src.scripts,
+      cfg.src.templates,
+      cfg.src.unitTests
+    ], debounce(gulp.series(scripts, unitTests), 200));
     gulp.watch(cfg.src.i18n, i18n);
   }
 

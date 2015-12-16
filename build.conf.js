@@ -22,7 +22,6 @@ function buildConfig(customConfig) {
   var customCfg = customConfig || {};
 
   cfg.env = {};
-  // When set to true all files in the 'dist' folder are copied to the 'target' folder
   cfg.env.maven = false;
 
   cfg.srcDir = customCfg.srcDir || './src/';
