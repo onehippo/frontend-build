@@ -65,7 +65,7 @@ function buildTasks(customConfig, localGulp) {
       .pipe(sass({
         outputStyle: 'expanded'
       }))
-      .pipe(sourceMaps.write())
+      .pipe(sourceMaps.write('./'))
       .pipe(gulp.dest(cfg.dist.styles))
       .pipe(bsServer.stream());
   }
@@ -124,18 +124,18 @@ function buildTasks(customConfig, localGulp) {
         var systemjs = new Builder();
         systemjs.config(cfg.systemjsOptions);
         return systemjs.bundle(cfg.src.indexScript, cfg.dist.indexScript, {
-          sourceMaps: 'inline'
+          sourceMaps: true
         });
       },
       function annotate() {
         return gulp
           .src(cfg.dist.indexScript)
           .pipe(plumber())
-          .pipe(ngAnnotate({
-            map: {
-              inline: true
-            }
+          .pipe(sourceMaps.init({
+            loadMaps: true
           }))
+          .pipe(ngAnnotate())
+          .pipe(sourceMaps.write('./'))
           .pipe(gulp.dest(cfg.dist.scripts));
       },
       function html2js() {
