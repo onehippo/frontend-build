@@ -147,7 +147,7 @@ function buildTasks(customConfig, localGulp) {
           .pipe(plumber())
           .pipe(gulpif('*.html', templateCache({
             transformUrl: function(url) {
-              return url.replace('angularjs/', '');
+              return url.replace(/.*angularjs(?:\\|\/)/gi, '');
             },
             module: cfg.projectName + '-templates',
             standalone: true
