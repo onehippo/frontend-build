@@ -116,7 +116,7 @@ function buildTasks(customConfig, localGulp) {
         return gulp
           .src(cfg.src.scripts)
           .pipe(plumber())
-          .pipe(esLint(cfg.esLintRules))
+          .pipe(esLint(cfg.esLintConfig))
           .pipe(esLint.format())
           .pipe(esLint.failOnError());
       },
@@ -162,7 +162,7 @@ function buildTasks(customConfig, localGulp) {
     gulp
       .src(cfg.src.unitTests)
       .pipe(plumber())
-      .pipe(esLint(cfg.esLintRules))
+      .pipe(esLint(cfg.esLintConfig))
       .pipe(esLint.format())
       .pipe(esLint.failOnError());
 
@@ -177,7 +177,7 @@ function buildTasks(customConfig, localGulp) {
     gulp
       .src(cfg.src.unitTests)
       .pipe(plumber())
-      .pipe(esLint())
+      .pipe(esLint(cfg.esLintConfig))
       .pipe(esLint.format())
       .pipe(esLint.failOnError());
 

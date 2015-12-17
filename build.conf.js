@@ -62,14 +62,14 @@ function buildConfig(customConfig) {
   cfg.sassLintRules = {
     'force-element-nesting': 0
   };
-  cfg.esLintRules = {
-    "ecmaFeatures": {
-      "modules": true
+  cfg.esLintConfig = {
+    ecmaFeatures: {
+      modules: true
     },
-    "env": {
-      "browser": true,
-      "node": true,
-      "es6": true
+    env: {
+      browser: true,
+      node: true,
+      es6: true
     }
   };
   cfg.systemjsOptions = {
