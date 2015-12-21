@@ -59,11 +59,11 @@ function buildTasks(customConfig, localGulp) {
       .pipe(sassLint.format())
       .pipe(sassLint.failOnError())
       .pipe(sourceMaps.init())
-      .pipe(autoprefixer({
-        browsers: cfg.supportedBrowsers
-      }))
       .pipe(sass({
         outputStyle: 'expanded'
+      }))
+      .pipe(autoprefixer({
+        browsers: cfg.supportedBrowsers
       }))
       .pipe(sourceMaps.write('./'))
       .pipe(gulp.dest(cfg.dist.styles))
