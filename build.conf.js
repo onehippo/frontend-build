@@ -24,14 +24,15 @@ function buildConfig(customConfig) {
   cfg.env = {};
   cfg.env.maven = false;
 
-  cfg.srcDir = customCfg.srcDir || './src/';
-  cfg.distDir = customCfg.distDir || './dist/';
-  cfg.bowerDir = customCfg.bowerDir || './bower_components/';
-  cfg.npmDir = customCfg.npmDir || './node_modules/';
+  cfg.appRoot = appRootDir.get() + '/';
+  cfg.srcDir = customCfg.srcDir || cfg.appRoot + 'src/';
+  cfg.distDir = customCfg.distDir || cfg.appRoot + 'dist/';
+  cfg.bowerDir = customCfg.bowerDir || 'bower_components/';
+  cfg.npmDir = customCfg.npmDir || 'node_modules/';
   cfg.targetBowerDir = customCfg.targetBowerDir || cfg.distDir + cfg.projectName + cfg.bowerDir;
   cfg.targetNpmDir = customCfg.npmDir || cfg.npmDir + cfg.projectName + +cfg.npmDir;
 
-  cfg.projectName = require(appRootDir.get() + '/package.json').name;
+  cfg.projectName = require(cfg.appRoot + 'package.json').name;
 
   cfg.src = {};
   cfg.src.styles = cfg.srcDir + 'styles/**/*.scss';
@@ -54,7 +55,7 @@ function buildConfig(customConfig) {
   cfg.dist.images = cfg.distDir + 'images/';
   cfg.dist.i18n = cfg.distDir + 'i18n/';
 
-  cfg.karmaConfig = appRootDir.get() + '/karma.conf.js';
+  cfg.karmaConfig = cfg.appRoot + 'karma.conf.js';
   cfg.bowerAssets = [cfg.bowerDir + 'hippo-theme/dist/**/*.{svg,woff,woff2,ttf,eot,png}'];
   cfg.bowerLinks = [cfg.bowerDir + 'hippo-theme/dist/**'];
   cfg.supportedBrowsers = ['last 1 Chrome versions', 'last 1 Firefox versions', 'Safari >= 7', 'Explorer >= 10'];
@@ -63,6 +64,7 @@ function buildConfig(customConfig) {
     'force-element-nesting': 0
   };
   cfg.esLintConfig = {
+    parser: 'babel-eslint',
     ecmaFeatures: {
       modules: true
     },
@@ -71,10 +73,6 @@ function buildConfig(customConfig) {
       node: true,
       es6: true
     }
-  };
-  cfg.systemjsOptions = {
-    transpiler: 'babel',
-    defaultJSExtensions: true
   };
 
   return objectAssign(cfg, customCfg);

@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-var debounce = require('debounce');
-var sourceMaps = require('gulp-sourcemaps');
 var autoprefixer = require('gulp-autoprefixer');
 var browserSync = require('browser-sync');
 var buildConfig = require('./build.conf.js');
 var Builder = require('systemjs-builder');
 var concat = require('gulp-concat');
+var debounce = require('debounce');
 var debug = require('gulp-debug');
 var del = require('del');
 var esLint = require('gulp-eslint');
@@ -36,6 +35,7 @@ var plumber = require('gulp-plumber');
 var rev = require('gulp-rev');
 var sass = require('gulp-sass');
 var sassLint = require('gulp-sass-lint');
+var sourceMaps = require('gulp-sourcemaps');
 var templateCache = require('gulp-angular-templatecache');
 var uglify = require('gulp-uglify');
 var usemin = require('gulp-usemin');
@@ -97,9 +97,9 @@ function buildTasks(customConfig, localGulp) {
 
   function symlinkDependencies() {
     return gulp.src([
-        path.basename(cfg.bowerDir),
-        path.basename(cfg.npmDir)
-      ])
+      path.basename(cfg.bowerDir),
+      path.basename(cfg.npmDir)
+    ])
       .pipe(gulp.symlink(cfg.distDir));
   }
 
@@ -122,7 +122,10 @@ function buildTasks(customConfig, localGulp) {
       },
       function transpile() {
         var systemjs = new Builder();
-        systemjs.config(cfg.systemjsOptions);
+        systemjs.config({
+          transpiler: 'babel',
+          defaultJSExtensions: true
+        });
         return systemjs.buildStatic(cfg.src.indexScript, cfg.dist.indexScript, {
           sourceMaps: true
         });
@@ -141,12 +144,12 @@ function buildTasks(customConfig, localGulp) {
       function html2js() {
         return gulp
           .src([
-            cfg.dist.indexScript,
-            cfg.src.templates
+            cfg.src.templates,
+            cfg.dist.indexScript
           ])
           .pipe(plumber())
           .pipe(gulpif('*.html', templateCache({
-            transformUrl: function(url) {
+            transformUrl: function (url) {
               return url.replace(/.*angularjs(?:\\|\/)/gi, '');
             },
             module: cfg.projectName + '-templates',
@@ -155,40 +158,51 @@ function buildTasks(customConfig, localGulp) {
           .pipe(concat(cfg.projectName + '.js'))
           .pipe(gulp.dest(cfg.dist.scripts))
           .pipe(bsServer.stream());
-      })(done);
+      }
+    )(done);
   }
 
   function unitTests(done) {
-    gulp
-      .src(cfg.src.unitTests)
-      .pipe(plumber())
-      .pipe(esLint(cfg.esLintConfig))
-      .pipe(esLint.format())
-      .pipe(esLint.failOnError());
+    gulp.series(
+      function lint() {
+        return gulp
+          .src(cfg.src.unitTests)
+          .pipe(plumber())
+          .pipe(esLint(cfg.esLintConfig))
+          .pipe(esLint.format())
+          .pipe(esLint.failOnError());
+      },
+      function runKarma(karmaDone) {
+        var server = new karma.Server({
+          configFile: cfg.karmaConfig
+        }, karmaDone);
 
-    var server = new karma.Server({
-      configFile: cfg.karmaConfig
-    }, done);
-
-    server.start();
+        server.start();
+      }
+    )(done);
   }
 
   function unitTestsDebug(done) {
-    gulp
-      .src(cfg.src.unitTests)
-      .pipe(plumber())
-      .pipe(esLint(cfg.esLintConfig))
-      .pipe(esLint.format())
-      .pipe(esLint.failOnError());
+    gulp.series(
+      function lint() {
+        return gulp
+          .src(cfg.src.unitTests)
+          .pipe(plumber())
+          .pipe(esLint(cfg.esLintConfig))
+          .pipe(esLint.format())
+          .pipe(esLint.failOnError());
+      },
+      function runKarma(karmaDone) {
+        var server = new karma.Server({
+          configFile: cfg.karmaConfig,
+          browsers: ['Chrome'],
+          singleRun: false,
+          autoWatch: true
+        }, karmaDone);
 
-    var server = new karma.Server({
-      configFile: cfg.karmaConfig,
-      browsers: ['Chrome'],
-      singleRun: false,
-      autoWatch: true
-    }, done);
-
-    server.start();
+        server.start();
+      }
+    )(done);
   }
 
   function i18n() {
