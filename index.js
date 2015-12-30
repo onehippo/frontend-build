@@ -97,9 +97,9 @@ function buildTasks(customConfig, localGulp) {
 
   function symlinkDependencies() {
     return gulp.src([
-      path.basename(cfg.bowerDir),
-      path.basename(cfg.npmDir)
-    ])
+        path.basename(cfg.bowerDir),
+        path.basename(cfg.npmDir)
+      ])
       .pipe(gulp.symlink(cfg.distDir));
   }
 
@@ -122,11 +122,8 @@ function buildTasks(customConfig, localGulp) {
       },
       function transpile() {
         var systemjs = new Builder();
-        systemjs.config({
-          transpiler: 'babel',
-          defaultJSExtensions: true
-        });
-        return systemjs.buildStatic(cfg.src.indexScript, cfg.dist.indexScript, {
+        systemjs.config(cfg.systemjsOptions);
+        return systemjs.bundle(cfg.src.indexScript, cfg.dist.indexScript, {
           sourceMaps: true
         });
       },
@@ -149,13 +146,19 @@ function buildTasks(customConfig, localGulp) {
           ])
           .pipe(plumber())
           .pipe(gulpif('*.html', templateCache({
-            transformUrl: function (url) {
+            transformUrl: function(url) {
               return url.replace(/.*angularjs(?:\\|\/)/gi, '');
             },
             module: cfg.projectName + '-templates',
             standalone: true
           })))
           .pipe(concat(cfg.projectName + '.js'))
+          .pipe(gulp.dest(cfg.dist.scripts));
+      },
+      function systemImport() {
+        return gulp
+          .src(cfg.dist.indexScript)
+          .pipe(insert.append('System.import("' + cfg.src.indexScript + '");'))
           .pipe(gulp.dest(cfg.dist.scripts))
           .pipe(bsServer.stream());
       }

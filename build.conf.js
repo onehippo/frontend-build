@@ -25,8 +25,8 @@ function buildConfig(customConfig) {
   cfg.env.maven = false;
 
   cfg.appRoot = appRootDir.get() + '/';
-  cfg.srcDir = customCfg.srcDir || cfg.appRoot + 'src/';
-  cfg.distDir = customCfg.distDir || cfg.appRoot + 'dist/';
+  cfg.srcDir = customCfg.srcDir || 'src/';
+  cfg.distDir = customCfg.distDir || 'dist/';
   cfg.bowerDir = customCfg.bowerDir || 'bower_components/';
   cfg.npmDir = customCfg.npmDir || 'node_modules/';
   cfg.targetBowerDir = customCfg.targetBowerDir || cfg.distDir + cfg.projectName + cfg.bowerDir;
@@ -74,6 +74,10 @@ function buildConfig(customConfig) {
       es6: true
     }
   };
+  cfg.systemjsOptions = {
+    transpiler: 'babel',
+    defaultJSExtensions: true
+  }
 
   return objectAssign(cfg, customCfg);
 }
