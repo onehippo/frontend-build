@@ -37,7 +37,7 @@ function buildConfig(customConfig) {
   cfg.src = {};
   cfg.src.styles = cfg.srcDir + 'styles/**/*.scss';
   cfg.src.indexStyles = cfg.srcDir + 'styles/' + cfg.projectName + '.scss';
-  cfg.src.images = cfg.srcDir + 'images/**/*.{png,jpg,gif,ico}';
+  cfg.src.images = cfg.srcDir + 'images/**/*.{png,jpg,gif,ico,svg}';
   cfg.src.fonts = cfg.srcDir + 'fonts/**/*';
   cfg.src.indexScript = cfg.srcDir + 'angularjs/' + cfg.projectName + '.js';
   cfg.src.unitTests = cfg.srcDir + '**/*.spec.js';
