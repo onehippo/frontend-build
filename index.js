@@ -253,13 +253,13 @@ function buildTasks(customConfig, localGulp) {
     } else {
       bsServer.init({
         ui: {
-          port: 9001
+          port: (cfg.serverPort + 1)
         },
         server: {
           baseDir: [cfg.distDir, './'],
           middleware: cfg.serverMiddlewares
         },
-        port: 9000
+        port: cfg.serverPort
       });
     }
   }

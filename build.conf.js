@@ -77,7 +77,8 @@ function buildConfig(customConfig) {
   cfg.systemjsOptions = {
     transpiler: 'babel',
     defaultJSExtensions: true
-  }
+  };
+  cfg.serverPort = 9000;
 
   return objectAssign(cfg, customCfg);
 }
