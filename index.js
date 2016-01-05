@@ -265,41 +265,41 @@ function buildTasks(customConfig, localGulp) {
   }
 
   function serve(done) {
-    gulp.series(build, gulp.parallel(bsServerSync, watch))(done);
+    gulp.series('build', gulp.parallel('bsServerSync', 'watch'))(done);
   }
 
   function serveDist(done) {
-    gulp.series(buildDist, gulp.parallel(bsServerSync, watch))(done);
+    gulp.series('buildDist', gulp.parallel('bsServerSync', 'watch'))(done);
   }
 
   function build(done) {
     if (cfg.env.maven) {
-      gulp.series(clean, gulp.parallel(scripts, styles, images, bowerAssets, i18n, dev, symlinkDependencies))(done);
+      gulp.series('clean', gulp.parallel('scripts', 'styles', 'images', 'bowerAssets', 'i18n', 'dev', 'symlinkDependencies'))(done);
     } else {
-      gulp.series(clean, gulp.parallel(scripts, styles, images, bowerAssets, i18n, dev))(done);
+      gulp.series('clean', gulp.parallel('scripts', 'styles', 'images', 'bowerAssets', 'i18n', 'dev'))(done);
     }
   }
 
   function buildDist(done) {
     if (cfg.env.maven) {
-      gulp.series(build, dist, unlinkDependencies)(done);
+      gulp.series('build', 'dist', 'unlinkDependencies')(done);
     } else {
-      gulp.series(build, dist)(done);
+      gulp.series('build', 'dist')(done);
     }
   }
 
   function watch() {
-    gulp.watch(cfg.src.styles, styles);
-    gulp.watch(cfg.src.images, images);
-    gulp.watch(cfg.src.fonts, fonts);
-    gulp.watch(cfg.src.bowerLinks, build);
-    gulp.watch(cfg.src.indexHtml, dev);
+    gulp.watch(cfg.src.styles, gulp.parallel('styles'));
+    gulp.watch(cfg.src.images, gulp.parallel('images'));
+    gulp.watch(cfg.src.fonts, gulp.parallel('fonts'));
+    gulp.watch(cfg.src.bowerLinks, gulp.parallel('build'));
+    gulp.watch(cfg.src.indexHtml, gulp.parallel('dev'));
     gulp.watch([
       cfg.src.scripts,
       cfg.src.templates,
       cfg.src.unitTests
-    ], debounce(gulp.series(scripts, unitTests), 200));
-    gulp.watch(cfg.src.i18n, i18n);
+    ], debounce(gulp.series('scripts', 'unitTests'), 200));
+    gulp.watch(cfg.src.i18n, gulp.parallel('i18n'));
   }
 
   gulp.task(bowerAssets);
