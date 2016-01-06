@@ -264,12 +264,29 @@ function buildTasks(customConfig, localGulp) {
     }
   }
 
+  function bsServerSyncDist() {
+    if (cfg.env.maven) {
+      bsServer.init();
+    } else {
+      bsServer.init({
+        ui: {
+          port: (cfg.serverPort + 1)
+        },
+        server: {
+          baseDir: [cfg.distDir],
+          middleware: cfg.serverMiddlewares
+        },
+        port: cfg.serverPort
+      });
+    }
+  }
+
   function serve(done) {
     gulp.series('build', gulp.parallel('bsServerSync', 'watch'))(done);
   }
 
   function serveDist(done) {
-    gulp.series('buildDist', gulp.parallel('bsServerSync', 'watch'))(done);
+    gulp.series('buildDist', 'bsServerSyncDist')(done);
   }
 
   function build(done) {
@@ -312,6 +329,7 @@ function buildTasks(customConfig, localGulp) {
   gulp.task(i18n);
   gulp.task(images);
   gulp.task(bsServerSync);
+  gulp.task(bsServerSyncDist);
   gulp.task(scripts);
   gulp.task(serve);
   gulp.task(serveDist);
