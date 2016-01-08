@@ -29,8 +29,8 @@ function buildConfig(customConfig) {
   cfg.distDir = customCfg.distDir || 'dist/';
   cfg.bowerDir = customCfg.bowerDir || 'bower_components/';
   cfg.npmDir = customCfg.npmDir || 'node_modules/';
-  cfg.targetBowerDir = customCfg.targetBowerDir || cfg.distDir + cfg.projectName + cfg.bowerDir;
-  cfg.targetNpmDir = customCfg.npmDir || cfg.npmDir + cfg.projectName + +cfg.npmDir;
+  cfg.targetBowerDir = customCfg.targetBowerDir || cfg.distDir + cfg.bowerDir;
+  cfg.targetNpmDir = customCfg.npmDir || cfg.distDir + cfg.npmDir;
 
   cfg.projectName = require(cfg.appRoot + 'package.json').name;
 
