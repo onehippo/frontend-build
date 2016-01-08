@@ -1,7 +1,7 @@
 {
   "name": "hippo-build",
   "private": true,
-  "version": "0.0.12",
+  "version": "0.0.13",
   "main": "index.js",
   "license": "Apache-2.0",
   "repository": {
@@ -36,7 +36,7 @@
     "gulp-usemin": "0.3.16",
     "isparta": "3.5.3",
     "jasmine-core": "2.4.1",
-    "karma": "0.13.16",
+    "karma": "0.13.17",
     "karma-chrome-launcher": "0.2.2",
     "karma-coverage": "0.5.3",
     "karma-es6-shim": "0.2.0",
