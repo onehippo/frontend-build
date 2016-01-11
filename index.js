@@ -165,7 +165,7 @@ function buildTasks(customConfig, localGulp) {
     )(done);
   }
 
-  function unitTests(done) {
+  function test(done) {
     gulp.series(
       function lint() {
         return gulp
@@ -185,7 +185,7 @@ function buildTasks(customConfig, localGulp) {
     )(done);
   }
 
-  function unitTestsDebug(done) {
+  function testDebug(done) {
     gulp.series(
       function lint() {
         return gulp
@@ -315,7 +315,7 @@ function buildTasks(customConfig, localGulp) {
       cfg.src.scripts,
       cfg.src.templates,
       cfg.src.unitTests
-    ], debounce(gulp.series('scripts', 'unitTests'), 200));
+    ], debounce(gulp.series('scripts', 'test'), 200));
     gulp.watch(cfg.src.i18n, gulp.parallel('i18n'));
   }
 
@@ -335,8 +335,8 @@ function buildTasks(customConfig, localGulp) {
   gulp.task(serveDist);
   gulp.task(styles);
   gulp.task(symlinkDependencies);
-  gulp.task(unitTests);
-  gulp.task(unitTestsDebug);
+  gulp.task(test);
+  gulp.task(testDebug);
   gulp.task(unlinkDependencies);
   gulp.task(watch);
 }
