@@ -54,6 +54,7 @@ function buildTasks(customConfig, localGulp) {
       .pipe(plumber())
       .pipe(sassLint(cfg.sassLintConfig))
       .pipe(sassLint.format())
+      .pipe(sassLint.failOnError())
       .pipe(sourceMaps.init())
       .pipe(sass({
         outputStyle: 'expanded',
@@ -113,7 +114,8 @@ function buildTasks(customConfig, localGulp) {
           .src(cfg.src.scripts)
           .pipe(plumber())
           .pipe(esLint(cfg.esLintConfig))
-          .pipe(esLint.format());
+          .pipe(esLint.format())
+          .pipe(esLint.failAfterError());
       },
 
       function transpile() {
@@ -171,8 +173,9 @@ function buildTasks(customConfig, localGulp) {
         return gulp
           .src(cfg.src.unitTests)
           .pipe(plumber())
-          .pipe(esLint(cfg.esLintConfig))
-          .pipe(esLint.format());
+          .pipe(esLint(cfg.esLintTestConfig))
+          .pipe(esLint.format())
+          .pipe(esLint.failAfterError());
       },
 
       function runKarma(karmaDone) {
@@ -191,8 +194,9 @@ function buildTasks(customConfig, localGulp) {
         return gulp
           .src(cfg.src.unitTests)
           .pipe(plumber())
-          .pipe(esLint(cfg.esLintConfig))
-          .pipe(esLint.format());
+          .pipe(esLint(cfg.esLintTestConfig))
+          .pipe(esLint.format())
+          .pipe(esLint.failAfterError());
       },
 
       function runKarma(karmaDone) {

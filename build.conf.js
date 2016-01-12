@@ -74,7 +74,6 @@ function buildConfig(customConfig) {
       include: 0,
     },
   };
-
   cfg.esLintConfig = {
     parser: 'babel-eslint',
     extends: 'airbnb/base',
@@ -85,6 +84,11 @@ function buildConfig(customConfig) {
       'max-len': 0,
     },
   };
+  cfg.esLintTestConfig = objectAssign(cfg.esLintConfig, {
+    env: {
+      jasmine: true,
+    },
+  });
   cfg.systemjsOptions = {
     transpiler: 'babel',
     defaultJSExtensions: true,
