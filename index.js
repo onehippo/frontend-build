@@ -20,7 +20,6 @@ var buildConfig = require('./build.conf.js');
 var Builder = require('systemjs-builder');
 var concat = require('gulp-concat');
 var debounce = require('debounce');
-var debug = require('gulp-debug');
 var del = require('del');
 var esLint = require('gulp-eslint');
 var gulpif = require('gulp-if');
@@ -57,10 +56,10 @@ function buildTasks(customConfig, localGulp) {
       .pipe(sassLint.format())
       .pipe(sourceMaps.init())
       .pipe(sass({
-        outputStyle: 'expanded'
+        outputStyle: 'expanded',
       }))
       .pipe(autoprefixer({
-        browsers: cfg.supportedBrowsers
+        browsers: cfg.supportedBrowsers,
       }))
       .pipe(sourceMaps.write('./'))
       .pipe(gulp.dest(cfg.dist.styles))
@@ -95,7 +94,7 @@ function buildTasks(customConfig, localGulp) {
   function symlinkDependencies() {
     return gulp.src([
       path.basename(cfg.bowerDir),
-      path.basename(cfg.npmDir)
+      path.basename(cfg.npmDir),
     ])
       .pipe(gulp.symlink(cfg.distDir));
   }
@@ -103,7 +102,7 @@ function buildTasks(customConfig, localGulp) {
   function unlinkDependencies() {
     return del([
       cfg.targetBowerDir,
-      cfg.targetNpmDir
+      cfg.targetNpmDir,
     ]);
   }
 
@@ -116,41 +115,46 @@ function buildTasks(customConfig, localGulp) {
           .pipe(esLint(cfg.esLintConfig))
           .pipe(esLint.format());
       },
+
       function transpile() {
         var systemjs = new Builder();
         systemjs.config(cfg.systemjsOptions);
         return systemjs.bundle(cfg.src.indexScript, cfg.dist.indexScript, {
-          sourceMaps: true
+          sourceMaps: true,
         });
       },
+
       function annotate() {
         return gulp
           .src(cfg.dist.indexScript)
           .pipe(plumber())
           .pipe(sourceMaps.init({
-            loadMaps: true
+            loadMaps: true,
           }))
           .pipe(ngAnnotate())
           .pipe(sourceMaps.write('./'))
           .pipe(gulp.dest(cfg.dist.scripts));
       },
+
       function html2js() {
         return gulp
           .src([
             cfg.src.templates,
-            cfg.dist.indexScript
+            cfg.dist.indexScript,
           ])
           .pipe(plumber())
           .pipe(gulpif('*.html', templateCache({
-            transformUrl: function (url) {
+            transformUrl: function transformUrl(url) {
               return url.replace(/.*angularjs(?:\\|\/)/gi, '');
             },
+
             module: cfg.projectName + '-templates',
-            standalone: true
+            standalone: true,
           })))
           .pipe(concat(cfg.projectName + '.js'))
           .pipe(gulp.dest(cfg.dist.scripts));
       },
+
       function systemImport() {
         return gulp
           .src(cfg.dist.indexScript)
@@ -170,9 +174,10 @@ function buildTasks(customConfig, localGulp) {
           .pipe(esLint(cfg.esLintConfig))
           .pipe(esLint.format());
       },
+
       function runKarma(karmaDone) {
         var server = new karma.Server({
-          configFile: cfg.karmaConfig
+          configFile: cfg.karmaConfig,
         }, karmaDone);
 
         server.start();
@@ -189,12 +194,13 @@ function buildTasks(customConfig, localGulp) {
           .pipe(esLint(cfg.esLintConfig))
           .pipe(esLint.format());
       },
+
       function runKarma(karmaDone) {
         var server = new karma.Server({
           configFile: cfg.karmaConfig,
           browsers: ['Chrome'],
           singleRun: false,
-          autoWatch: true
+          autoWatch: true,
         }, karmaDone);
 
         server.start();
@@ -222,20 +228,20 @@ function buildTasks(customConfig, localGulp) {
       .src(cfg.dist.indexHtml)
       .pipe(usemin({
         html: [
-          minifyHtml()
+          minifyHtml(),
         ],
         css: [
           sourceMaps.init(),
           minifyCss(),
           rev(),
-          sourceMaps.write('./')
+          sourceMaps.write('./'),
         ],
         js: [
           sourceMaps.init(),
           uglify(),
           rev(),
-          sourceMaps.write('./')
-        ]
+          sourceMaps.write('./'),
+        ],
       }))
       .pipe(gulp.dest(cfg.distDir))
       .pipe(bsServer.stream());
@@ -247,13 +253,13 @@ function buildTasks(customConfig, localGulp) {
     } else {
       bsServer.init({
         ui: {
-          port: (cfg.serverPort + 1)
+          port: (cfg.serverPort + 1),
         },
         server: {
           baseDir: [cfg.distDir, './'],
-          middleware: cfg.serverMiddlewares
+          middleware: cfg.serverMiddlewares,
         },
-        port: cfg.serverPort
+        port: cfg.serverPort,
       });
     }
   }
@@ -264,13 +270,13 @@ function buildTasks(customConfig, localGulp) {
     } else {
       bsServer.init({
         ui: {
-          port: (cfg.serverPort + 1)
+          port: (cfg.serverPort + 1),
         },
         server: {
           baseDir: [cfg.distDir],
-          middleware: cfg.serverMiddlewares
+          middleware: cfg.serverMiddlewares,
         },
-        port: cfg.serverPort
+        port: cfg.serverPort,
       });
     }
   }
@@ -308,7 +314,7 @@ function buildTasks(customConfig, localGulp) {
     gulp.watch([
       cfg.src.scripts,
       cfg.src.templates,
-      cfg.src.unitTests
+      cfg.src.unitTests,
     ], debounce(gulp.series('scripts', 'test'), 200));
     gulp.watch(cfg.src.i18n, gulp.parallel('i18n'));
   }
