@@ -77,6 +77,7 @@ function buildConfig(customConfig) {
   cfg.esLintConfig = {
     parser: 'babel-eslint',
     extends: 'airbnb/base',
+    useEslintrc: false,
     globals: {
       angular: true,
       $: true,
