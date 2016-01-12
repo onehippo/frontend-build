@@ -79,14 +79,20 @@ function buildConfig(customConfig) {
     extends: 'airbnb/base',
     globals: {
       angular: true,
+      $: true,
     },
     rules: {
       'max-len': 0,
+      // Needed for ngInject to work with classes :(
+      'padded-blocks': 0,
     },
   };
   cfg.esLintTestConfig = objectAssign(cfg.esLintConfig, {
     env: {
       jasmine: true,
+    },
+    rules: {
+      'func-names': 0,
     },
   });
   cfg.systemjsOptions = {
