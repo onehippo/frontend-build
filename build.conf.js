@@ -17,7 +17,7 @@
 var objectAssign = require('lodash.assign');
 var appRootDir = require('app-root-dir');
 
-function buildConfig(customConfig) {
+function buildConfig (customConfig) {
   var cfg = {};
   var customCfg = customConfig || {};
 
@@ -60,18 +60,25 @@ function buildConfig(customConfig) {
   cfg.bowerLinks = [cfg.bowerDir + 'hippo-theme/dist/**'];
   cfg.supportedBrowsers = ['last 1 Chrome versions', 'last 1 Firefox versions', 'Safari >= 7', 'Explorer >= 10'];
   cfg.serverMiddlewares = [];
-  cfg.sassLintRules = {
-    'force-element-nesting': 0
+  cfg.sassLintConfig = {
+    rules: {
+      'clean-import-paths': 0,
+      'force-element-nesting': 0,
+      'hex-length': 'long',
+      'empty-line-between-blocks': 0,
+      include: 0
+    }
   };
   cfg.esLintConfig = {
     parser: 'babel-eslint',
-    ecmaFeatures: {
-      modules: true
+    extends: 'airbnb/base',
+    globals: {
+      angular: true
     },
-    env: {
-      browser: true,
-      node: true,
-      es6: true
+    rules: {
+      'space-before-function-paren': 0,
+      'comma-dangle': 0,
+      'max-len': 0
     }
   };
   cfg.systemjsOptions = {
