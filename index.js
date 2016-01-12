@@ -94,9 +94,9 @@ function buildTasks(customConfig, localGulp) {
 
   function symlinkDependencies() {
     return gulp.src([
-        path.basename(cfg.bowerDir),
-        path.basename(cfg.npmDir)
-      ])
+      path.basename(cfg.bowerDir),
+      path.basename(cfg.npmDir)
+    ])
       .pipe(gulp.symlink(cfg.distDir));
   }
 
@@ -142,7 +142,7 @@ function buildTasks(customConfig, localGulp) {
           ])
           .pipe(plumber())
           .pipe(gulpif('*.html', templateCache({
-            transformUrl: function(url) {
+            transformUrl: function (url) {
               return url.replace(/.*angularjs(?:\\|\/)/gi, '');
             },
             module: cfg.projectName + '-templates',
