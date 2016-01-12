@@ -93,6 +93,7 @@ function buildConfig(customConfig) {
       jasmine: true,
     },
     rules: {
+      'max-len': 0,
       'func-names': 0,
     },
   });
