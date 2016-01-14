@@ -95,9 +95,10 @@ function buildConfig(customConfig) {
     rules: {
       'max-len': 0,
       'func-names': 0,
+      'no-param-reassign': 0,
     },
   });
-  cfg.systemjsOptions = {
+   cfg.systemjsOptions = {
     transpiler: 'babel',
     defaultJSExtensions: true,
   };
