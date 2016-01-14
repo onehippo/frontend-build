@@ -86,19 +86,28 @@ function buildConfig(customConfig) {
       'max-len': 0,
       // Needed for ngInject to work with classes :(
       'padded-blocks': 0,
+      'no-param-reassign': 0,
     },
   };
   cfg.esLintTestConfig = objectAssign(cfg.esLintConfig, {
+    extends: 'airbnb/legacy',
     env: {
       jasmine: true,
     },
+    globals: {
+      angular: true,
+      $: true,
+      inject: true,
+      module: true,
+    },
     rules: {
       'max-len': 0,
-      'func-names': 0,
+      'padded-blocks': 0,
       'no-param-reassign': 0,
+      'func-names': 0,
     },
   });
-   cfg.systemjsOptions = {
+  cfg.systemjsOptions = {
     transpiler: 'babel',
     defaultJSExtensions: true,
   };
