@@ -26,8 +26,8 @@ var gulpif = require('gulp-if');
 var imagemin = require('gulp-imagemin');
 var insert = require('gulp-insert');
 var karma = require('karma');
-var minifyCss = require('gulp-minify-css');
-var minifyHtml = require('gulp-minify-html');
+var cssnano = require('gulp-cssnano');
+var htmlmin = require('gulp-htmlmin');
 var ngAnnotate = require('gulp-ng-annotate');
 var path = require('path');
 var plumber = require('gulp-plumber');
@@ -62,7 +62,7 @@ function buildTasks(customConfig, localGulp) {
       .pipe(autoprefixer({
         browsers: cfg.supportedBrowsers,
       }))
-      .pipe(sourceMaps.write('./'))
+      .pipe(sourceMaps.write())
       .pipe(gulp.dest(cfg.dist.styles))
       .pipe(bsServer.stream());
   }
@@ -134,7 +134,7 @@ function buildTasks(customConfig, localGulp) {
             loadMaps: true,
           }))
           .pipe(ngAnnotate())
-          .pipe(sourceMaps.write('./'))
+          .pipe(sourceMaps.write())
           .pipe(gulp.dest(cfg.dist.scripts));
       },
 
@@ -232,11 +232,11 @@ function buildTasks(customConfig, localGulp) {
       .src(cfg.dist.indexHtml)
       .pipe(usemin({
         html: [
-          minifyHtml(),
+          htmlmin(),
         ],
         css: [
           sourceMaps.init(),
-          minifyCss(),
+          cssnano(),
           rev(),
           sourceMaps.write('./'),
         ],
