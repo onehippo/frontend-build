@@ -16,10 +16,16 @@
 
 var objectAssign = require('lodash.assign');
 var appRootDir = require('app-root-dir');
+var path = require('path');
 
 function buildConfig(customConfig) {
   var cfg = {};
   var customCfg = customConfig || {};
+
+  function getRelativeModulePath(moduleName) {
+    var modulePath = require.resolve(moduleName);
+    return path.relative(cfg.appRoot, modulePath);
+  }
 
   cfg.env = {};
   cfg.env.maven = false;
@@ -55,16 +61,18 @@ function buildConfig(customConfig) {
   cfg.dist.images = cfg.distDir + 'images/';
   cfg.dist.i18n = cfg.distDir + 'i18n/';
 
-  cfg.karmaConfig = cfg.appRoot + 'karma.conf.js';
   cfg.bowerAssets = [cfg.bowerDir + 'hippo-theme/dist/**/*.{svg,woff,woff2,ttf,eot,png}'];
   cfg.bowerLinks = [cfg.bowerDir + 'hippo-theme/dist/**'];
+
   cfg.supportedBrowsers = [
     'last 1 Chrome versions',
     'last 1 Firefox versions',
     'Safari >= 7',
     'Explorer >= 10',
   ];
+
   cfg.serverMiddlewares = [];
+
   cfg.sassLintConfig = {
     rules: {
       'clean-import-paths': 0,
@@ -74,6 +82,7 @@ function buildConfig(customConfig) {
       include: 0,
     },
   };
+
   cfg.esLintConfig = {
     parser: 'babel-eslint',
     extends: 'airbnb/base',
@@ -89,6 +98,7 @@ function buildConfig(customConfig) {
       'no-param-reassign': 0,
     },
   };
+
   cfg.esLintTestConfig = objectAssign(cfg.esLintConfig, {
     extends: 'airbnb/legacy',
     env: {
@@ -107,11 +117,68 @@ function buildConfig(customConfig) {
       'func-names': 0,
     },
   });
+
   cfg.systemjsOptions = {
     transpiler: 'babel',
     defaultJSExtensions: true,
   };
+
   cfg.serverPort = 9000;
+
+  cfg.karma = {
+    configFile: cfg.appRoot + 'karma.conf.js',
+    basePath: '.',
+    frameworks: ['systemjs', 'jasmine', 'es6-shim'],
+    reporters: ['progress', 'coverage'],
+    preprocessors: {},
+    browsers: ['PhantomJS'],
+    autoWatch: false,
+    singleRun: true,
+  };
+
+  cfg.karma.coverageReporter = {
+    instrumenters: {
+      isparta: require('isparta'),
+    },
+    instrumenter: {
+      '**/*.js': 'isparta',
+    },
+    reporters: [
+      {
+        type: 'html',
+      }, {
+        type: 'text-summary',
+      },
+    ],
+  };
+
+  cfg.karma.ngHtml2JsPreprocessor = {
+    stripPrefix: 'src/angularjs/',
+    moduleName: cfg.projectName + '-templates',
+  };
+
+  cfg.karma.preprocessors[cfg.src.scripts] = ['coverage'];
+  cfg.karma.preprocessors[cfg.src.templates] = ['ng-html2js'];
+
+  cfg.karma.systemjs = {
+    config: {
+      transpiler: 'babel',
+      defaultJSExtensions: true,
+      paths: {
+        babel: getRelativeModulePath('babel-core/browser'),
+        systemjs: getRelativeModulePath('systemjs/dist/system'),
+        'system-polyfills': getRelativeModulePath('systemjs/dist/system-polyfills'),
+        'es6-module-loader': getRelativeModulePath('es6-module-loader/dist/es6-module-loader'),
+        'phantomjs-polyfill': getRelativeModulePath('phantomjs-polyfill/bind-polyfill'),
+      },
+    },
+  };
+
+  cfg.karmaDebug = objectAssign({}, cfg.karma, {
+    browsers: ['Chrome'],
+    autoWatch: true,
+    singleRun: false,
+  });
 
   return objectAssign(cfg, customCfg);
 }

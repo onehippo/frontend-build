@@ -25,7 +25,7 @@ var esLint = require('gulp-eslint');
 var gulpif = require('gulp-if');
 var imagemin = require('gulp-imagemin');
 var insert = require('gulp-insert');
-var karma = require('karma');
+var Server = require('karma').Server;
 var cssnano = require('gulp-cssnano');
 var htmlmin = require('gulp-htmlmin');
 var ngAnnotate = require('gulp-ng-annotate');
@@ -179,11 +179,7 @@ function buildTasks(customConfig, localGulp) {
       },
 
       function runKarma(karmaDone) {
-        var server = new karma.Server({
-          configFile: cfg.karmaConfig,
-        }, karmaDone);
-
-        server.start();
+        new Server(cfg.karma, karmaDone).start();
       }
     )(done);
   }
@@ -200,14 +196,7 @@ function buildTasks(customConfig, localGulp) {
       },
 
       function runKarma(karmaDone) {
-        var server = new karma.Server({
-          configFile: cfg.karmaConfig,
-          browsers: ['Chrome'],
-          singleRun: false,
-          autoWatch: true,
-        }, karmaDone);
-
-        server.start();
+        new Server(cfg.karmaDebug, karmaDone).start();
       }
     )(done);
   }
