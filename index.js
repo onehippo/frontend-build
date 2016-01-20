@@ -121,7 +121,7 @@ function buildTasks(customConfig, localGulp) {
       function transpile() {
         var systemjs = new Builder();
         systemjs.config(cfg.systemjsOptions);
-        return systemjs.bundle(cfg.src.indexScript, cfg.dist.indexScript, {
+        return systemjs.buildStatic(cfg.src.indexScript, cfg.dist.indexScript, {
           sourceMaps: true,
         });
       },
@@ -154,13 +154,6 @@ function buildTasks(customConfig, localGulp) {
             standalone: true,
           })))
           .pipe(concat(cfg.projectName + '.js'))
-          .pipe(gulp.dest(cfg.dist.scripts));
-      },
-
-      function systemImport() {
-        return gulp
-          .src(cfg.dist.indexScript)
-          .pipe(insert.append('System.import("' + cfg.src.indexScript + '");'))
           .pipe(gulp.dest(cfg.dist.scripts))
           .pipe(bsServer.stream());
       }
