@@ -125,8 +125,9 @@ function buildConfig(customConfig) {
 
   cfg.serverPort = 9000;
 
+  cfg.karmaConfig = cfg.appRoot + 'karma.conf.js';
+
   cfg.karma = {
-    configFile: cfg.appRoot + 'karma.conf.js',
     basePath: '.',
     frameworks: ['systemjs', 'jasmine', 'es6-shim'],
     reporters: ['progress', 'coverage'],
@@ -134,51 +135,42 @@ function buildConfig(customConfig) {
     browsers: ['PhantomJS'],
     autoWatch: false,
     singleRun: true,
-  };
-
-  cfg.karma.coverageReporter = {
-    instrumenters: {
-      isparta: require('isparta'),
-    },
-    instrumenter: {
-      '**/*.js': 'isparta',
-    },
-    reporters: [
-      {
-        type: 'html',
-      }, {
-        type: 'text-summary',
+    coverageReporter: {
+      instrumenters: {
+        isparta: require('isparta'),
       },
-    ],
-  };
-
-  cfg.karma.ngHtml2JsPreprocessor = {
-    stripPrefix: 'src/angularjs/',
-    moduleName: cfg.projectName + '-templates',
+      instrumenter: {
+        '**/*.js': 'isparta',
+      },
+      reporters: [
+        {
+          type: 'html',
+        }, {
+          type: 'text-summary',
+        },
+      ],
+    },
+    ngHtml2JsPreprocessor: {
+      stripPrefix: 'src/angularjs/',
+      moduleName: cfg.projectName + '-templates',
+    },
+    systemjs: {
+      config: {
+        transpiler: 'babel',
+        defaultJSExtensions: true,
+        paths: {
+          babel: getRelativeModulePath('babel-core/browser'),
+          systemjs: getRelativeModulePath('systemjs/dist/system'),
+          'system-polyfills': getRelativeModulePath('systemjs/dist/system-polyfills'),
+          'es6-module-loader': getRelativeModulePath('es6-module-loader/dist/es6-module-loader'),
+          'phantomjs-polyfill': getRelativeModulePath('phantomjs-polyfill/bind-polyfill'),
+        },
+      },
+    },
   };
 
   cfg.karma.preprocessors[cfg.src.scripts] = ['coverage'];
   cfg.karma.preprocessors[cfg.src.templates] = ['ng-html2js'];
-
-  cfg.karma.systemjs = {
-    config: {
-      transpiler: 'babel',
-      defaultJSExtensions: true,
-      paths: {
-        babel: getRelativeModulePath('babel-core/browser'),
-        systemjs: getRelativeModulePath('systemjs/dist/system'),
-        'system-polyfills': getRelativeModulePath('systemjs/dist/system-polyfills'),
-        'es6-module-loader': getRelativeModulePath('es6-module-loader/dist/es6-module-loader'),
-        'phantomjs-polyfill': getRelativeModulePath('phantomjs-polyfill/bind-polyfill'),
-      },
-    },
-  };
-
-  cfg.karmaDebug = objectAssign({}, cfg.karma, {
-    browsers: ['Chrome'],
-    autoWatch: true,
-    singleRun: false,
-  });
 
   return objectAssign(cfg, customCfg);
 }

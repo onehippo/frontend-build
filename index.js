@@ -172,7 +172,9 @@ function buildTasks(customConfig, localGulp) {
       },
 
       function runKarma(karmaDone) {
-        new Server(cfg.karma, karmaDone).start();
+        new Server({
+          configFile: cfg.karmaConfig,
+        }, karmaDone).start();
       }
     )(done);
   }
@@ -189,7 +191,12 @@ function buildTasks(customConfig, localGulp) {
       },
 
       function runKarma(karmaDone) {
-        new Server(cfg.karmaDebug, karmaDone).start();
+        new Server({
+          configFile: cfg.karmaConfig,
+          browsers: ['Chrome'],
+          autoWatch: true,
+          singleRun: false,
+        }, karmaDone).start();
       }
     )(done);
   }
