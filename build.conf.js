@@ -37,6 +37,7 @@ function buildConfig(customConfig) {
   cfg.npmDir = customCfg.npmDir || 'node_modules/';
   cfg.targetBowerDir = cfg.distDir + cfg.bowerDir;
   cfg.targetNpmDir = cfg.distDir + cfg.npmDir;
+  cfg.coverageDir = 'coverage/';
 
   cfg.projectName = require(cfg.appRoot + 'package.json').name;
 

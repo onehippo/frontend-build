@@ -45,7 +45,7 @@ function buildTasks(customConfig, localGulp) {
   var bsServer = browserSync.create();
 
   function clean() {
-    return del([cfg.distDir]);
+    return del([cfg.distDir, cfg.coverageDir]);
   }
 
   function styles() {
