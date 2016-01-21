@@ -24,7 +24,7 @@ var del = require('del');
 var esLint = require('gulp-eslint');
 var gulpif = require('gulp-if');
 var imagemin = require('gulp-imagemin');
-var insert = require('gulp-insert');
+var filter = require('gulp-filter');
 var Server = require('karma').Server;
 var cssnano = require('gulp-cssnano');
 var htmlmin = require('gulp-htmlmin');
@@ -62,8 +62,9 @@ function buildTasks(customConfig, localGulp) {
       .pipe(autoprefixer({
         browsers: cfg.supportedBrowsers,
       }))
-      .pipe(sourceMaps.write())
+      .pipe(sourceMaps.write('./'))
       .pipe(gulp.dest(cfg.dist.styles))
+      .pipe(filter('**/*.css'))
       .pipe(bsServer.stream());
   }
 
@@ -134,7 +135,7 @@ function buildTasks(customConfig, localGulp) {
             loadMaps: true,
           }))
           .pipe(ngAnnotate())
-          .pipe(sourceMaps.write())
+          .pipe(sourceMaps.write('./'))
           .pipe(gulp.dest(cfg.dist.scripts));
       },
 
@@ -253,6 +254,9 @@ function buildTasks(customConfig, localGulp) {
           middleware: cfg.serverMiddlewares,
         },
         port: cfg.serverPort,
+        watchOptions: {
+          ignored: '*.map',
+        },
       });
     }
   }
