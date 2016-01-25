@@ -26,7 +26,7 @@ var gulpif = require('gulp-if');
 var imagemin = require('gulp-imagemin');
 var filter = require('gulp-filter');
 var Server = require('karma').Server;
-var cssmin = require('gulp-minify-css');
+var cssnano = require('gulp-cssnano');
 var htmlmin = require('gulp-htmlmin');
 var ngAnnotate = require('gulp-ng-annotate');
 var path = require('path');
@@ -226,7 +226,9 @@ function buildTasks(customConfig, localGulp) {
         ],
         css: [
           sourceMaps.init(),
-          cssmin(),
+          cssnano({
+            safe: true,
+          }),
           rev(),
           sourceMaps.write('./'),
         ],
