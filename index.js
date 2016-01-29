@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+var browserSyncScript = require('./enable.browsersync.js');
 var autoprefixer = require('gulp-autoprefixer');
 var browserSync = require('browser-sync');
 var buildConfig = require('./build.conf.js');
