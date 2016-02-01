@@ -1,12 +1,15 @@
 {
   "name": "hippo-build",
   "private": true,
-  "version": "0.0.24",
+  "version": "0.0.25",
   "main": "index.js",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/onehippo/hippo-build"
+  },
+  "engines": {
+    "node": "5.5"
   },
   "dependencies": {
     "app-root-dir": "1.0.2",
