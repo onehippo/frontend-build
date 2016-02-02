@@ -38,6 +38,10 @@ var sourceMaps = require('gulp-sourcemaps');
 var templateCache = require('gulp-angular-templatecache');
 var uglify = require('gulp-uglify');
 var usemin = require('gulp-usemin');
+var insertLines = require('gulp-insert-lines');
+var getRelativeModulePath = require('./utils.js').getRelativeModulePath;
+var pkg = require('./package.json');
+
 
 function buildTasks(customConfig, localGulp) {
   var cfg = buildConfig(customConfig);
@@ -280,8 +284,28 @@ function buildTasks(customConfig, localGulp) {
     }
   }
 
+  function bsInject() {
+    var browserSyncVersion = pkg.dependencies['browser-sync'];
+    var bsScriptPath = '//localhost:3000/browser-sync/browser-sync-client.' + browserSyncVersion + '.js';
+    var bsScriptTag = '<script src="' + bsScriptPath + '"></script>';
+
+    return gulp
+      .src(cfg.src.indexHtml)
+      .pipe(plumber())
+      .pipe(insertLines({
+        before: /<\/body>$/,
+        lineBefore: bsScriptTag,
+      }))
+      .pipe(gulp.dest(cfg.distDir))
+      .pipe(bsServer.stream());
+  }
+
   function serve(done) {
-    gulp.series('build', gulp.parallel('bsServerSync', 'watch'))(done);
+    if (cfg.env.maven) {
+      gulp.series('build', 'bsInject', gulp.parallel('bsServerSync', 'watch'))(done);
+    } else {
+      gulp.series('build', gulp.parallel('bsServerSync', 'watch'))(done);
+    }
   }
 
   function serveDist(done) {
@@ -305,20 +329,27 @@ function buildTasks(customConfig, localGulp) {
   }
 
   function watch() {
-    gulp.watch(cfg.src.styles, gulp.parallel('styles'));
-    gulp.watch(cfg.src.images, gulp.parallel('images'));
-    gulp.watch(cfg.src.fonts, gulp.parallel('fonts'));
-    gulp.watch(cfg.src.bowerLinks, gulp.parallel('build'));
-    gulp.watch(cfg.src.indexHtml, gulp.parallel('dev'));
+    gulp.watch(cfg.src.styles, gulp.series('styles'));
+    gulp.watch(cfg.src.images, gulp.series('images'));
+    gulp.watch(cfg.src.fonts, gulp.series('fonts'));
     gulp.watch([
       cfg.src.scripts,
       cfg.src.templates,
       cfg.src.unitTests,
     ], debounce(gulp.series('scripts', 'test'), 200));
-    gulp.watch(cfg.src.i18n, gulp.parallel('i18n'));
+    gulp.watch(cfg.src.i18n, gulp.series('i18n'));
+
+    gulp.watch(cfg.src.bowerLinks, gulp.series('build'));
+
+    if (cfg.env.maven) {
+      gulp.watch(cfg.src.indexHtml, gulp.series('bsInject'));
+    } else {
+      gulp.watch(cfg.src.indexHtml, gulp.series('dev'));
+    }
   }
 
   gulp.task(bowerAssets);
+  gulp.task(bsInject);
   gulp.task(bsServerSync);
   gulp.task(bsServerSyncDist);
   gulp.task(build);
