@@ -1,7 +1,7 @@
 {
   "name": "hippo-build",
   "private": true,
-  "version": "0.0.22",
+  "version": "0.0.23",
   "main": "index.js",
   "license": "Apache-2.0",
   "repository": {
@@ -11,7 +11,7 @@
   "dependencies": {
     "app-root-dir": "1.0.2",
     "babel-core": "5.8.34",
-    "babel-eslint": "4.1.6",
+    "babel-eslint": "4.1.8",
     "browser-sync": "2.11.1",
     "debounce": "1.0.0",
     "del": "2.2.0",
