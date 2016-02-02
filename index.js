@@ -40,6 +40,7 @@ var sourceMaps = require('gulp-sourcemaps');
 var templateCache = require('gulp-angular-templatecache');
 var uglify = require('gulp-uglify');
 var usemin = require('gulp-usemin');
+var getRelativeModuleFolderPath = require('./utils.js').getRelativeModuleFolderPath;
 
 function buildTasks(customConfig, localGulp) {
   var cfg = buildConfig(customConfig);
@@ -141,11 +142,28 @@ function buildTasks(customConfig, localGulp) {
           .pipe(gulp.dest(cfg.dist.scripts));
       },
 
+      function addPolyfills() {
+        var babelPolyfill = getRelativeModuleFolderPath('babel-core') + 'browser-polyfill.js';
+
+        return gulp
+          .src([
+            babelPolyfill,
+            cfg.dist.indexScript,
+          ])
+          .pipe(plumber())
+          .pipe(sourceMaps.init({
+            loadMaps: true,
+          }))
+          .pipe(concat(cfg.projectName + '.js'))
+          .pipe(sourceMaps.write('./'))
+          .pipe(gulp.dest(cfg.dist.scripts));
+      },
+
       function html2js() {
         return gulp
           .src([
-            cfg.src.templates,
             cfg.dist.indexScript,
+            cfg.src.templates,
           ])
           .pipe(plumber())
           .pipe(gulpif('*.html', templateCache({
