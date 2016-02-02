@@ -8,6 +8,9 @@
     "type": "git",
     "url": "https://github.com/onehippo/hippo-build"
   },
+  "engines": {
+    "node": "5.5"
+  },
   "dependencies": {
     "app-root-dir": "1.0.2",
     "babel-core": "5.8.34",
