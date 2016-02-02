@@ -19,29 +19,27 @@ var browserSync = require('browser-sync');
 var buildConfig = require('./build.conf.js');
 var Builder = require('systemjs-builder');
 var concat = require('gulp-concat');
+var cssnano = require('gulp-cssnano');
 var debounce = require('debounce');
 var del = require('del');
 var esLint = require('gulp-eslint');
-var gulpif = require('gulp-if');
-var imagemin = require('gulp-imagemin');
 var filter = require('gulp-filter');
-var Server = require('karma').Server;
-var cssnano = require('gulp-cssnano');
+var gulpif = require('gulp-if');
 var htmlmin = require('gulp-htmlmin');
+var imagemin = require('gulp-imagemin');
+var insertLines = require('gulp-insert-lines');
 var ngAnnotate = require('gulp-ng-annotate');
 var path = require('path');
+var pkg = require('./package.json');
 var plumber = require('gulp-plumber');
 var rev = require('gulp-rev');
 var sass = require('gulp-sass');
 var sassLint = require('gulp-sass-lint');
+var Server = require('karma').Server;
 var sourceMaps = require('gulp-sourcemaps');
 var templateCache = require('gulp-angular-templatecache');
 var uglify = require('gulp-uglify');
 var usemin = require('gulp-usemin');
-var insertLines = require('gulp-insert-lines');
-var getRelativeModulePath = require('./utils.js').getRelativeModulePath;
-var pkg = require('./package.json');
-
 
 function buildTasks(customConfig, localGulp) {
   var cfg = buildConfig(customConfig);
