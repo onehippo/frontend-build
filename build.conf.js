@@ -16,16 +16,11 @@
 
 var objectAssign = require('lodash.assign');
 var appRootDir = require('app-root-dir');
-var path = require('path');
+var getRelativeModulePath = require('./utils.js').getRelativeModulePath;
 
 function buildConfig(customConfig) {
   var cfg = {};
   var customCfg = customConfig || {};
-
-  function getRelativeModulePath(moduleName) {
-    var modulePath = require.resolve(moduleName);
-    return path.relative(cfg.appRoot, modulePath);
-  }
 
   cfg.env = {};
   cfg.env.maven = false;
