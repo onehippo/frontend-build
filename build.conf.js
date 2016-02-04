@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,7 +44,8 @@ function buildConfig(customConfig) {
   cfg.src.indexScript = cfg.srcDir + 'angularjs/' + cfg.projectName + '.js';
   cfg.src.unitTests = cfg.srcDir + '**/*.spec.js';
   cfg.src.scripts = cfg.srcDir + '**/!(*.spec).js';
-  cfg.src.templates = cfg.srcDir + '**/!(index).html';
+  cfg.src.templates = cfg.srcDir + '**/!(index|*.fixture).html';
+  cfg.src.fixtures = cfg.srcDir + '**/*.fixture.{html,css,json}';
   cfg.src.i18n = cfg.srcDir + 'i18n/**';
   cfg.src.indexHtml = cfg.srcDir + 'index.html';
 
@@ -125,7 +126,7 @@ function buildConfig(customConfig) {
 
   cfg.karma = {
     basePath: '.',
-    frameworks: ['systemjs', 'jasmine', 'es6-shim'],
+    frameworks: ['systemjs', 'jasmine-jquery', 'jasmine', 'es6-shim'],
     reporters: ['progress', 'coverage'],
     preprocessors: {},
     browsers: ['PhantomJS'],
@@ -163,6 +164,14 @@ function buildConfig(customConfig) {
         },
       },
     },
+    files: [
+      // Jasmine init hook
+      { pattern: getRelativeModulePath('./jasmine.init.js') },
+      // Share project build configuration in Karma context
+      { pattern: 'build.conf.js' },
+      // Pattern for serving fixture files
+      { pattern:  '**/*.fixture.*', included: false }
+    ],
   };
 
   cfg.karma.preprocessors[cfg.src.scripts] = ['coverage'];
