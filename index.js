@@ -97,11 +97,9 @@ function buildTasks(customConfig, localGulp) {
   }
 
   function symlinkDependencies() {
-    return gulp.src([
-      path.basename(cfg.bowerDir),
-      path.basename(cfg.npmDir),
-    ])
-      .pipe(gulp.symlink(cfg.distDir));
+    return gulp
+      .src(cfg.bowerDir + '**/*')
+      .pipe(gulp.dest(cfg.distDir + cfg.bowerDir));
   }
 
   function unlinkDependencies() {
