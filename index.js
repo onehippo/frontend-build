@@ -40,6 +40,7 @@ var sourceMaps = require('gulp-sourcemaps');
 var templateCache = require('gulp-angular-templatecache');
 var uglify = require('gulp-uglify');
 var usemin = require('gulp-usemin');
+var gutil = require('gulp-util');
 var getRelativeModuleFolderPath = require('./utils.js').getRelativeModuleFolderPath;
 
 function buildTasks(customConfig, localGulp) {
@@ -184,7 +185,12 @@ function buildTasks(customConfig, localGulp) {
       function lint() {
         return gulp
           .src(cfg.src.unitTests)
-          .pipe(plumber())
+          .pipe(plumber({
+            errorHandler: function (err) {
+              gutil.log('linting failed :' + err.toString());
+              return process.exit(1);
+            }
+          }))
           .pipe(esLint(cfg.esLintTestConfig))
           .pipe(esLint.format())
           .pipe(esLint.failAfterError());
