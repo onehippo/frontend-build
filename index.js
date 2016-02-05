@@ -48,6 +48,11 @@ function buildTasks(customConfig, localGulp) {
   var gulp = localGulp || require('gulp');
   var bsServer = browserSync.create();
 
+  function plumberErrorHandler(error) {
+    gutil.log('Exception found, terminate gulp:', error.toString());
+    return process.exit(1);
+  }
+
   function clean() {
     return del([cfg.distDir, cfg.coverageDir]);
   }
@@ -115,7 +120,9 @@ function buildTasks(customConfig, localGulp) {
       function lint() {
         return gulp
           .src(cfg.src.scripts)
-          .pipe(plumber())
+          .pipe(plumber({
+            errorHandler: plumberErrorHandler
+          }))
           .pipe(esLint(cfg.esLintConfig))
           .pipe(esLint.format())
           .pipe(esLint.failAfterError());
@@ -186,10 +193,7 @@ function buildTasks(customConfig, localGulp) {
         return gulp
           .src(cfg.src.unitTests)
           .pipe(plumber({
-            errorHandler: function (err) {
-              gutil.log('linting failed :' + err.toString());
-              return process.exit(1);
-            }
+            errorHandler: plumberErrorHandler
           }))
           .pipe(esLint(cfg.esLintTestConfig))
           .pipe(esLint.format())
