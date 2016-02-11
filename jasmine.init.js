@@ -13,16 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+var buildConfig = require('build.conf.js');
 
 (function initJasmine(jasmine) {
+  var cfg = buildConfig();
 
-  var cfg = require('build.conf.js');
-  var fixturesPath = cfg.fixturesPath || 'base/src/angularjs';
-  var styleFixturesPath = cfg.styleFixturesPath || fixturesPath;
-  var jsonFixturesPath = cfg.jsonFixturesPath || fixturesPath;
-
-  jasmine.getFixtures().fixturesPath = fixturesPath;
-  jasmine.getStyleFixtures().fixturesPath = styleFixturesPath;
-  jasmine.getJSONFixtures().fixturesPath = jsonFixturesPath;
-
+  jasmine.getFixtures().fixturesPath = cfg.fixturesPath;
+  jasmine.getStyleFixtures().fixturesPath = cfg.styleFixturesPath;
+  jasmine.getJSONFixtures().fixturesPath = cfg.jsonFixturesPath;
 }(jasmine));

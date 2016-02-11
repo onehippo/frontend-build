@@ -122,6 +122,10 @@ function buildConfig(customConfig) {
 
   cfg.serverPort = 9000;
 
+  cfg.fixturesPath = customCfg.fixturesPath || 'base/src/angularjs';
+  cfg.styleFixturesPath = customCfg.styleFixturesPath || cfg.fixturesPath;
+  cfg.jsonFixturesPath = customCfg.jsonFixturesPath || cfg.fixturesPath;
+
   cfg.karmaConfig = cfg.appRoot + 'karma.conf.js';
 
   cfg.karma = {
@@ -170,7 +174,7 @@ function buildConfig(customConfig) {
       // Share project build configuration in Karma context
       { pattern: 'build.conf.js' },
       // Pattern for serving fixture files
-      { pattern:  '**/*.fixture.*', included: false }
+      { pattern: '**/*.fixture.*', included: false },
     ],
   };
 
