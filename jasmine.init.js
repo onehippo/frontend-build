@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-(function(jasmine) {
+(function initJasmine(jasmine) {
 
   var cfg = require('build.conf.js');
   var fixturesPath = cfg.fixturesPath || 'base/src/angularjs';
@@ -25,4 +25,4 @@
   jasmine.getStyleFixtures().fixturesPath = styleFixturesPath;
   jasmine.getJSONFixtures().fixturesPath = jsonFixturesPath;
 
-})(jasmine);
+}(jasmine));
