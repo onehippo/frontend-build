@@ -350,8 +350,8 @@ function buildTasks(customConfig, localGulp) {
       cfg.src.scripts,
       cfg.src.templates,
       cfg.src.unitTests,
-      cfg.src.fixtures,
     ], debounce(gulp.series('scripts', 'test'), 200));
+    gulp.watch(cfg.src.fixtures, gulp.series('test'));
     gulp.watch(cfg.src.i18n, gulp.series('i18n'));
 
     gulp.watch(cfg.src.bowerLinks, gulp.series('build'));
