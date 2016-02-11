@@ -39,12 +39,18 @@ var sourceMaps = require('gulp-sourcemaps');
 var templateCache = require('gulp-angular-templatecache');
 var uglify = require('gulp-uglify');
 var usemin = require('gulp-usemin');
+var gutil = require('gulp-util');
 var getRelativeModuleFolderPath = require('./utils.js').getRelativeModuleFolderPath;
 
 function buildTasks(customConfig, localGulp) {
   var cfg = buildConfig(customConfig);
   var gulp = localGulp || require('gulp');
   var bsServer = browserSync.create();
+
+  function exitOnErrorHandler(error) {
+    gutil.log('Unhandled error found, exiting gulp:', error.toString());
+    return process.exit(1);
+  }
 
   function clean() {
     return del([cfg.distDir, cfg.coverageDir]);
@@ -108,16 +114,20 @@ function buildTasks(customConfig, localGulp) {
     ]);
   }
 
+  function lintScripts(src, lintConfig, exitOnError) {
+    return function() {
+      return gulp
+        .src(src)
+        .pipe(exitOnError ? plumber({ errorHandler: exitOnErrorHandler }) : plumber())
+        .pipe(esLint(lintConfig))
+        .pipe(esLint.format())
+        .pipe(esLint.failAfterError());
+    };
+  }
+
   function scripts(done) {
     gulp.series(
-      function lint() {
-        return gulp
-          .src(cfg.src.scripts)
-          .pipe(plumber())
-          .pipe(esLint(cfg.esLintConfig))
-          .pipe(esLint.format())
-          .pipe(esLint.failAfterError());
-      },
+      lintScripts(cfg.src.scripts, cfg.esLintConfig, true),
 
       function transpile() {
         var systemjs = new Builder();
@@ -180,14 +190,7 @@ function buildTasks(customConfig, localGulp) {
 
   function test(done) {
     gulp.series(
-      function lint() {
-        return gulp
-          .src(cfg.src.unitTests)
-          .pipe(plumber())
-          .pipe(esLint(cfg.esLintTestConfig))
-          .pipe(esLint.format())
-          .pipe(esLint.failAfterError());
-      },
+      lintScripts(cfg.src.unitTests, cfg.esLintTestConfig, true),
 
       function runKarma(karmaDone) {
         new Server({
@@ -199,14 +202,7 @@ function buildTasks(customConfig, localGulp) {
 
   function testDebug(done) {
     gulp.series(
-      function lint() {
-        return gulp
-          .src(cfg.src.unitTests)
-          .pipe(plumber())
-          .pipe(esLint(cfg.esLintTestConfig))
-          .pipe(esLint.format())
-          .pipe(esLint.failAfterError());
-      },
+      lintScripts(cfg.src.unitTests, cfg.esLintTestConfig),
 
       function runKarma(karmaDone) {
         new Server({
