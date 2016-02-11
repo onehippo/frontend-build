@@ -52,6 +52,7 @@
     "lodash.assign": "4.0.0",
     "phantomjs": "1.9.19",
     "phantomjs-polyfill": "0.0.1",
-    "systemjs-builder": "0.14.15"
+    "systemjs-builder": "0.14.15",
+    "karma-spec-reporter": "0.0.24"
   }
 }

@@ -126,7 +126,7 @@ function buildConfig(customConfig) {
   cfg.karma = {
     basePath: '.',
     frameworks: ['systemjs', 'jasmine', 'es6-shim'],
-    reporters: ['progress', 'coverage'],
+    reporters: ['spec', 'coverage'],
     preprocessors: {},
     browsers: ['PhantomJS'],
     autoWatch: false,
@@ -162,6 +162,13 @@ function buildConfig(customConfig) {
           'phantomjs-polyfill': getRelativeModulePath('phantomjs-polyfill/bind-polyfill'),
         },
       },
+    },
+    specReporter: {
+      maxLogLines: 5,
+      suppressErrorSummary: true,
+      suppressFailed: false,
+      suppressPassed: true,
+      suppressSkipped: true
     },
   };
 
