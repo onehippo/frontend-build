@@ -29,7 +29,6 @@ var htmlmin = require('gulp-htmlmin');
 var imagemin = require('gulp-imagemin');
 var insertLines = require('gulp-insert-lines');
 var ngAnnotate = require('gulp-ng-annotate');
-var path = require('path');
 var pkg = require('./package.json');
 var plumber = require('gulp-plumber');
 var rev = require('gulp-rev');
