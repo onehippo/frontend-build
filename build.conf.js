@@ -122,10 +122,6 @@ function buildConfig(customConfig) {
 
   cfg.serverPort = 9000;
 
-  cfg.fixturesPath = customCfg.fixturesPath || 'base/src/angularjs';
-  cfg.styleFixturesPath = customCfg.styleFixturesPath || cfg.fixturesPath;
-  cfg.jsonFixturesPath = customCfg.jsonFixturesPath || cfg.fixturesPath;
-
   cfg.karmaConfig = cfg.appRoot + 'karma.conf.js';
 
   cfg.karma = {
@@ -168,14 +164,6 @@ function buildConfig(customConfig) {
         },
       },
     },
-    files: [
-      // Jasmine init hook
-      { pattern: getRelativeModulePath('./jasmine.init.js') },
-      // Share project build configuration in Karma context
-      { pattern: 'build.conf.js' },
-      // Pattern for serving fixture files
-      { pattern: '**/*.fixture.*', included: false },
-    ],
   };
 
   cfg.karma.preprocessors[cfg.src.scripts] = ['coverage'];
