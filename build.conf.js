@@ -72,7 +72,7 @@ function buildConfig(customConfig) {
 
   cfg.plumberOptions = {};
 
-  if (yargs.failOnPlumberError) {
+  if (yargs.failOnGulpError) {
     cfg.plumberOptions.errorHandler = exitOnErrorHandler;
   }
 
