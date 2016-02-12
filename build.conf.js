@@ -164,6 +164,13 @@ function buildConfig(customConfig) {
         },
       },
     },
+    proxies: {
+      "/spec/javascripts/fixtures/": "/base/src/angularjs/",
+      "/spec/javascripts/fixtures/json/": "/base/src/angularjs/",
+    },
+    files: [
+      { pattern: '**/*.fixture.*', included: false },
+    ]
   };
 
   cfg.karma.preprocessors[cfg.src.scripts] = ['coverage'];
