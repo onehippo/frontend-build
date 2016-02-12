@@ -104,6 +104,7 @@ function buildConfig(customConfig) {
     globals: {
       angular: true,
       $: true,
+      $j: true,
       inject: true,
       module: true,
     },
