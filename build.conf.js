@@ -17,14 +17,19 @@
 var objectAssign = require('lodash.assign');
 var appRootDir = require('app-root-dir');
 var getRelativeModulePath = require('./utils.js').getRelativeModulePath;
+var gutil = require('gulp-util');
+var yargs = require('yargs').argv;
+
+function exitOnErrorHandler(error) {
+  gutil.log('Unhandled error found, exiting gulp:', error.toString());
+  return process.exit(1);
+}
 
 function buildConfig(customConfig) {
   var cfg = {};
   var customCfg = customConfig || {};
 
-  cfg.env = {};
-  cfg.env.maven = false;
-
+  /* All the folder/file patterns*/
   cfg.appRoot = appRootDir.get() + '/';
   cfg.srcDir = customCfg.srcDir || 'src/';
   cfg.distDir = customCfg.distDir || 'dist/';
@@ -60,6 +65,16 @@ function buildConfig(customConfig) {
 
   cfg.bowerAssets = [cfg.bowerDir + 'hippo-theme/dist/**/*.{svg,woff,woff2,ttf,eot,png}'];
   cfg.bowerLinks = [cfg.bowerDir + 'hippo-theme/dist/**'];
+
+  /* Gulp Task configuration options */
+  cfg.env = {};
+  cfg.env.maven = false;
+
+  cfg.plumberOptions = {};
+
+  if (yargs.failOnPlumberError) {
+    cfg.plumberOptions.errorHandler = exitOnErrorHandler;
+  }
 
   cfg.supportedBrowsers = [
     'last 1 Chrome versions',

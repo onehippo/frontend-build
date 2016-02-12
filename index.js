@@ -39,7 +39,6 @@ var sourceMaps = require('gulp-sourcemaps');
 var templateCache = require('gulp-angular-templatecache');
 var uglify = require('gulp-uglify');
 var usemin = require('gulp-usemin');
-var gutil = require('gulp-util');
 var getRelativeModuleFolderPath = require('./utils.js').getRelativeModuleFolderPath;
 
 function buildTasks(customConfig, localGulp) {
@@ -47,9 +46,15 @@ function buildTasks(customConfig, localGulp) {
   var gulp = localGulp || require('gulp');
   var bsServer = browserSync.create();
 
-  function exitOnErrorHandler(error) {
-    gutil.log('Unhandled error found, exiting gulp:', error.toString());
-    return process.exit(1);
+  function createLintFunction(src, lintConfig) {
+    return function lintScripts() {
+      return gulp
+        .src(src)
+        .pipe(plumber(cfg.plumberOptions))
+        .pipe(esLint(lintConfig))
+        .pipe(esLint.format())
+        .pipe(esLint.failAfterError());
+    };
   }
 
   function clean() {
@@ -59,7 +64,7 @@ function buildTasks(customConfig, localGulp) {
   function styles() {
     return gulp
       .src(cfg.src.indexStyles)
-      .pipe(plumber())
+      .pipe(plumber(cfg.plumberOptions))
       .pipe(sassLint(cfg.sassLintConfig))
       .pipe(sassLint.format())
       .pipe(sassLint.failOnError())
@@ -79,7 +84,7 @@ function buildTasks(customConfig, localGulp) {
   function images() {
     return gulp
       .src(cfg.src.images)
-      .pipe(plumber())
+      .pipe(plumber(cfg.plumberOptions))
       .pipe(imagemin())
       .pipe(gulp.dest(cfg.dist.images))
       .pipe(bsServer.stream());
@@ -88,7 +93,7 @@ function buildTasks(customConfig, localGulp) {
   function fonts() {
     return gulp
       .src(cfg.src.fonts)
-      .pipe(plumber())
+      .pipe(plumber(cfg.plumberOptions))
       .pipe(gulp.dest(cfg.dist.fonts))
       .pipe(bsServer.stream());
   }
@@ -96,7 +101,7 @@ function buildTasks(customConfig, localGulp) {
   function bowerAssets() {
     return gulp
       .src(cfg.bowerAssets)
-      .pipe(plumber())
+      .pipe(plumber(cfg.plumberOptions))
       .pipe(gulp.dest(cfg.distDir))
       .pipe(bsServer.stream());
   }
@@ -114,20 +119,9 @@ function buildTasks(customConfig, localGulp) {
     ]);
   }
 
-  function lintScripts(src, lintConfig, exitOnError) {
-    return function() {
-      return gulp
-        .src(src)
-        .pipe(exitOnError ? plumber({ errorHandler: exitOnErrorHandler }) : plumber())
-        .pipe(esLint(lintConfig))
-        .pipe(esLint.format())
-        .pipe(esLint.failAfterError());
-    };
-  }
-
   function scripts(done) {
     gulp.series(
-      lintScripts(cfg.src.scripts, cfg.esLintConfig, true),
+      createLintFunction(cfg.src.scripts, cfg.esLintConfig),
 
       function transpile() {
         var systemjs = new Builder();
@@ -140,7 +134,7 @@ function buildTasks(customConfig, localGulp) {
       function annotate() {
         return gulp
           .src(cfg.dist.indexScript)
-          .pipe(plumber())
+          .pipe(plumber(cfg.plumberOptions))
           .pipe(sourceMaps.init({
             loadMaps: true,
           }))
@@ -157,7 +151,7 @@ function buildTasks(customConfig, localGulp) {
             babelPolyfill,
             cfg.dist.indexScript,
           ])
-          .pipe(plumber())
+          .pipe(plumber(cfg.plumberOptions))
           .pipe(sourceMaps.init({
             loadMaps: true,
           }))
@@ -172,7 +166,7 @@ function buildTasks(customConfig, localGulp) {
             cfg.dist.indexScript,
             cfg.src.templates,
           ])
-          .pipe(plumber())
+          .pipe(plumber(cfg.plumberOptions))
           .pipe(gulpif('*.html', templateCache({
             transformUrl: function transformUrl(url) {
               return url.replace(/.*angularjs(?:\\|\/)/gi, '');
@@ -190,7 +184,7 @@ function buildTasks(customConfig, localGulp) {
 
   function test(done) {
     gulp.series(
-      lintScripts(cfg.src.unitTests, cfg.esLintTestConfig, true),
+      createLintFunction([cfg.src.unitTests, cfg.src.scripts], cfg.esLintTestConfig),
 
       function runKarma(karmaDone) {
         new Server({
@@ -202,7 +196,7 @@ function buildTasks(customConfig, localGulp) {
 
   function testDebug(done) {
     gulp.series(
-      lintScripts(cfg.src.unitTests, cfg.esLintTestConfig),
+      createLintFunction([cfg.src.unitTests, cfg.src.scripts], cfg.esLintTestConfig),
 
       function runKarma(karmaDone) {
         new Server({
@@ -218,14 +212,14 @@ function buildTasks(customConfig, localGulp) {
   function i18n() {
     return gulp
       .src(cfg.src.i18n)
-      .pipe(plumber())
+      .pipe(plumber(cfg.plumberOptions))
       .pipe(gulp.dest(cfg.dist.i18n));
   }
 
   function dev() {
     return gulp
       .src(cfg.src.indexHtml)
-      .pipe(plumber())
+      .pipe(plumber(cfg.plumberOptions))
       .pipe(gulp.dest(cfg.distDir))
       .pipe(bsServer.stream());
   }
@@ -300,7 +294,7 @@ function buildTasks(customConfig, localGulp) {
 
     return gulp
       .src(cfg.src.indexHtml)
-      .pipe(plumber())
+      .pipe(plumber(cfg.plumberOptions))
       .pipe(insertLines({
         before: /<\/body>$/,
         lineBefore: bsScriptTag,
