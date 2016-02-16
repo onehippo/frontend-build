@@ -1,7 +1,7 @@
 {
   "name": "hippo-build",
   "private": true,
-  "version": "0.0.28",
+  "version": "0.0.29",
   "main": "index.js",
   "license": "Apache-2.0",
   "repository": {
@@ -9,7 +9,7 @@
     "url": "https://github.com/onehippo/hippo-build"
   },
   "engines": {
-    "node": "5.5"
+    "node": "5"
   },
   "dependencies": {
     "app-root-dir": "1.0.2",
@@ -53,6 +53,7 @@
     "lodash.assign": "4.0.0",
     "phantomjs": "1.9.19",
     "phantomjs-polyfill": "0.0.1",
-    "systemjs-builder": "0.14.15"
+    "systemjs-builder": "0.14.15",
+    "yargs": "3.32.0"
   }
 }
