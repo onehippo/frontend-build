@@ -65,6 +65,7 @@ function buildConfig(customConfig) {
 
   cfg.bowerAssets = [cfg.bowerDir + 'hippo-theme/dist/**/*.{svg,woff,woff2,ttf,eot,png}'];
   cfg.bowerLinks = [cfg.bowerDir + 'hippo-theme/dist/**'];
+  cfg.karmaFixtureProxyPath = '/base/' + cfg.srcDir + 'angularjs/';
 
   /* Gulp Task configuration options */
   cfg.env = {};
@@ -105,6 +106,7 @@ function buildConfig(customConfig) {
     },
     rules: {
       'max-len': 0,
+
       // Needed for ngInject to work with classes :(
       'padded-blocks': 0,
       'no-param-reassign': 0,
@@ -119,6 +121,7 @@ function buildConfig(customConfig) {
     globals: {
       angular: true,
       $: true,
+      $j: true,
       inject: true,
       module: true,
     },
@@ -178,6 +181,10 @@ function buildConfig(customConfig) {
           'phantomjs-polyfill': getRelativeModulePath('phantomjs-polyfill/bind-polyfill'),
         },
       },
+    },
+    proxies: {
+      '/spec/javascripts/fixtures/': cfg.karmaFixtureProxyPath,
+      '/spec/javascripts/fixtures/json/': cfg.karmaFixtureProxyPath,
     },
   };
 
