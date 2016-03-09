@@ -99,11 +99,11 @@ function buildTasks(customConfig, localGulp) {
   }
 
   function copyFiles(done) {
-    cfg.copyFiles.forEach(function (copySpec) {
+    cfg.copyFiles.forEach((copySpec) => {
       gulp.src(copySpec.src)
         .pipe(plumber(cfg.plumberOptions))
         .pipe(gulp.dest(copySpec.dest))
-        .pipe(bsServer.stream())
+        .pipe(bsServer.stream());
     });
     done();
   }

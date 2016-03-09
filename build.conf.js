@@ -68,12 +68,12 @@ function buildConfig(customConfig) {
   cfg.copyFiles = [
     {
       src: cfg.bowerDir + 'hippo-theme/dist/**/*.{svg,woff,woff2,ttf,eot,png}',
-      dest: cfg.distDir
+      dest: cfg.distDir,
     },
     {
       src: 'bower_components/dragula.js/*.min.*',
-      dest: 'target/hippo-cm/dragula'
-    }
+      dest: 'target/hippo-cm/dragula',
+    },
   ];
 
   /* Gulp Task configuration options */
