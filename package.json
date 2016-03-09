@@ -50,7 +50,6 @@
     "karma-ng-html2js-preprocessor": "0.2.0",
     "karma-phantomjs-launcher": "0.2.3",
     "karma-systemjs": "0.10.0",
-    "lodash.assign": "4.0.0",
     "phantomjs": "1.9.19",
     "phantomjs-polyfill": "0.0.1",
     "systemjs-builder": "0.14.15",

@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-var objectAssign = require('lodash.assign');
-var appRootDir = require('app-root-dir');
-var getRelativeModulePath = require('./utils.js').getRelativeModulePath;
-var gutil = require('gulp-util');
-var yargs = require('yargs').argv;
+const appRootDir = require('app-root-dir');
+const getRelativeModulePath = require('./utils.js').getRelativeModulePath;
+const gutil = require('gulp-util');
+const yargs = require('yargs').argv;
 
 function exitOnErrorHandler(error) {
   gutil.log('Unhandled error found, exiting gulp:', error.toString());
@@ -26,8 +25,8 @@ function exitOnErrorHandler(error) {
 }
 
 function buildConfig(customConfig) {
-  var cfg = {};
-  var customCfg = customConfig || {};
+  const cfg = {};
+  const customCfg = customConfig || {};
 
   /* All the folder/file patterns*/
   cfg.appRoot = appRootDir.get() + '/';
@@ -123,7 +122,7 @@ function buildConfig(customConfig) {
     },
   };
 
-  cfg.esLintTestConfig = objectAssign(cfg.esLintConfig, {
+  cfg.esLintTestConfig = Object.assign(cfg.esLintConfig, {
     extends: 'airbnb/legacy',
     env: {
       jasmine: true,
@@ -201,7 +200,7 @@ function buildConfig(customConfig) {
   cfg.karma.preprocessors[cfg.src.scripts] = ['coverage'];
   cfg.karma.preprocessors[cfg.src.templates] = ['ng-html2js'];
 
-  return objectAssign(cfg, customCfg);
+  return Object.assign(cfg, customCfg);
 }
 
 module.exports = buildConfig;

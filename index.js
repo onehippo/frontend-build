@@ -14,37 +14,37 @@
  * limitations under the License.
  */
 
-var autoprefixer = require('gulp-autoprefixer');
-var browserSync = require('browser-sync');
-var buildConfig = require('./build.conf.js');
-var Builder = require('systemjs-builder');
-var concat = require('gulp-concat');
-var cssnano = require('gulp-cssnano');
-var debounce = require('debounce');
-var del = require('del');
-var esLint = require('gulp-eslint');
-var filter = require('gulp-filter');
-var gulpif = require('gulp-if');
-var htmlmin = require('gulp-htmlmin');
-var imagemin = require('gulp-imagemin');
-var insertLines = require('gulp-insert-lines');
-var ngAnnotate = require('gulp-ng-annotate');
-var pkg = require('./package.json');
-var plumber = require('gulp-plumber');
-var rev = require('gulp-rev');
-var sass = require('gulp-sass');
-var sassLint = require('gulp-sass-lint');
-var Server = require('karma').Server;
-var sourceMaps = require('gulp-sourcemaps');
-var templateCache = require('gulp-angular-templatecache');
-var uglify = require('gulp-uglify');
-var usemin = require('gulp-usemin');
-var getRelativeModuleFolderPath = require('./utils.js').getRelativeModuleFolderPath;
+const autoprefixer = require('gulp-autoprefixer');
+const browserSync = require('browser-sync');
+const buildConfig = require('./build.conf.js');
+const Builder = require('systemjs-builder');
+const concat = require('gulp-concat');
+const cssnano = require('gulp-cssnano');
+const debounce = require('debounce');
+const del = require('del');
+const esLint = require('gulp-eslint');
+const filter = require('gulp-filter');
+const gulpif = require('gulp-if');
+const htmlmin = require('gulp-htmlmin');
+const imagemin = require('gulp-imagemin');
+const insertLines = require('gulp-insert-lines');
+const ngAnnotate = require('gulp-ng-annotate');
+const pkg = require('./package.json');
+const plumber = require('gulp-plumber');
+const rev = require('gulp-rev');
+const sass = require('gulp-sass');
+const sassLint = require('gulp-sass-lint');
+const Server = require('karma').Server;
+const sourceMaps = require('gulp-sourcemaps');
+const templateCache = require('gulp-angular-templatecache');
+const uglify = require('gulp-uglify');
+const usemin = require('gulp-usemin');
+const getRelativeModuleFolderPath = require('./utils.js').getRelativeModuleFolderPath;
 
 function buildTasks(customConfig, localGulp) {
-  var cfg = buildConfig(customConfig);
-  var gulp = localGulp || require('gulp');
-  var bsServer = browserSync.create();
+  const cfg = buildConfig(customConfig);
+  const gulp = localGulp || require('gulp');
+  const bsServer = browserSync.create();
 
   function createLintFunction(src, lintConfig) {
     return function lintScripts() {
@@ -126,7 +126,7 @@ function buildTasks(customConfig, localGulp) {
       createLintFunction(cfg.src.scripts, cfg.esLintConfig),
 
       function transpile() {
-        var systemjs = new Builder();
+        const systemjs = new Builder();
         systemjs.config(cfg.systemjsOptions);
         return systemjs.buildStatic(cfg.src.indexScript, cfg.dist.indexScript, {
           sourceMaps: true,
@@ -146,7 +146,7 @@ function buildTasks(customConfig, localGulp) {
       },
 
       function addPolyfills() {
-        var babelPolyfill = getRelativeModuleFolderPath('babel-core') + 'browser-polyfill.js';
+        const babelPolyfill = getRelativeModuleFolderPath('babel-core') + 'browser-polyfill.js';
 
         return gulp
           .src([
@@ -290,9 +290,9 @@ function buildTasks(customConfig, localGulp) {
   }
 
   function bsInject() {
-    var browserSyncVersion = pkg.dependencies['browser-sync'];
-    var bsScriptPath = '//localhost:3000/browser-sync/browser-sync-client.' + browserSyncVersion + '.js';
-    var bsScriptTag = '<script src="' + bsScriptPath + '"></script>';
+    const browserSyncVersion = pkg.dependencies['browser-sync'];
+    const bsScriptPath = '//localhost:3000/browser-sync/browser-sync-client.' + browserSyncVersion + '.js';
+    const bsScriptTag = '<script src="' + bsScriptPath + '"></script>';
 
     return gulp
       .src(cfg.src.indexHtml)

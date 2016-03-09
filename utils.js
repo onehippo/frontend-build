@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-var path = require('path');
-var appRootDir = require('app-root-dir');
+const path = require('path');
+const appRootDir = require('app-root-dir');
 
 function getRelativeModulePath(moduleName) {
-  var appRoot = appRootDir.get();
-  var modulePath = require.resolve(moduleName);
+  const appRoot = appRootDir.get();
+  const modulePath = require.resolve(moduleName);
   return path.relative(appRoot, modulePath);
 }
 
 function getRelativeModuleFolderPath(moduleName) {
-  var relativeModulePath = getRelativeModulePath(moduleName);
+  const relativeModulePath = getRelativeModulePath(moduleName);
   return path.dirname(relativeModulePath) + '/';
 }
 
 module.exports = {
-  getRelativeModulePath: getRelativeModulePath,
-  getRelativeModuleFolderPath: getRelativeModuleFolderPath,
+  getRelativeModulePath,
+  getRelativeModuleFolderPath,
 };
