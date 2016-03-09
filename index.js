@@ -98,12 +98,14 @@ function buildTasks(customConfig, localGulp) {
       .pipe(bsServer.stream());
   }
 
-  function bowerAssets() {
-    return gulp
-      .src(cfg.bowerAssets)
-      .pipe(plumber(cfg.plumberOptions))
-      .pipe(gulp.dest(cfg.distDir))
-      .pipe(bsServer.stream());
+  function copyFiles(done) {
+    cfg.copyFiles.forEach(function (copySpec) {
+      gulp.src(copySpec.src)
+        .pipe(plumber(cfg.plumberOptions))
+        .pipe(gulp.dest(copySpec.dest))
+        .pipe(bsServer.stream())
+    });
+    done();
   }
 
   function symlinkDependencies() {
@@ -317,9 +319,9 @@ function buildTasks(customConfig, localGulp) {
 
   function build(done) {
     if (cfg.env.maven) {
-      gulp.series('clean', gulp.parallel('scripts', 'styles', 'images', 'bowerAssets', 'i18n', 'dev', 'symlinkDependencies'))(done);
+      gulp.series('clean', gulp.parallel('scripts', 'styles', 'images', 'copyFiles', 'i18n', 'dev', 'symlinkDependencies'))(done);
     } else {
-      gulp.series('clean', gulp.parallel('scripts', 'styles', 'images', 'bowerAssets', 'i18n', 'dev'))(done);
+      gulp.series('clean', gulp.parallel('scripts', 'styles', 'images', 'copyFiles', 'i18n', 'dev'))(done);
     }
   }
 
@@ -334,6 +336,7 @@ function buildTasks(customConfig, localGulp) {
   function watch() {
     gulp.watch(cfg.src.styles, gulp.series('styles'));
     gulp.watch(cfg.src.images, gulp.series('images'));
+    gulp.watch(cfg.copyFiles.map((copySpec) => copySpec.src), gulp.series('copyFiles'));
     gulp.watch(cfg.src.fonts, gulp.series('fonts'));
     gulp.watch([
       cfg.src.scripts,
@@ -352,13 +355,13 @@ function buildTasks(customConfig, localGulp) {
     }
   }
 
-  gulp.task(bowerAssets);
   gulp.task(bsInject);
   gulp.task(bsServerSync);
   gulp.task(bsServerSyncDist);
   gulp.task(build);
   gulp.task(buildDist);
   gulp.task(clean);
+  gulp.task(copyFiles);
   gulp.task(dev);
   gulp.task(dist);
   gulp.task(fonts);

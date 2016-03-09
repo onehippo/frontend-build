@@ -63,9 +63,19 @@ function buildConfig(customConfig) {
   cfg.dist.images = cfg.distDir + 'images/';
   cfg.dist.i18n = cfg.distDir + 'i18n/';
 
-  cfg.bowerAssets = [cfg.bowerDir + 'hippo-theme/dist/**/*.{svg,woff,woff2,ttf,eot,png}'];
-  cfg.bowerLinks = [cfg.bowerDir + 'hippo-theme/dist/**'];
+  cfg.bowerLinks = [];
   cfg.karmaFixtureProxyPath = '/base/' + cfg.srcDir + 'angularjs/';
+
+  cfg.copyFiles = [
+    {
+      src: cfg.bowerDir + 'hippo-theme/dist/**/*.{svg,woff,woff2,ttf,eot,png}',
+      dest: cfg.distDir
+    },
+    {
+      src: 'bower_components/dragula.js/*.min.*',
+      dest: 'target/hippo-cm/dragula'
+    }
+  ];
 
   /* Gulp Task configuration options */
   cfg.env = {};
