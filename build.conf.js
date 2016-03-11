@@ -139,6 +139,7 @@ function buildConfig(customConfig) {
       'padded-blocks': 0,
       'no-param-reassign': 0,
       'func-names': 0,
+      'comma-dangle': 0,
     },
   });
 
