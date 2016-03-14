@@ -1,7 +1,7 @@
 {
   "name": "hippo-build",
   "private": true,
-  "version": "0.0.31",
+  "version": "0.0.32",
   "main": "index.js",
   "license": "Apache-2.0",
   "repository": {
