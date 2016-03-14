@@ -20,7 +20,7 @@
     "del": "2.2.0",
     "eslint": "2.4.0",
     "eslint-config-airbnb": "6.1.0",
-    "eslint-plugin-react": "4.2.1",
+    "eslint-plugin-react": "4.2.2",
     "gulp": "git://github.com/gulpjs/gulp.git#73eced0969af4d1e87cea1d7172f90b557b8f7b5",
     "gulp-angular-templatecache": "1.8.0",
     "gulp-autoprefixer": "3.1.0",
@@ -55,6 +55,6 @@
     "phantomjs-polyfill": "0.0.2",
     "phantomjs-prebuilt": "2.1.5",
     "systemjs-builder": "0.15.13",
-    "yargs": "4.2.0"
+    "yargs": "4.3.1"
   }
 }
