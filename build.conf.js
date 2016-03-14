@@ -29,45 +29,48 @@ function buildConfig(customConfig) {
   const customCfg = customConfig || {};
 
   /* All the folder/file patterns*/
-  cfg.appRoot = appRootDir.get() + '/';
-  cfg.srcDir = customCfg.srcDir || 'src/';
-  cfg.distDir = customCfg.distDir || 'dist/';
-  cfg.bowerDir = customCfg.bowerDir || 'bower_components/';
-  cfg.npmDir = customCfg.npmDir || 'node_modules/';
+  cfg.appRoot = appRootDir.get();
+  cfg.srcDir = customCfg.srcDir || 'src';
+  cfg.distDir = customCfg.distDir || 'dist';
+  cfg.bowerDir = customCfg.bowerDir || 'bower_components';
+  cfg.npmDir = customCfg.npmDir || 'node_modules';
   cfg.targetBowerDir = cfg.distDir + cfg.bowerDir;
   cfg.targetNpmDir = cfg.distDir + cfg.npmDir;
-  cfg.coverageDir = 'coverage/';
+  cfg.coverageDir = 'coverage';
 
-  cfg.projectName = require(cfg.appRoot + 'package.json').name;
+  cfg.projectName = require(`${cfg.appRoot}/package.json`).name;
 
   cfg.src = {};
-  cfg.src.styles = cfg.srcDir + 'styles/**/*.scss';
-  cfg.src.indexStyles = cfg.srcDir + 'styles/' + cfg.projectName + '.scss';
-  cfg.src.images = cfg.srcDir + 'images/**/*.{png,jpg,gif,ico,svg}';
-  cfg.src.fonts = cfg.srcDir + 'fonts/**/*';
-  cfg.src.indexScript = cfg.srcDir + 'angularjs/' + cfg.projectName + '.js';
-  cfg.src.unitTests = cfg.srcDir + '**/*.spec.js';
-  cfg.src.scripts = cfg.srcDir + '**/!(*.spec|*.fixture).js';
-  cfg.src.templates = cfg.srcDir + '**/!(index|*.fixture).html';
-  cfg.src.fixtures = { pattern: cfg.srcDir + '**/*.fixture.+(js|html|css|json)', included: false };
-  cfg.src.i18n = cfg.srcDir + 'i18n/**';
-  cfg.src.indexHtml = cfg.srcDir + 'index.html';
+  cfg.src.styles = `${cfg.srcDir}/styles/**/*.scss`;
+  cfg.src.indexStyles = `${cfg.srcDir}/styles/${cfg.projectName}.scss`;
+  cfg.src.images = `${cfg.srcDir}/images/**/*.{png,jpg,gif,ico,svg}`;
+  cfg.src.fonts = `${cfg.srcDir}/fonts/**/*`;
+  cfg.src.indexScript = `${cfg.srcDir}/angularjs/${cfg.projectName}.js`;
+  cfg.src.unitTests = `${cfg.srcDir}/**/*.spec.js`;
+  cfg.src.scripts = `${cfg.srcDir}/**/!(*.spec|*.fixture).js`;
+  cfg.src.templates = `${cfg.srcDir}/**/!(index|*.fixture).html`;
+  cfg.src.fixtures = {
+    pattern: `${cfg.srcDir}/**/*.fixture.+(js|html|css|json)`,
+    included: false,
+  };
+  cfg.src.i18n = `${cfg.srcDir}/i18n/**`;
+  cfg.src.indexHtml = `${cfg.srcDir}/index.html`;
 
   cfg.dist = {};
-  cfg.dist.indexHtml = cfg.distDir + 'index.html';
-  cfg.dist.styles = cfg.distDir + 'styles/';
-  cfg.dist.fonts = cfg.distDir + 'fonts/';
-  cfg.dist.scripts = cfg.distDir + 'scripts/';
-  cfg.dist.indexScript = cfg.distDir + 'scripts/' + cfg.projectName + '.js';
-  cfg.dist.images = cfg.distDir + 'images/';
-  cfg.dist.i18n = cfg.distDir + 'i18n/';
+  cfg.dist.indexHtml = `${cfg.distDir}/index.html`;
+  cfg.dist.styles = `${cfg.distDir}/styles/`;
+  cfg.dist.fonts = `${cfg.distDir}/fonts/`;
+  cfg.dist.scripts = `${cfg.distDir}/scripts/`;
+  cfg.dist.indexScript = `${cfg.distDir}/scripts/${cfg.projectName}.js`;
+  cfg.dist.images = `${cfg.distDir}/images/`;
+  cfg.dist.i18n = `${cfg.distDir}/i18n/`;
 
   cfg.bowerLinks = [];
-  cfg.karmaFixtureProxyPath = '/base/' + cfg.srcDir + 'angularjs/';
+  cfg.karmaFixtureProxyPath = `/base/${cfg.srcDir}/angularjs/`;
 
   cfg.copyFiles = [
     {
-      src: cfg.bowerDir + 'hippo-theme/dist/**/*.{svg,woff,woff2,ttf,eot,png}',
+      src: `${cfg.bowerDir}/hippo-theme/dist/**/*.{svg,woff,woff2,ttf,eot,png}`,
       dest: cfg.distDir,
     },
     {
@@ -115,14 +118,11 @@ function buildConfig(customConfig) {
     },
     rules: {
       'max-len': 0,
-
-      // Needed for ngInject to work with classes :(
-      'padded-blocks': 0,
       'no-param-reassign': 0,
     },
   };
 
-  cfg.esLintTestConfig = Object.assign(cfg.esLintConfig, {
+  cfg.esLintTestConfig = Object.assign({}, cfg.esLintConfig, {
     extends: 'airbnb/legacy',
     env: {
       jasmine: true,
@@ -136,7 +136,6 @@ function buildConfig(customConfig) {
     },
     rules: {
       'max-len': 0,
-      'padded-blocks': 0,
       'no-param-reassign': 0,
       'func-names': 0,
       'comma-dangle': 0,
@@ -150,7 +149,7 @@ function buildConfig(customConfig) {
 
   cfg.serverPort = 9000;
 
-  cfg.karmaConfig = cfg.appRoot + 'karma.conf.js';
+  cfg.karmaConfig = `${cfg.appRoot}/karma.conf.js`;
 
   cfg.karma = {
     basePath: '.',
@@ -177,7 +176,7 @@ function buildConfig(customConfig) {
     },
     ngHtml2JsPreprocessor: {
       stripPrefix: 'src/angularjs/',
-      moduleName: cfg.projectName + '-templates',
+      moduleName: `${cfg.projectName}-templates`,
     },
     systemjs: {
       config: {
@@ -201,7 +200,7 @@ function buildConfig(customConfig) {
   cfg.karma.preprocessors[cfg.src.scripts] = ['coverage'];
   cfg.karma.preprocessors[cfg.src.templates] = ['ng-html2js'];
 
-  return Object.assign(cfg, customCfg);
+  return Object.assign({}, cfg, customCfg);
 }
 
 module.exports = buildConfig;

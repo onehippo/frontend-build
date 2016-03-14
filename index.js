@@ -110,7 +110,7 @@ function buildTasks(customConfig, localGulp) {
 
   function symlinkDependencies() {
     return gulp
-      .src(cfg.bowerDir + '**/*')
+      .src(`${cfg.bowerDir}/**/*`)
       .pipe(gulp.dest(cfg.distDir + cfg.bowerDir));
   }
 
@@ -122,92 +122,99 @@ function buildTasks(customConfig, localGulp) {
   }
 
   function scripts(done) {
+    function transpile() {
+      const systemjs = new Builder();
+      systemjs.config(cfg.systemjsOptions);
+      return systemjs.buildStatic(cfg.src.indexScript, cfg.dist.indexScript, {
+        sourceMaps: true,
+      });
+    }
+
+    function annotate() {
+      return gulp
+        .src(cfg.dist.indexScript)
+        .pipe(plumber(cfg.plumberOptions))
+        .pipe(sourceMaps.init({
+          loadMaps: true,
+        }))
+        .pipe(ngAnnotate())
+        .pipe(sourceMaps.write('./'))
+        .pipe(gulp.dest(cfg.dist.scripts));
+    }
+
+    function addPolyfills() {
+      const babelCorePath = getRelativeModuleFolderPath('babel-core');
+      const babelPolyfill = `${babelCorePath}/browser-polyfill.js`;
+
+      return gulp
+        .src([
+          babelPolyfill,
+          cfg.dist.indexScript,
+        ])
+        .pipe(plumber(cfg.plumberOptions))
+        .pipe(sourceMaps.init({
+          loadMaps: true,
+        }))
+        .pipe(concat(`${cfg.projectName}.js`))
+        .pipe(sourceMaps.write('./'))
+        .pipe(gulp.dest(cfg.dist.scripts));
+    }
+
+    function html2js() {
+      return gulp
+        .src([
+          cfg.dist.indexScript,
+          cfg.src.templates,
+        ])
+        .pipe(plumber(cfg.plumberOptions))
+        .pipe(gulpif('*.html', templateCache({
+          transformUrl: function transformUrl(url) {
+            return url.replace(/.*angularjs(?:\\|\/)/gi, '');
+          },
+
+          module: `${cfg.projectName}-templates`,
+          standalone: true,
+        })))
+        .pipe(concat(`${cfg.projectName}.js`))
+        .pipe(gulp.dest(cfg.dist.scripts))
+        .pipe(bsServer.stream());
+    }
+
     gulp.series(
       createLintFunction(cfg.src.scripts, cfg.esLintConfig),
-
-      function transpile() {
-        const systemjs = new Builder();
-        systemjs.config(cfg.systemjsOptions);
-        return systemjs.buildStatic(cfg.src.indexScript, cfg.dist.indexScript, {
-          sourceMaps: true,
-        });
-      },
-
-      function annotate() {
-        return gulp
-          .src(cfg.dist.indexScript)
-          .pipe(plumber(cfg.plumberOptions))
-          .pipe(sourceMaps.init({
-            loadMaps: true,
-          }))
-          .pipe(ngAnnotate())
-          .pipe(sourceMaps.write('./'))
-          .pipe(gulp.dest(cfg.dist.scripts));
-      },
-
-      function addPolyfills() {
-        const babelPolyfill = getRelativeModuleFolderPath('babel-core') + 'browser-polyfill.js';
-
-        return gulp
-          .src([
-            babelPolyfill,
-            cfg.dist.indexScript,
-          ])
-          .pipe(plumber(cfg.plumberOptions))
-          .pipe(sourceMaps.init({
-            loadMaps: true,
-          }))
-          .pipe(concat(cfg.projectName + '.js'))
-          .pipe(sourceMaps.write('./'))
-          .pipe(gulp.dest(cfg.dist.scripts));
-      },
-
-      function html2js() {
-        return gulp
-          .src([
-            cfg.dist.indexScript,
-            cfg.src.templates,
-          ])
-          .pipe(plumber(cfg.plumberOptions))
-          .pipe(gulpif('*.html', templateCache({
-            transformUrl: function transformUrl(url) {
-              return url.replace(/.*angularjs(?:\\|\/)/gi, '');
-            },
-
-            module: cfg.projectName + '-templates',
-            standalone: true,
-          })))
-          .pipe(concat(cfg.projectName + '.js'))
-          .pipe(gulp.dest(cfg.dist.scripts))
-          .pipe(bsServer.stream());
-      }
+      transpile,
+      annotate,
+      addPolyfills,
+      html2js
     )(done);
   }
 
   function test(done) {
+    function runKarma(karmaDone) {
+      new Server({
+        configFile: cfg.karmaConfig,
+      }, karmaDone).start();
+    }
+
     gulp.series(
       createLintFunction([cfg.src.unitTests, cfg.src.scripts], cfg.esLintTestConfig),
-
-      function runKarma(karmaDone) {
-        new Server({
-          configFile: cfg.karmaConfig,
-        }, karmaDone).start();
-      }
+      runKarma
     )(done);
   }
 
   function testDebug(done) {
+    function runKarma(karmaDone) {
+      new Server({
+        configFile: cfg.karmaConfig,
+        browsers: ['Chrome'],
+        autoWatch: true,
+        singleRun: false,
+      }, karmaDone).start();
+    }
+
     gulp.series(
       createLintFunction([cfg.src.unitTests, cfg.src.scripts], cfg.esLintTestConfig),
-
-      function runKarma(karmaDone) {
-        new Server({
-          configFile: cfg.karmaConfig,
-          browsers: ['Chrome'],
-          autoWatch: true,
-          singleRun: false,
-        }, karmaDone).start();
-      }
+      runKarma
     )(done);
   }
 
@@ -291,8 +298,9 @@ function buildTasks(customConfig, localGulp) {
 
   function bsInject() {
     const browserSyncVersion = pkg.dependencies['browser-sync'];
-    const bsScriptPath = '//localhost:3000/browser-sync/browser-sync-client.' + browserSyncVersion + '.js';
-    const bsScriptTag = '<script src="' + bsScriptPath + '"></script>';
+    const bsScriptPrefix = '//localhost:3000/browser-sync/browser-sync-client';
+    const bsScriptPath = `${bsScriptPrefix}.${browserSyncVersion}.js`;
+    const bsScriptTag = `<script src="${bsScriptPath}"></script>`;
 
     return gulp
       .src(cfg.src.indexHtml)
@@ -319,9 +327,29 @@ function buildTasks(customConfig, localGulp) {
 
   function build(done) {
     if (cfg.env.maven) {
-      gulp.series('clean', gulp.parallel('scripts', 'styles', 'images', 'copyFiles', 'i18n', 'dev', 'symlinkDependencies'))(done);
+      gulp.series(
+        'clean',
+        gulp.parallel(
+          'scripts',
+          'styles',
+          'images',
+          'copyFiles',
+          'i18n',
+          'dev',
+          'symlinkDependencies'
+        )
+      )(done);
     } else {
-      gulp.series('clean', gulp.parallel('scripts', 'styles', 'images', 'copyFiles', 'i18n', 'dev'))(done);
+      gulp.series(
+        'clean',
+        gulp.parallel('scripts',
+          'styles',
+          'images',
+          'copyFiles',
+          'i18n',
+          'dev'
+        )
+      )(done);
     }
   }
 

@@ -25,7 +25,7 @@ function getRelativeModulePath(moduleName) {
 
 function getRelativeModuleFolderPath(moduleName) {
   const relativeModulePath = getRelativeModulePath(moduleName);
-  return path.dirname(relativeModulePath) + '/';
+  return path.dirname(relativeModulePath);
 }
 
 module.exports = {
