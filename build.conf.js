@@ -47,9 +47,9 @@ function buildConfig(customConfig) {
   cfg.src.fonts = cfg.srcDir + 'fonts/**/*';
   cfg.src.indexScript = cfg.srcDir + 'angularjs/' + cfg.projectName + '.js';
   cfg.src.unitTests = cfg.srcDir + '**/*.spec.js';
-  cfg.src.scripts = cfg.srcDir + '**/!(*.spec).js';
+  cfg.src.scripts = cfg.srcDir + '**/!(*.spec|*.fixture).js';
   cfg.src.templates = cfg.srcDir + '**/!(index|*.fixture).html';
-  cfg.src.fixtures = cfg.srcDir + '**/*.fixture.{html,css,json}';
+  cfg.src.fixtures = { pattern: cfg.srcDir + '**/*.fixture.+(js|html|css|json)', included: false };
   cfg.src.i18n = cfg.srcDir + 'i18n/**';
   cfg.src.indexHtml = cfg.srcDir + 'index.html';
 
