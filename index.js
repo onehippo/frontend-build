@@ -207,6 +207,7 @@ function buildTasks(customConfig, localGulp) {
       new Server({
         configFile: cfg.karmaConfig,
         browsers: ['Chrome'],
+        reporters: ['progress'],
         autoWatch: true,
         singleRun: false,
       }, karmaDone).start();
