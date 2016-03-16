@@ -34,7 +34,8 @@ const plumber = require('gulp-plumber');
 const rev = require('gulp-rev');
 const sass = require('gulp-sass');
 const sassLint = require('gulp-sass-lint');
-const Server = require('karma').Server;
+const KarmaServer = require('karma').Server;
+const karmaRunner = require('karma').runner;
 const sourceMaps = require('gulp-sourcemaps');
 const templateCache = require('gulp-angular-templatecache');
 const uglify = require('gulp-uglify');
@@ -189,34 +190,23 @@ function buildTasks(customConfig, localGulp) {
     )(done);
   }
 
-  function test(done) {
-    function runKarma(karmaDone) {
-      new Server({
-        configFile: cfg.karmaConfig,
-      }, karmaDone).start();
-    }
-
-    gulp.series(
-      createLintFunction([cfg.src.unitTests, cfg.src.scripts], cfg.esLintTestConfig),
-      runKarma
-    )(done);
+  function runKarma(done) {
+    karmaRunner.run({
+      configFile: cfg.karmaConfig,
+    }, done);
   }
 
-  function testDebug(done) {
-    function runKarma(karmaDone) {
-      new Server({
-        configFile: cfg.karmaConfig,
-        browsers: ['Chrome'],
-        reporters: ['progress'],
-        autoWatch: true,
-        singleRun: false,
-      }, karmaDone).start();
-    }
+  function startKarma(done) {
+    new KarmaServer({
+      configFile: cfg.karmaConfig,
+      singleRun: false,
+    }, done).start();
+  }
 
-    gulp.series(
-      createLintFunction([cfg.src.unitTests, cfg.src.scripts], cfg.esLintTestConfig),
-      runKarma
-    )(done);
+  function test(done) {
+    new KarmaServer({
+      configFile: cfg.karmaConfig,
+    }, done).start();
   }
 
   function i18n() {
@@ -365,17 +355,22 @@ function buildTasks(customConfig, localGulp) {
   function watch() {
     gulp.watch(cfg.src.styles, gulp.series('styles'));
     gulp.watch(cfg.src.images, gulp.series('images'));
-    gulp.watch(cfg.copyFiles.map((copySpec) => copySpec.src), gulp.series('copyFiles'));
     gulp.watch(cfg.src.fonts, gulp.series('fonts'));
+    gulp.watch(cfg.copyFiles.map((copySpec) => copySpec.src), gulp.series('copyFiles'));
+    gulp.watch(cfg.src.bowerLinks, gulp.series('build'));
+    gulp.watch(cfg.src.i18n, gulp.series('i18n'));
+
+    gulp.watch([
+      cfg.src.scripts,
+      cfg.src.templates,
+    ], gulp.series('scripts'));
+
     gulp.watch([
       cfg.src.scripts,
       cfg.src.templates,
       cfg.src.unitTests,
-    ], debounce(gulp.series('scripts', 'test'), 200));
-    gulp.watch(cfg.src.fixtures.pattern, gulp.series('test'));
-    gulp.watch(cfg.src.i18n, gulp.series('i18n'));
-
-    gulp.watch(cfg.src.bowerLinks, gulp.series('build'));
+      cfg.src.fixtures.pattern,
+    ], debounce(gulp.series('runKarma'), 200));
 
     if (cfg.env.maven) {
       gulp.watch(cfg.src.indexHtml, gulp.series('bsInject'));
@@ -396,15 +391,16 @@ function buildTasks(customConfig, localGulp) {
   gulp.task(fonts);
   gulp.task(i18n);
   gulp.task(images);
+  gulp.task(runKarma);
   gulp.task(scripts);
   gulp.task(serve);
   gulp.task(serveDist);
+  gulp.task(startKarma);
   gulp.task(styles);
   gulp.task(symlinkDependencies);
   gulp.task(test);
-  gulp.task(testDebug);
   gulp.task(unlinkDependencies);
-  gulp.task(watch);
+  gulp.task('watch', gulp.parallel(startKarma, watch));
 }
 
 module.exports.buildTasks = buildTasks;

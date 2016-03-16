@@ -147,7 +147,7 @@ function buildConfig(customConfig) {
     frameworks: ['systemjs', 'jasmine-jquery', 'jasmine', 'es6-shim'],
     reporters: ['progress', 'coverage'],
     preprocessors: {},
-    browsers: ['PhantomJS'],
+    browsers: ['Chrome'],
     autoWatch: false,
     singleRun: true,
     coverageReporter: {
