@@ -103,18 +103,6 @@ function buildConfig(customConfig) {
     parser: 'babel-eslint',
     extends: 'airbnb/base',
     useEslintrc: false,
-    globals: {
-      angular: true,
-      $: true,
-    },
-    rules: {
-      'max-len': 0,
-      'no-param-reassign': 0,
-    },
-  };
-
-  cfg.esLintTestConfig = Object.assign({}, cfg.esLintConfig, {
-    extends: 'airbnb/legacy',
     env: {
       jasmine: true,
     },
@@ -128,10 +116,8 @@ function buildConfig(customConfig) {
     rules: {
       'max-len': 0,
       'no-param-reassign': 0,
-      'func-names': 0,
-      'comma-dangle': 0,
     },
-  });
+  };
 
   cfg.systemjsOptions = {
     transpiler: 'babel',
@@ -149,7 +135,7 @@ function buildConfig(customConfig) {
     preprocessors: {},
     browsers: ['Chrome'],
     autoWatch: false,
-    singleRun: true,
+    singleRun: false,
     coverageReporter: {
       instrumenters: {
         isparta: require('isparta'),
@@ -178,7 +164,6 @@ function buildConfig(customConfig) {
           systemjs: getRelativeModulePath('systemjs/dist/system'),
           'system-polyfills': getRelativeModulePath('systemjs/dist/system-polyfills'),
           'es6-module-loader': getRelativeModulePath('es6-module-loader/dist/es6-module-loader'),
-          'phantomjs-polyfill': getRelativeModulePath('phantomjs-polyfill/bind-polyfill'),
         },
       },
     },

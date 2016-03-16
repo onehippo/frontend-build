@@ -47,17 +47,6 @@ function buildTasks(customConfig, localGulp) {
   const gulp = localGulp || require('gulp');
   const bsServer = browserSync.create();
 
-  function createLintFunction(src, lintConfig) {
-    return function lintScripts() {
-      return gulp
-        .src(src)
-        .pipe(plumber(cfg.plumberOptions))
-        .pipe(esLint(lintConfig))
-        .pipe(esLint.format())
-        .pipe(esLint.failAfterError());
-    };
-  }
-
   function clean() {
     return del([cfg.distDir, cfg.coverageDir]);
   }
@@ -123,6 +112,15 @@ function buildTasks(customConfig, localGulp) {
   }
 
   function scripts(done) {
+    function lintScripts() {
+      return gulp
+        .src(cfg.src.scripts)
+        .pipe(plumber(cfg.plumberOptions))
+        .pipe(esLint(cfg.esLintConfig))
+        .pipe(esLint.format())
+        .pipe(esLint.failAfterError());
+    }
+
     function transpile() {
       const systemjs = new Builder();
       systemjs.config(cfg.systemjsOptions);
@@ -182,7 +180,7 @@ function buildTasks(customConfig, localGulp) {
     }
 
     gulp.series(
-      createLintFunction(cfg.src.scripts, cfg.esLintConfig),
+      lintScripts,
       transpile,
       annotate,
       addPolyfills,
@@ -190,22 +188,38 @@ function buildTasks(customConfig, localGulp) {
     )(done);
   }
 
-  function runKarma(done) {
-    karmaRunner.run({
-      configFile: cfg.karmaConfig,
-    }, done);
+  function test(done) {
+    function lintScripts() {
+      return gulp
+        .src(cfg.src.unitTests)
+        .pipe(plumber(cfg.plumberOptions))
+        .pipe(esLint(cfg.esLintConfig))
+        .pipe(esLint.format())
+        .pipe(esLint.failAfterError());
+    }
+
+    function runKarma(karmaDone) {
+      karmaRunner.run({
+        configFile: cfg.karmaConfig,
+      }, karmaDone);
+    }
+
+    gulp.series(
+      lintScripts,
+      runKarma
+    )(done);
   }
 
   function startKarma(done) {
     new KarmaServer({
       configFile: cfg.karmaConfig,
-      singleRun: false,
     }, done).start();
   }
 
-  function test(done) {
+  function testSingleRun(done) {
     new KarmaServer({
       configFile: cfg.karmaConfig,
+      singleRun: true,
     }, done).start();
   }
 
@@ -370,7 +384,7 @@ function buildTasks(customConfig, localGulp) {
       cfg.src.templates,
       cfg.src.unitTests,
       cfg.src.fixtures.pattern,
-    ], debounce(gulp.series('runKarma'), 200));
+    ], debounce(gulp.series('test'), 200));
 
     if (cfg.env.maven) {
       gulp.watch(cfg.src.indexHtml, gulp.series('bsInject'));
@@ -391,10 +405,10 @@ function buildTasks(customConfig, localGulp) {
   gulp.task(fonts);
   gulp.task(i18n);
   gulp.task(images);
-  gulp.task(runKarma);
   gulp.task(scripts);
   gulp.task(serve);
   gulp.task(serveDist);
+  gulp.task(testSingleRun);
   gulp.task(startKarma);
   gulp.task(styles);
   gulp.task(symlinkDependencies);
