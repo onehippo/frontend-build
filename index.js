@@ -366,7 +366,7 @@ function buildTasks(customConfig, localGulp) {
     }
   }
 
-  function watch() {
+  function watchForChanges() {
     gulp.watch(cfg.src.styles, gulp.series('styles'));
     gulp.watch(cfg.src.images, gulp.series('images'));
     gulp.watch(cfg.src.fonts, gulp.series('fonts'));
@@ -377,14 +377,7 @@ function buildTasks(customConfig, localGulp) {
     gulp.watch([
       cfg.src.scripts,
       cfg.src.templates,
-    ], gulp.series('scripts'));
-
-    gulp.watch([
-      cfg.src.scripts,
-      cfg.src.templates,
-      cfg.src.unitTests,
-      cfg.src.fixtures.pattern,
-    ], debounce(gulp.series('test'), 200));
+    ], debounce(gulp.series('scripts'), 200));
 
     if (cfg.env.maven) {
       gulp.watch(cfg.src.indexHtml, gulp.series('bsInject'));
@@ -414,7 +407,7 @@ function buildTasks(customConfig, localGulp) {
   gulp.task(symlinkDependencies);
   gulp.task(test);
   gulp.task(unlinkDependencies);
-  gulp.task('watch', gulp.parallel(startKarma, watch));
+  gulp.task('watch', gulp.parallel(startKarma, watchForChanges));
 }
 
 module.exports.buildTasks = buildTasks;

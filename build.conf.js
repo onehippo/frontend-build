@@ -134,7 +134,7 @@ function buildConfig(customConfig) {
     reporters: ['progress', 'coverage'],
     preprocessors: {},
     browsers: ['Chrome'],
-    autoWatch: false,
+    autoWatch: true,
     singleRun: false,
     coverageReporter: {
       instrumenters: {
