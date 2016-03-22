@@ -140,24 +140,6 @@ function buildTasks(customConfig, localGulp) {
         .pipe(gulp.dest(cfg.dist.scripts));
     }
 
-    function addPolyfills() {
-      const babelCorePath = getRelativeModuleFolderPath('babel-core');
-      const babelPolyfill = `${babelCorePath}/browser-polyfill.js`;
-
-      return gulp
-        .src([
-          babelPolyfill,
-          cfg.dist.indexScript,
-        ])
-        .pipe(plumber(cfg.plumberOptions))
-        .pipe(sourceMaps.init({
-          loadMaps: true,
-        }))
-        .pipe(concat(`${cfg.projectName}.js`))
-        .pipe(sourceMaps.write('./'))
-        .pipe(gulp.dest(cfg.dist.scripts));
-    }
-
     function html2js() {
       return gulp
         .src([
@@ -178,13 +160,7 @@ function buildTasks(customConfig, localGulp) {
         .pipe(bsServer.stream());
     }
 
-    gulp.series(
-      lintScripts,
-      transpile,
-      annotate,
-      addPolyfills,
-      html2js
-    )(done);
+    gulp.series(lintScripts, transpile, annotate, html2js)(done);
   }
 
   function test(done) {
