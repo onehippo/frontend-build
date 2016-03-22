@@ -23,12 +23,6 @@ function getRelativeModulePath(moduleName) {
   return path.relative(appRoot, modulePath);
 }
 
-function getRelativeModuleFolderPath(moduleName) {
-  const relativeModulePath = getRelativeModulePath(moduleName);
-  return path.dirname(relativeModulePath);
-}
-
 module.exports = {
   getRelativeModulePath,
-  getRelativeModuleFolderPath,
 };
