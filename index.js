@@ -40,7 +40,6 @@ const sourceMaps = require('gulp-sourcemaps');
 const templateCache = require('gulp-angular-templatecache');
 const uglify = require('gulp-uglify');
 const usemin = require('gulp-usemin');
-const getRelativeModuleFolderPath = require('./utils.js').getRelativeModuleFolderPath;
 
 function buildTasks(customConfig, localGulp) {
   const cfg = buildConfig(customConfig);
@@ -171,10 +170,10 @@ function buildTasks(customConfig, localGulp) {
             return url.replace(/.*angularjs(?:\\|\/)/gi, '');
           },
 
-          module: `${cfg.projectName}-templates`,
+          module: 'templates',
           standalone: true,
         })))
-        .pipe(concat(`${cfg.projectName}.js`))
+        .pipe(concat('index.js'))
         .pipe(gulp.dest(cfg.dist.scripts))
         .pipe(bsServer.stream());
     }

@@ -25,60 +25,60 @@ function exitOnErrorHandler(error) {
 }
 
 function buildConfig(customConfig) {
-  const cfg = {};
   const customCfg = customConfig || {};
 
-  /* All the folder/file patterns*/
-  cfg.appRoot = appRootDir.get();
-  cfg.srcDir = customCfg.srcDir || 'src';
-  cfg.distDir = customCfg.distDir || 'dist';
-  cfg.bowerDir = customCfg.bowerDir || 'bower_components';
-  cfg.npmDir = customCfg.npmDir || 'node_modules';
+  /* Gulp file and folder glob patterns */
+  const cfg = {
+    appRoot: appRootDir.get(),
+    srcDir: 'src',
+    distDir: customCfg.distDir || 'dist',
+    npmDir: 'node_modules',
+    bowerDir: 'bower_components',
+    bowerLinks: [],
+    copyFiles: [],
+    coverageDir: 'coverage',
+  };
+
   cfg.targetBowerDir = cfg.distDir + cfg.bowerDir;
   cfg.targetNpmDir = cfg.distDir + cfg.npmDir;
-  cfg.coverageDir = 'coverage';
 
-  cfg.projectName = require(`${cfg.appRoot}/package.json`).name;
-
-  cfg.src = {};
-  cfg.src.styles = `${cfg.srcDir}/styles/**/*.scss`;
-  cfg.src.indexStyles = `${cfg.srcDir}/styles/[!_]*.scss`;
-  cfg.src.images = `${cfg.srcDir}/images/**/*.{png,jpg,gif,ico,svg}`;
-  cfg.src.fonts = `${cfg.srcDir}/fonts/**/*`;
-  cfg.src.indexScript = `${cfg.srcDir}/angularjs/${cfg.projectName}.js`;
-  cfg.src.unitTests = `${cfg.srcDir}/**/*.spec.js`;
-  cfg.src.scripts = `${cfg.srcDir}/**/!(*.spec|*.fixture).js`;
-  cfg.src.templates = `${cfg.srcDir}/**/!(index|*.fixture).html`;
-  cfg.src.fixtures = {
-    pattern: `${cfg.srcDir}/**/*.fixture.+(js|html|css|json)`,
-    included: false,
+  cfg.src = {
+    indexHtml: `${cfg.srcDir}/*.html`,
+    templates: `${cfg.srcDir}/**/!(index|*.fixture).html`,
+    indexStyles: `${cfg.srcDir}/**/[!_]*.scss`,
+    styles: `${cfg.srcDir}/**/*.scss`,
+    indexScript: `${cfg.srcDir}/index.js`,
+    scripts: `${cfg.srcDir}/**/!(*.spec|*.fixture).js`,
+    unitTests: `${cfg.srcDir}/**/*.spec.js`,
+    fixtures: {
+      pattern: `${cfg.srcDir}/**/*.fixture.+(js|html|css|json)`,
+      included: false,
+    },
+    images: `${cfg.srcDir}/images/**/*.{png,jpg,gif,ico,svg}`,
+    fonts: `${cfg.srcDir}/fonts/**/*`,
+    i18n: `${cfg.srcDir}/i18n/**`,
   };
-  cfg.src.i18n = `${cfg.srcDir}/i18n/**`;
-  cfg.src.indexHtml = `${cfg.srcDir}/index.html`;
 
-  cfg.dist = {};
-  cfg.dist.indexHtml = `${cfg.distDir}/index.html`;
-  cfg.dist.styles = `${cfg.distDir}/styles/`;
-  cfg.dist.fonts = `${cfg.distDir}/fonts/`;
-  cfg.dist.scripts = `${cfg.distDir}/scripts/`;
-  cfg.dist.indexScript = `${cfg.distDir}/scripts/${cfg.projectName}.js`;
-  cfg.dist.images = `${cfg.distDir}/images/`;
-  cfg.dist.i18n = `${cfg.distDir}/i18n/`;
-
-  cfg.bowerLinks = [];
-  cfg.karmaFixtureProxyPath = `/base/${cfg.srcDir}/angularjs/`;
-
-  cfg.copyFiles = [];
+  cfg.dist = {
+    indexHtml: `${cfg.distDir}/*.html`,
+    indexScript: `${cfg.distDir}/scripts/index.js`,
+    scripts: `${cfg.distDir}/scripts/`,
+    styles: `${cfg.distDir}/styles/`,
+    images: `${cfg.distDir}/images/`,
+    fonts: `${cfg.distDir}/fonts/`,
+    i18n: `${cfg.distDir}/i18n/`,
+  };
 
   /* Gulp Task configuration options */
   cfg.env = {};
   cfg.env.maven = false;
 
   cfg.plumberOptions = {};
-
   if (yargs.failOnGulpError) {
     cfg.plumberOptions.errorHandler = exitOnErrorHandler;
   }
+
+  cfg.serverPort = 9000;
 
   cfg.supportedBrowsers = [
     'last 1 Chrome versions',
@@ -124,18 +124,20 @@ function buildConfig(customConfig) {
     defaultJSExtensions: true,
   };
 
-  cfg.serverPort = 9000;
-
   cfg.karmaConfig = `${cfg.appRoot}/karma.conf.js`;
+  cfg.karmaFixtureProxyPath = `/base/${cfg.srcDir}/angularjs/`;
 
   cfg.karma = {
     basePath: '.',
     frameworks: ['systemjs', 'jasmine-jquery', 'jasmine', 'es6-shim'],
     reporters: ['progress', 'coverage'],
-    preprocessors: {},
     browsers: ['Chrome'],
     autoWatch: true,
     singleRun: false,
+    preprocessors: {
+      [cfg.src.scripts]: ['coverage'],
+      [cfg.src.templates]: ['ng-html2js'],
+    },
     coverageReporter: {
       instrumenters: {
         isparta: require('isparta'),
@@ -153,7 +155,7 @@ function buildConfig(customConfig) {
     },
     ngHtml2JsPreprocessor: {
       stripPrefix: 'src/angularjs/',
-      moduleName: `${cfg.projectName}-templates`,
+      moduleName: 'templates',
     },
     systemjs: {
       config: {
@@ -172,9 +174,6 @@ function buildConfig(customConfig) {
       '/spec/javascripts/fixtures/json/': cfg.karmaFixtureProxyPath,
     },
   };
-
-  cfg.karma.preprocessors[cfg.src.scripts] = ['coverage'];
-  cfg.karma.preprocessors[cfg.src.templates] = ['ng-html2js'];
 
   return Object.assign({}, cfg, customCfg);
 }
