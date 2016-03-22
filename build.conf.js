@@ -83,8 +83,8 @@ function buildConfig(customConfig) {
   cfg.supportedBrowsers = [
     'last 1 Chrome versions',
     'last 1 Firefox versions',
-    'Safari >= 7',
-    'Explorer >= 10',
+    'Safari >= 8',
+    'Explorer >= 11',
   ];
 
   cfg.serverMiddlewares = [];
