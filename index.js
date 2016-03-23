@@ -97,10 +97,23 @@ function buildTasks(customConfig, localGulp) {
     done();
   }
 
-  function symlinkDependencies() {
-    return gulp
-      .src(`${cfg.bowerDir}/**/*`)
-      .pipe(gulp.dest(cfg.distDir + cfg.bowerDir));
+  function symlinkDependencies(done) {
+    function copyBower() {
+      return gulp
+        .src(`${cfg.bowerDir}/**/*`)
+        .pipe(gulp.dest(cfg.targetBowerDir));
+    }
+
+    function copyNpm() {
+      return gulp
+        .src([
+          `${cfg.npmDir}/**/browser-polyfill.js`,
+          `${cfg.npmDir}/**/system-polyfills.js`,
+        ])
+        .pipe(gulp.dest(cfg.targetNpmDir));
+    }
+
+    gulp.series(copyBower, copyNpm)(done);
   }
 
   function unlinkDependencies() {
