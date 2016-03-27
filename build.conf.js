@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+'use strict';
+
 const appRootDir = require('app-root-dir');
 const getRelativeModulePath = require('./utils.js').getRelativeModulePath;
 const gutil = require('gulp-util');
@@ -62,11 +64,11 @@ function buildConfig(customConfig) {
   cfg.dist = {
     indexHtml: `${cfg.distDir}/*.html`,
     indexScript: `${cfg.distDir}/scripts/index.js`,
-    scripts: `${cfg.distDir}/scripts/`,
-    styles: `${cfg.distDir}/styles/`,
-    images: `${cfg.distDir}/images/`,
-    fonts: `${cfg.distDir}/fonts/`,
-    i18n: `${cfg.distDir}/i18n/`,
+    scripts: `${cfg.distDir}/scripts`,
+    styles: `${cfg.distDir}/styles`,
+    images: `${cfg.distDir}/images`,
+    fonts: `${cfg.distDir}/fonts`,
+    i18n: `${cfg.distDir}/i18n`,
   };
 
   /* Gulp Task configuration options */
@@ -130,9 +132,9 @@ function buildConfig(customConfig) {
   cfg.karma = {
     basePath: '.',
     frameworks: ['systemjs', 'jasmine-jquery', 'jasmine', 'es6-shim'],
-    reporters: ['progress', 'coverage'],
+    reporters: ['mocha', 'coverage'],
     browsers: ['Chrome'],
-    autoWatch: true,
+    autoWatch: false,
     singleRun: false,
     preprocessors: {
       [cfg.src.scripts]: ['coverage'],
@@ -149,7 +151,7 @@ function buildConfig(customConfig) {
         {
           type: 'html',
         }, {
-          type: 'text-summary',
+          type: 'text',
         },
       ],
     },
@@ -173,6 +175,11 @@ function buildConfig(customConfig) {
       '/spec/javascripts/fixtures/': cfg.karmaFixtureProxyPath,
       '/spec/javascripts/fixtures/json/': cfg.karmaFixtureProxyPath,
     },
+    files: [
+      cfg.src.templates,
+      cfg.src.scripts,
+      cfg.src.unitTests,
+    ],
   };
 
   return Object.assign({}, cfg, customCfg);

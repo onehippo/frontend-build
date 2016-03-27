@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+'use strict';
+
 const autoprefixer = require('gulp-autoprefixer');
 const browserSync = require('browser-sync');
 const buildConfig = require('./build.conf.js');
@@ -35,7 +37,6 @@ const rev = require('gulp-rev');
 const sass = require('gulp-sass');
 const sassLint = require('gulp-sass-lint');
 const KarmaServer = require('karma').Server;
-const karmaRunner = require('karma').runner;
 const sourceMaps = require('gulp-sourcemaps');
 const templateCache = require('gulp-angular-templatecache');
 const uglify = require('gulp-uglify');
@@ -176,38 +177,48 @@ function buildTasks(customConfig, localGulp) {
     gulp.series(lintScripts, transpile, annotate, html2js)(done);
   }
 
+  function lintTests() {
+    return gulp
+      .src(cfg.src.unitTests)
+      .pipe(plumber(cfg.plumberOptions))
+      .pipe(esLint(cfg.esLintConfig))
+      .pipe(esLint.format())
+      .pipe(esLint.failAfterError());
+  }
+
   function test(done) {
-    function lintScripts() {
-      return gulp
-        .src(cfg.src.unitTests)
-        .pipe(plumber(cfg.plumberOptions))
-        .pipe(esLint(cfg.esLintConfig))
-        .pipe(esLint.format())
-        .pipe(esLint.failAfterError());
-    }
-
-    function runKarma(karmaDone) {
-      karmaRunner.run({
+    function runTests(karmaDone) {
+      new KarmaServer({
         configFile: cfg.karmaConfig,
-      }, karmaDone);
+        singleRun: true,
+      }, karmaDone).start();
     }
 
-    gulp.series(
-      lintScripts,
-      runKarma
-    )(done);
+    gulp.series(lintTests, runTests)(done);
+  }
+
+  function runKarma(done) {
+    function runTests(karmaDone) {
+      let cmd;
+      const exec = require('child_process').exec;
+
+      if (process.platform === 'win32') {
+        cmd = 'node_modules\\.bin\\karma run';
+      } else {
+        cmd = 'node node_modules/.bin/karma run';
+      }
+
+      exec(cmd, () => {
+        karmaDone();
+      });
+    }
+
+    gulp.series(lintTests, runTests)(done);
   }
 
   function startKarma(done) {
     new KarmaServer({
       configFile: cfg.karmaConfig,
-    }, done).start();
-  }
-
-  function testSingleRun(done) {
-    new KarmaServer({
-      configFile: cfg.karmaConfig,
-      singleRun: true,
     }, done).start();
   }
 
@@ -367,6 +378,11 @@ function buildTasks(customConfig, localGulp) {
       cfg.src.templates,
     ], debounce(gulp.series('scripts'), 200));
 
+    gulp.watch([
+      cfg.src.scripts,
+      cfg.src.unitTests,
+    ], debounce(gulp.series('runKarma'), 200));
+
     if (cfg.env.maven) {
       gulp.watch(cfg.src.indexHtml, gulp.series('bsInject'));
     } else {
@@ -389,7 +405,7 @@ function buildTasks(customConfig, localGulp) {
   gulp.task(scripts);
   gulp.task(serve);
   gulp.task(serveDist);
-  gulp.task(testSingleRun);
+  gulp.task(runKarma);
   gulp.task(startKarma);
   gulp.task(styles);
   gulp.task(symlinkDependencies);
