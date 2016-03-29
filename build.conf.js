@@ -140,6 +140,9 @@ function buildConfig(customConfig) {
       [cfg.src.scripts]: ['coverage'],
       [cfg.src.templates]: ['ng-html2js'],
     },
+    mochaReporter: {
+      output: 'minimal',
+    },
     coverageReporter: {
       instrumenters: {
         isparta: require('isparta'),
@@ -151,7 +154,7 @@ function buildConfig(customConfig) {
         {
           type: 'html',
         }, {
-          type: 'text',
+          type: 'text-summary',
         },
       ],
     },
