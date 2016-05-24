@@ -101,7 +101,7 @@ function buildTasks(customConfig, localGulp) {
   function symlinkDependencies(done) {
     function copyBower() {
       return gulp
-        .src(`${cfg.bowerDir}/**/*`)
+        .src(`${cfg.bowerDir}/**/*`, { follow: true })
         .pipe(gulp.dest(cfg.targetBowerDir));
     }
 
