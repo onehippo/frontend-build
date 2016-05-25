@@ -74,3 +74,5 @@ To create a minor release, run:
 npm version minor
 git push
 ```
+
+Last, create a description for the released version at https://github.com/onehippo/hippo-build/releases/new.
