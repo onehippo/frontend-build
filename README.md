@@ -60,3 +60,17 @@ beforeEach(function () {
   jasmine.getJSONFixtures().fixturesPath = 'base/spec/json/fixtures';
 });
 ```
+
+## Releasing hippo-build
+
+To create patch release, run:
+```
+npm version patch
+git push
+```
+
+To create a minor release, run:
+```
+npm version minor
+git push
+```
