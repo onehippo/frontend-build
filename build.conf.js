@@ -102,7 +102,6 @@ function buildConfig(customConfig) {
   };
 
   cfg.esLintConfig = {
-    parser: 'babel-eslint',
     extends: 'airbnb/base',
     useEslintrc: false,
     env: {
@@ -114,6 +113,9 @@ function buildConfig(customConfig) {
       $j: true,
       inject: true,
       module: true,
+    },
+    parserOptions: {
+      ecmaVersion: 6,
     },
     rules: {
       'max-len': 0,
@@ -170,7 +172,6 @@ function buildConfig(customConfig) {
           babel: getRelativeModulePath('babel-core/browser'),
           systemjs: getRelativeModulePath('systemjs/dist/system'),
           'system-polyfills': getRelativeModulePath('systemjs/dist/system-polyfills'),
-          'es6-module-loader': getRelativeModulePath('es6-module-loader/dist/es6-module-loader'),
         },
       },
     },
