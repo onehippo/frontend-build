@@ -23,9 +23,9 @@ const Builder = require('systemjs-builder');
 const concat = require('gulp-concat');
 const cssnano = require('gulp-cssnano');
 const debounce = require('debounce');
-const del = require('del');
 const esLint = require('gulp-eslint');
 const filter = require('gulp-filter');
+const fs = require('fs-extra');
 const gulpif = require('gulp-if');
 const htmlmin = require('gulp-htmlmin');
 const imagemin = require('gulp-imagemin');
@@ -47,8 +47,10 @@ function buildTasks(customConfig, localGulp) {
   const gulp = localGulp || require('gulp');
   const bsServer = browserSync.create();
 
-  function clean() {
-    return del([cfg.distDir, cfg.coverageDir]);
+  function clean(done) {
+    fs.removeSync(cfg.distDir);
+    fs.removeSync(cfg.coverageDir);
+    done();
   }
 
   function styles() {
@@ -98,30 +100,20 @@ function buildTasks(customConfig, localGulp) {
     done();
   }
 
-  function symlinkDependencies(done) {
-    function copyBower() {
-      return gulp
-        .src(`${cfg.bowerDir}/**/*`, { follow: true })
-        .pipe(gulp.dest(cfg.targetBowerDir));
-    }
+  function copyDependencies(done) {
+    fs.copySync(cfg.bowerDir, cfg.distDir);
 
-    function copyNpm() {
-      return gulp
-        .src([
-          `${cfg.npmDir}/**/browser-polyfill.js`,
-          `${cfg.npmDir}/**/system-polyfills.js`,
-        ])
-        .pipe(gulp.dest(cfg.targetNpmDir));
-    }
+    ['babel-core/browser-polyfill.js', 'systemjs/dist/system-polyfills.js'].forEach((file) => {
+      fs.copySync(`${cfg.npmDir}/${file}`, `${cfg.targetNpmDir}/${file}`);
+    });
 
-    gulp.series(copyBower, copyNpm)(done);
+    done();
   }
 
-  function unlinkDependencies() {
-    return del([
-      cfg.targetBowerDir,
-      cfg.targetNpmDir,
-    ]);
+  function cleanupDependencies(done) {
+    fs.remove(cfg.targetBowerDir);
+    fs.remove(cfg.targetNpmDir);
+    done();
   }
 
   function scripts(done) {
@@ -340,7 +332,7 @@ function buildTasks(customConfig, localGulp) {
           'copyFiles',
           'i18n',
           'dev',
-          'symlinkDependencies'
+          'copyDependencies'
         )
       )(done);
     } else {
@@ -359,7 +351,7 @@ function buildTasks(customConfig, localGulp) {
 
   function buildDist(done) {
     if (cfg.env.maven) {
-      gulp.series('build', 'dist', 'unlinkDependencies')(done);
+      gulp.series('build', 'dist', 'cleanupDependencies')(done);
     } else {
       gulp.series('build', 'dist')(done);
     }
@@ -408,9 +400,9 @@ function buildTasks(customConfig, localGulp) {
   gulp.task(runKarma);
   gulp.task(startKarma);
   gulp.task(styles);
-  gulp.task(symlinkDependencies);
+  gulp.task(copyDependencies);
   gulp.task(test);
-  gulp.task(unlinkDependencies);
+  gulp.task(cleanupDependencies);
   gulp.task('watch', gulp.parallel(startKarma, watchForChanges));
 }
 
