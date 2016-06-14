@@ -1,5 +1,5 @@
 {
-  "name": "frontend-build",
+  "name": "@onehippo/frontend-build",
   "version": "0.0.41",
   "main": "index.js",
   "license": "Apache-2.0",
