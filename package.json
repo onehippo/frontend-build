@@ -4,6 +4,9 @@
   "version": "0.0.41",
   "main": "index.js",
   "license": "Apache-2.0",
+  "publishConfig" : {
+    "registry" : "https://maven.onehippo.com/npm-private/"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/onehippo/frontend-build"
