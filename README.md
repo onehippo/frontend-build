@@ -1,17 +1,17 @@
-# hippo-build
+# frontend-build
 
 ## Testing
 
 ### Unit tests
-Hippo-build supports unit testing using Karma and Jasmine. The test files are located using the following file pattern `**/*.spec.js`.
+Frontend-build supports unit testing using Karma and Jasmine. The test files are located using the following file pattern `**/*.spec.js`.
 
 #### Loading HTML, CSS and JSON fixtures
-The default Karma setup of hippo-build exposes the [jasmine-jquery](https://github.com/velesin/jasmine-jquery) module
+The default Karma setup of frontend-build exposes the [jasmine-jquery](https://github.com/velesin/jasmine-jquery) module
 for handling HTML, CSS and JSON fixtures, as well as provide a set of custom matchers that simplify validating DOM conditions, e.g. `expect($('#id-name')[0]).toBeInDOM()`.
 
 Fixture files should be defined adjacent to the spec files that use them, or at least as close as possible. They follow the same naming convention as the spec files and are named with a `.fixture` suffix, e.g. `cms.login.fixture.html` or `cms.config.fixture.json`. Karma can be instructed to serve fixture files over it's HTTP-server by adding a file pattern  to the `files` array in the project's `karma.conf.js`. The default pattern is saved in `cfg.src.fixtures` and matches `{ pattern: cfg.srcDir + '**/*.fixture.+(js|html|css|json)', included: false}`.
 
-Hippo-build instructs Karma by default to proxy the path `/spec/javascripts/fixtures/` (which is the default fixtures path of jasmine-jquery) to `/base/src/angularjs/`. This is a combination of Karma's base path for serving files over HTTP and the root folder where hippo-build expects your Angular code to live.
+Frontend-build instructs Karma by default to proxy the path `/spec/javascripts/fixtures/` (which is the default fixtures path of jasmine-jquery) to `/base/src/angularjs/`. This is a combination of Karma's base path for serving files over HTTP and the root folder where frontend-build expects your Angular code to live.
 
 When changing the karma options you can customize the proxy path with the following options:
 * override `cfg.srcDir` in your build.conf.js which changes the default proxy path from `/base/src/angularjs` to `/base/[your src dir]/angularjs`
@@ -61,7 +61,7 @@ beforeEach(function () {
 });
 ```
 
-## Releasing hippo-build
+## Releasing frontend-build
 
 To create patch release, run:
 ```
@@ -75,4 +75,4 @@ npm version minor
 git push
 ```
 
-Last, create a description for the released version at https://github.com/onehippo/hippo-build/releases/new.
+Last, create a description for the released version at https://github.com/onehippo/frontend-build/releases/new.
