@@ -131,6 +131,7 @@ function buildTasks(customConfig, localGulp) {
       systemjs.config(cfg.systemjsOptions);
       return systemjs.buildStatic(cfg.src.indexScript, cfg.dist.indexScript, {
         sourceMaps: true,
+        lowResSourceMaps: true,
       });
     }
 

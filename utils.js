@@ -16,6 +16,7 @@
 
 const path = require('path');
 const appRootDir = require('app-root-dir');
+const gutil = require('gulp-util');
 
 function getRelativeModulePath(moduleName) {
   const appRoot = appRootDir.get();
@@ -23,6 +24,31 @@ function getRelativeModulePath(moduleName) {
   return path.relative(appRoot, modulePath);
 }
 
+function exitOnErrorHandler(error) {
+  gutil.log('Unhandled error found, exiting gulp:', error.toString());
+  return process.exit(1);
+}
+
+function isObject(item) {
+  return (item && typeof item === 'object' && !Array.isArray(item) && item !== null);
+}
+
+function mergeDeep(target, source) {
+  if (isObject(target) && isObject(source)) {
+    Object.keys(source).forEach(key => {
+      if (isObject(source[key])) {
+        if (!target[key]) Object.assign(target, { [key]: {} });
+        mergeDeep(target[key], source[key]);
+      } else {
+        Object.assign(target, { [key]: source[key] });
+      }
+    });
+  }
+  return target;
+}
+
 module.exports = {
+  exitOnErrorHandler,
   getRelativeModulePath,
+  mergeDeep,
 };

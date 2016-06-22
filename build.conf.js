@@ -18,13 +18,9 @@
 
 const appRootDir = require('app-root-dir');
 const getRelativeModulePath = require('./utils.js').getRelativeModulePath;
-const gutil = require('gulp-util');
+const mergeDeep = require('./utils.js').mergeDeep;
+const exitOnErrorHandler = require('./utils.js').exitOnErrorHandler;
 const yargs = require('yargs').argv;
-
-function exitOnErrorHandler(error) {
-  gutil.log('Unhandled error found, exiting gulp:', error.toString());
-  return process.exit(1);
-}
 
 function buildConfig(customConfig) {
   const customCfg = customConfig || {};
@@ -186,7 +182,7 @@ function buildConfig(customConfig) {
     ],
   };
 
-  return Object.assign({}, cfg, customCfg);
+  return mergeDeep(cfg, customCfg);
 }
 
 module.exports = buildConfig;
