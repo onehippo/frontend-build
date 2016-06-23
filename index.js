@@ -330,6 +330,7 @@ function buildTasks(customConfig, localGulp) {
           'scripts',
           'styles',
           'images',
+          'fonts',
           'copyFiles',
           'i18n',
           'dev',
@@ -342,6 +343,7 @@ function buildTasks(customConfig, localGulp) {
         gulp.parallel('scripts',
           'styles',
           'images',
+          'fonts',
           'copyFiles',
           'i18n',
           'dev'
