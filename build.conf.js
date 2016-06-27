@@ -31,13 +31,18 @@ function buildConfig(customConfig) {
     srcDir: 'src',
     distDir: customCfg.distDir || 'dist',
     npmDir: 'node_modules',
-    bowerDir: 'bower_components',
-    bowerLinks: [],
+    npmLinks: [],
     copyFiles: [],
     coverageDir: 'coverage',
   };
 
-  cfg.targetBowerDir = cfg.distDir + cfg.bowerDir;
+  if (customCfg.dependencies) {
+    customCfg.dependencies = customCfg.dependencies.concat([
+      'babel-core/browser-polyfill.js',
+      'systemjs/dist/system-polyfills.js',
+    ]);
+  }
+
   cfg.targetNpmDir = cfg.distDir + cfg.npmDir;
 
   cfg.src = {

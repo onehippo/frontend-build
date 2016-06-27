@@ -101,9 +101,7 @@ function buildTasks(customConfig, localGulp) {
   }
 
   function copyDependencies(done) {
-    fs.copySync(cfg.bowerDir, cfg.targetBowerDir);
-
-    ['babel-core/browser-polyfill.js', 'systemjs/dist/system-polyfills.js'].forEach((file) => {
+    cfg.dependencies.forEach((file) => {
       fs.copySync(`${cfg.npmDir}/${file}`, `${cfg.targetNpmDir}/${file}`);
     });
 
@@ -111,7 +109,6 @@ function buildTasks(customConfig, localGulp) {
   }
 
   function cleanupDependencies(done) {
-    fs.remove(cfg.targetBowerDir);
     fs.remove(cfg.targetNpmDir);
     done();
   }
