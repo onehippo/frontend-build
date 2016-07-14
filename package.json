@@ -11,7 +11,7 @@
     "url": "https://github.com/onehippo/frontend-build"
   },
   "engines": {
-    "node": "5"
+    "node": "6"
   },
   "dependencies": {
     "app-root-dir": "1.0.2",
@@ -44,7 +44,7 @@
     "gulp-usemin": "0.3.23",
     "isparta": "3.5.3",
     "jasmine-core": "2.4.1",
-    "karma": "0.13.22",
+    "karma": "1.1.1",
     "karma-chrome-launcher": "1.0.1",
     "karma-coverage": "0.5.5",
     "karma-es6-shim": "1.0.0",
