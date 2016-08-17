@@ -22,7 +22,6 @@ const buildConfig = require('./build.conf.js');
 const Builder = require('systemjs-builder');
 const concat = require('gulp-concat');
 const cssnano = require('gulp-cssnano');
-const debounce = require('debounce');
 const esLint = require('gulp-eslint');
 const filter = require('gulp-filter');
 const fs = require('fs-extra');
@@ -368,12 +367,12 @@ function buildTasks(customConfig, localGulp) {
     gulp.watch([
       cfg.src.scripts,
       cfg.src.templates,
-    ], debounce(gulp.series('scripts'), 200));
+    ], gulp.series('scripts'));
 
     gulp.watch([
       cfg.src.scripts,
       cfg.src.unitTests,
-    ], debounce(gulp.series('runKarma'), 200));
+    ], gulp.series('runKarma'));
 
     if (cfg.env.maven) {
       gulp.watch(cfg.src.indexHtml, gulp.series('bsInject'));
