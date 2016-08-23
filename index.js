@@ -27,6 +27,7 @@ const esLint = require('gulp-eslint');
 const filter = require('gulp-filter');
 const fs = require('fs-extra');
 const gulpif = require('gulp-if');
+const gulputil = require('gulp-util');
 const htmlmin = require('gulp-htmlmin');
 const imagemin = require('gulp-imagemin');
 const insertLines = require('gulp-insert-lines');
@@ -113,16 +114,46 @@ function buildTasks(customConfig, localGulp) {
     done();
   }
 
-  function scripts(done) {
-    function lintScripts() {
-      return gulp
-        .src(cfg.src.scripts)
-        .pipe(plumber(cfg.plumberOptions))
-        .pipe(esLint(cfg.esLintConfig))
-        .pipe(esLint.format())
-        .pipe(esLint.failAfterError());
-    }
+  function lint(sources) {
+    return gulp
+      .src(sources)
+      .pipe(plumber(cfg.plumberOptions))
+      .pipe(esLint(cfg.esLintConfig))
+      .pipe(esLint.format());
+  }
 
+  function lintAll() {
+    return lint([cfg.src.scripts, cfg.src.unitTests])
+      .pipe(esLint.failAfterError());
+  }
+
+  function lintChanges(sources) {
+    const changedPaths = new Set();
+    let lintRunning = false;
+
+    gulp.watch(sources).on('change', (path) => {
+      changedPaths.add(path);
+
+      if (!lintRunning) {
+        gulputil.log('Linting changes...');
+        lintRunning = true;
+        lint(Array.from(changedPaths))
+          .pipe(esLint.result(result => {
+            if (result.messages.length === 0) {
+              changedPaths.delete(result.filePath);
+            }
+          }))
+          .pipe(esLint.results(results => {
+            if (results.warningCount + results.errorCount === 0) {
+              gulputil.log('Lint OK');
+            }
+          }));
+        lintRunning = false;
+      }
+    });
+  }
+
+  function scripts(done) {
     function transpile() {
       const systemjs = new Builder();
       systemjs.config(cfg.systemjsOptions);
@@ -152,10 +183,7 @@ function buildTasks(customConfig, localGulp) {
         ])
         .pipe(plumber(cfg.plumberOptions))
         .pipe(gulpif('*.html', templateCache({
-          transformUrl: function transformUrl(url) {
-            return url.replace(/.*angularjs(?:\\|\/)/gi, '');
-          },
-
+          transformUrl: (url) => url.replace(/.*angularjs(?:\\|\/)/gi, ''),
           module: 'templates',
           standalone: true,
         })))
@@ -164,46 +192,37 @@ function buildTasks(customConfig, localGulp) {
         .pipe(bsServer.stream());
     }
 
-    gulp.series(lintScripts, transpile, annotate, html2js)(done);
-  }
-
-  function lintTests() {
-    return gulp
-      .src(cfg.src.unitTests)
-      .pipe(plumber(cfg.plumberOptions))
-      .pipe(esLint(cfg.esLintConfig))
-      .pipe(esLint.format())
-      .pipe(esLint.failAfterError());
+    gulp.series(transpile, annotate, html2js)(done);
   }
 
   function test(done) {
-    function runTests(karmaDone) {
-      new KarmaServer({
-        configFile: cfg.karmaConfig,
-        singleRun: true,
-      }, karmaDone).start();
-    }
-
-    gulp.series(lintTests, runTests)(done);
+    new KarmaServer({
+      configFile: cfg.karmaConfig,
+      singleRun: true,
+    }, (error) => {
+      if (error) {
+        // create a new Error to prevent Gulp's ugly stack trace
+        done(new Error('failing tests'));
+      } else {
+        done();
+      }
+    }).start();
   }
 
   function runKarma(done) {
-    function runTests(karmaDone) {
-      let cmd;
-      const exec = require('child_process').exec;
+    let cmd;
+    const exec = require('child_process').exec;
 
-      if (process.platform === 'win32') {
-        cmd = 'node_modules\\.bin\\karma run';
-      } else {
-        cmd = 'node node_modules/.bin/karma run';
-      }
-
-      exec(cmd, () => {
-        karmaDone();
-      });
+    if (process.platform === 'win32') {
+      cmd = 'node_modules\\.bin\\karma run';
+    } else {
+      cmd = 'node node_modules/.bin/karma run';
     }
 
-    gulp.series(lintTests, runTests)(done);
+    exec(cmd, () => {
+      // don't pass the 'error' argument to done(), otherwise gulp will terminate when a test fails
+      done()
+    });
   }
 
   function startKarma(done) {
@@ -255,7 +274,9 @@ function buildTasks(customConfig, localGulp) {
 
   function bsServerSync() {
     if (cfg.env.maven) {
-      bsServer.init();
+      bsServer.init({
+        logLevel: 'silent',
+      });
     } else {
       bsServer.init({
         ui: {
@@ -323,6 +344,7 @@ function buildTasks(customConfig, localGulp) {
     if (cfg.env.maven) {
       gulp.series(
         'clean',
+        lintAll,
         gulp.parallel(
           'scripts',
           'styles',
@@ -337,7 +359,9 @@ function buildTasks(customConfig, localGulp) {
     } else {
       gulp.series(
         'clean',
-        gulp.parallel('scripts',
+        lintAll,
+        gulp.parallel(
+          'scripts',
           'styles',
           'images',
           'fonts',
@@ -380,6 +404,8 @@ function buildTasks(customConfig, localGulp) {
     } else {
       gulp.watch(cfg.src.indexHtml, gulp.series('dev'));
     }
+
+    lintChanges([cfg.src.scripts, cfg.src.unitTests]);
   }
 
   gulp.task(bsInject);
