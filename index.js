@@ -419,10 +419,11 @@ function buildTasks(customConfig, localGulp) {
   gulp.task(fonts);
   gulp.task(i18n);
   gulp.task(images);
+  gulp.task(lintAll);
+  gulp.task(runKarma);
   gulp.task(scripts);
   gulp.task(serve);
   gulp.task(serveDist);
-  gulp.task(runKarma);
   gulp.task(startKarma);
   gulp.task(styles);
   gulp.task(copyDependencies);
