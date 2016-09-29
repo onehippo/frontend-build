@@ -73,6 +73,7 @@ module.exports = {
       minChunks: Infinity,
     }),
     new webpack.optimize.OccurrenceOrderPlugin(),
+    new webpack.NoErrorsPlugin(),
     new HtmlWebpackPlugin({
       template: conf.path.src('index.html'),
       inject: true,
