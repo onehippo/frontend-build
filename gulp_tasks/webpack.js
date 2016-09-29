@@ -29,7 +29,7 @@ const defaultStatsOptions = {
   colors: util.colors.supportsColor,
   hash: false,
   children: false,
-  version: true,
+  version: false,
   chunkModules: false,
   timings: false,
   chunks: false,
@@ -85,11 +85,19 @@ function webpackBuild(options, done) {
   });
 }
 
-function webpackServe(conf) {
-  const compiler = webpack(conf);
-  const server = new WebpackDevServer(compiler, webpackServerConf);
+function webpackServe(options) {
+  const config = parseConfig(options);
+  const serverConfig = Object.create(webpackServerConf);
 
-  server.listen(webpackServerConf.port);
+  if (options.verbose) {
+    serverConfig.stats = 'verbose';
+  } else {
+    serverConfig.stats = Object.assign({}, defaultStatsOptions, serverConfig.stats, options.stats);
+  }
+
+  const compiler = webpack(config);
+  const server = new WebpackDevServer(compiler, serverConfig);
+  server.listen(serverConfig.port);
 }
 
 gulp.task('webpack:dev', done => {
@@ -122,7 +130,10 @@ gulp.task('webpack:serve', () => {
   webpackDevConf.entry.app.unshift(prefix, 'webpack/hot/dev-server');
   webpackServerConf.hot = true;
   webpackServerConf.inline = true;
-  webpackServe(webpackDevConf);
+  webpackServe({
+    config: webpackDevConf,
+    progress: true,
+  });
 });
 
 gulp.task('webpack:distServe', () => {

@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-'use strict';
-
 /**
  *  This file contains the variables used in other gulp files
  *  which defines tasks
@@ -25,13 +23,19 @@
  */
 
 const path = require('path');
-const gutil = require('gulp-util');
 const basePath = process.cwd();
 const pkg = require(`${basePath}/package.json`);
 
 // Import custom config of end project
 const customConf = require(`${basePath}/build.conf`);
 exports.custom = customConf;
+
+exports.exclude = {
+  vendors: [],
+};
+
+exports.vendors = Object.keys(pkg.dependencies)
+  .filter(name => exports.exclude.vendors.indexOf(name) === -1);
 
 /**
  *  The main paths of your project handle these with care
@@ -45,33 +49,13 @@ exports.paths = {
   tasks: 'gulp_tasks',
 };
 
-exports.exclude = {
-  vendors: [],
-};
-
-exports.vendors = Object.keys(pkg.dependencies)
-  .filter(name => exports.exclude.vendors.indexOf(name) === -1);
-
 exports.path = {};
-for (const pathName in exports.paths) {
-  if (exports.paths.hasOwnProperty(pathName)) {
-    exports.path[pathName] = function pathJoin(...args) {
-      const pathValue = exports.paths[pathName];
-      const funcArgs = Array.prototype.slice.call(args);
-      const joinArgs = [pathValue].concat(funcArgs);
 
-      return path.join.apply(this, joinArgs);
-    };
-  }
-}
-
-/**
- *  Common implementation for an error handler of a Gulp plugin
- */
-exports.errorHandler = function (title) {
-  return function (err) {
-    gutil.log(gutil.colors.red(`[${title}]`), err.toString());
-    this.emit('end');
+Object.keys(exports.paths).forEach(pathName => {
+  exports.path[pathName] = function pathJoin(...funcArgs) {
+    const pathValue = exports.paths[pathName];
+    const args = [pathValue].concat(funcArgs);
+    return path.join.apply(this, args);
   };
-};
+});
 

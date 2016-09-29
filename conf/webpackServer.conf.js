@@ -21,7 +21,7 @@ module.exports = {
   publicPath: conf.paths.public,
   historyApiFallback: true,
   stats: {
-    colors: true,
+    chunks: true,
   },
   port: 9090,
 };
