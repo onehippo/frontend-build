@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,4 +14,16 @@
  * limitations under the License.
  */
 
+const conf = require('./gulp.conf');
 
+module.exports = {
+  contentBase: conf.paths.dist,
+  publicPath: '/',
+  hot: true,
+  inline: true,
+  historyApiFallback: true,
+  stats: {
+    colors: true,
+  },
+  port: 9090,
+};
