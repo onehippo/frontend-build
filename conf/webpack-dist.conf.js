@@ -32,6 +32,11 @@ webpackConf.module.loaders = webpackConf.module.loaders.concat([
 ]);
 
 webpackConf.plugins = webpackConf.plugins.concat([
+  new webpack.optimize.CommonsChunkPlugin({
+    name: 'vendor',
+    filename: 'vendor-[hash].js',
+    minChunks: Infinity,
+  }),
   new webpack.optimize.UglifyJsPlugin({
     compress: {
       warnings: false,
