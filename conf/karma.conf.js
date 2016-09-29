@@ -33,7 +33,7 @@ module.exports = function karmaConfig(config) {
         pattern: conf.path.src('**/*.fixture.+(js|html|css|json)'),
         included: false,
       },
-    ],
+    ].concat(conf.custom.karma.files || []),
     preprocessors: {
       [conf.path.src('index.spec.js')]: [
         'webpack',
@@ -68,6 +68,8 @@ module.exports = function karmaConfig(config) {
       noInfo: true,
     },
   };
+
+  Object.assign(configuration.proxies, conf.custom.karma.proxies); 
 
   config.set(configuration);
 };
