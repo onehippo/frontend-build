@@ -19,7 +19,7 @@ const karmaFixtureProxyPath = '/base/src/angularjs/';
 
 module.exports = function karmaConfig(config) {
   const configuration = {
-    basePath: '../',
+    basePath: conf.paths.basePath,
     browsers: [
       'Chrome',
     ],
