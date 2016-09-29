@@ -86,10 +86,6 @@ function webpackBuild(options, done) {
 }
 
 function webpackServe(conf) {
-  const prefix = `webpack-dev-server/client?http://localhost:${webpackServerConf.port}/`;
-
-  conf.entry.app.unshift(prefix, 'webpack/hot/dev-server');
-
   const compiler = webpack(conf);
   const server = new WebpackDevServer(compiler, webpackServerConf);
 
@@ -122,6 +118,10 @@ gulp.task('webpack:dist', done => {
 });
 
 gulp.task('webpack:serve', () => {
+  const prefix = `webpack-dev-server/client?http://localhost:${webpackServerConf.port}/`;
+  webpackDevConf.entry.app.unshift(prefix, 'webpack/hot/dev-server');
+  webpackServerConf.hot = true;
+  webpackServerConf.inline = true;
   webpackServe(webpackDevConf);
 });
 

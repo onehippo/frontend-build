@@ -19,8 +19,6 @@ const conf = require('./gulp.conf');
 module.exports = {
   contentBase: conf.paths.dist,
   publicPath: conf.paths.public,
-  hot: true,
-  inline: true,
   historyApiFallback: true,
   stats: {
     colors: true,
