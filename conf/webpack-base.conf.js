@@ -17,7 +17,6 @@
 const webpack = require('webpack');
 const conf = require('./gulp.conf');
 
-const NgAnnotatePlugin = require('ng-annotate-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const autoprefixer = require('autoprefixer');
@@ -48,18 +47,10 @@ module.exports = {
         ],
       },
       {
-        test: /\.scss$/,
-        loaders: [
-          'style',
-          'css?sourceMap',
-          'postcss?sourceMap',
-          'sass?sourceMap',
-        ],
-      },
-      {
         test: /\.js$/,
         exclude: /node_modules/,
         loaders: [
+          'ng-annotate',
           'babel',
         ],
       },
@@ -82,8 +73,6 @@ module.exports = {
       minChunks: Infinity,
     }),
     new webpack.optimize.OccurrenceOrderPlugin(),
-    new webpack.NoErrorsPlugin(),
-    new NgAnnotatePlugin(),
     new HtmlWebpackPlugin({
       template: conf.path.src('index.html'),
       inject: true,
@@ -95,8 +84,7 @@ module.exports = {
         from: '**/!(*.js|*.scss|*.html)',
         to: conf.paths.dir,
       },
-    ]),
-    new webpack.HotModuleReplacementPlugin(),
+    ].concat(conf.custom.copyFiles || [])),
   ],
   postcss: [
     autoprefixer({
@@ -108,6 +96,4 @@ module.exports = {
       ],
     }),
   ],
-  debug: true,
-  devtool: 'cheap-module-eval-source-map',
 };

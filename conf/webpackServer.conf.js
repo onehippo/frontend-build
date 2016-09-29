@@ -14,25 +14,16 @@
  * limitations under the License.
  */
 
-const gulp = require('gulp');
-const { Server } = require('karma');
+const conf = require('./gulp.conf');
 
-function karmaRun(config, singleRun) {
-  const configFile = require.resolve('../conf/karma.conf');
-  return (done) => {
-    new Server({
-      configFile,
-      singleRun,
-      autoWatch: !singleRun,
-    }, failCount => {
-      if (failCount === 0) {
-        done();
-      } else {
-        done(new Error(`Failed ${failCount} tests.`));
-      }
-    }).start();
-  };
-}
-
-gulp.task('karma:single-run', karmaRun('karma.conf.js', true));
-gulp.task('karma:auto-run', karmaRun('karma.conf.js', false));
+module.exports = {
+  contentBase: conf.paths.dist,
+  publicPath: conf.paths.public,
+  hot: true,
+  inline: true,
+  historyApiFallback: true,
+  stats: {
+    colors: true,
+  },
+  port: 9090,
+};

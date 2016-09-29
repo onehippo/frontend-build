@@ -17,43 +17,18 @@
 // set test environment, currently used to trigger 'istanbul' plugin in .babelrc
 process.env.ENV = process.env.NODE_ENV = 'test';
 
-module.exports = {
-  module: {
-    preLoaders: [
-      {
-        test: /\.js$/,
-        exclude: /node_modules/,
-        loader: 'eslint',
-      },
-    ],
+const baseConf = require('./webpack-base.conf');
+const clone = require('clone');
+const webpackConf = clone(baseConf);
+
+webpackConf.module.loaders = webpackConf.module.loaders.concat([
+  {
+    test: /\.scss$/,
     loaders: [
-      {
-        test: /.json$/,
-        loaders: [
-          'json',
-        ],
-      },
-      {
-        test: /\.scss$/,
-        loaders: [
-          'null',
-        ],
-      },
-      {
-        test: /\.js$/,
-        exclude: /(node_modules)/,
-        loaders: [
-          'ng-annotate',
-          'babel',
-        ],
-      },
-      {
-        test: /\.html$/,
-        loaders: [
-          'html',
-        ],
-      },
+      'null',
     ],
   },
-  devtool: 'inline-source-map',
-};
+]);
+
+module.exports = webpackConf;
+

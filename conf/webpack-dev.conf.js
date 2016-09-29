@@ -14,16 +14,28 @@
  * limitations under the License.
  */
 
-const conf = require('./gulp.conf');
+const webpack = require('webpack');
+const baseConf = require('./webpack-base.conf');
+const clone = require('clone');
+const webpackConf = clone(baseConf);
 
-module.exports = {
-  contentBase: conf.paths.dist,
-  publicPath: '/',
-  hot: true,
-  inline: true,
-  historyApiFallback: true,
-  stats: {
-    colors: true,
+webpackConf.module.loaders = webpackConf.module.loaders.concat([
+  {
+    test: /\.scss$/,
+    loaders: [
+      'style',
+      'css?sourceMap',
+      'postcss?sourceMap',
+      'sass?sourceMap',
+    ],
   },
-  port: 9090,
-};
+]);
+
+webpackConf.plugins = webpackConf.plugins.concat([
+  new webpack.HotModuleReplacementPlugin,
+]);
+
+webpackConf.debug = true;
+webpackConf.devtool = 'inline-source-map';
+
+module.exports = webpackConf;

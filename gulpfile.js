@@ -31,10 +31,11 @@ function clean() {
 
 gulp.task('test', gulp.series('karma:single-run'));
 gulp.task('test:auto', gulp.series('karma:auto-run'));
-gulp.task('serve', gulp.series('webpack:serve'));
-gulp.task('serveDist', gulp.series('webpack:distServe'));
 gulp.task('clean', clean);
 gulp.task('build', gulp.series('clean', 'webpack:dist'));
+gulp.task('serve', gulp.series('webpack:serve'));
+gulp.task('serveDist', gulp.series('webpack:distServe'));
+
 gulp.task('default', gulp.series('build'));
 
 module.exports = gulp;

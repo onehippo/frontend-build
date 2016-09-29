@@ -29,14 +29,18 @@ const gutil = require('gulp-util');
 const basePath = process.cwd();
 const pkg = require(`${basePath}/package.json`);
 
+// Import custom config of end project
+const customConf = require(`${basePath}/build.conf`);
+exports.custom = customConf;
+
 /**
  *  The main paths of your project handle these with care
  */
 exports.paths = {
   basePath,
-  public: '/',
+  public: customConf.public || '/',
   src: `${basePath}/src`,
-  dist: `${basePath}/dist`,
+  dist: customConf.dist || `${basePath}/dist`,
   npmDir: `${basePath}/node_modules`,
   tasks: 'gulp_tasks',
 };
