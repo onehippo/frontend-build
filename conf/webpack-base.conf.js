@@ -78,7 +78,7 @@ module.exports = {
     new CopyWebpackPlugin([
       {
         context: conf.paths.src,
-        from: '**/!(*.js|*.scss|*.html)',
+        from: '**/!(*.js|*.scss|*.html|*.fixture.*)',
         to: conf.paths.dir,
       },
     ].concat(conf.custom.copyFiles || [])),
