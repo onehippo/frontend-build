@@ -60,6 +60,7 @@ module.exports = {
       },
       {
         test: /.html$/,
+        exclude: conf.custom.htmlExcludes || null,
         loaders: [
           'html',
         ],
@@ -73,7 +74,7 @@ module.exports = {
       template: conf.path.src('index.html'),
       inject: true,
     }),
-    new webpack.ProvidePlugin({}),
+    new webpack.ProvidePlugin(conf.custom.provide),
     new CopyWebpackPlugin([
       {
         context: conf.paths.src,

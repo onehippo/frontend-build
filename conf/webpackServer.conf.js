@@ -23,5 +23,5 @@ module.exports = {
   stats: {
     chunks: true,
   },
-  port: 9090,
+  port: conf.custom.serverPort || 3000,
 };

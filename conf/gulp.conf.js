@@ -31,7 +31,7 @@ const customConf = require(`${basePath}/build.conf`);
 exports.custom = customConf;
 
 exports.exclude = {
-  vendors: [],
+  vendors: [].concat(customConf.vendorExcludes),
 };
 
 exports.vendors = Object.keys(pkg.dependencies)
