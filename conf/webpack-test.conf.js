@@ -21,6 +21,10 @@ const baseConf = require('./webpack-base.conf');
 const clone = require('clone');
 const webpackConf = clone(baseConf);
 
+webpackConf.entry = {};
+webpackConf.output = {};
+webpackConf.devtool = 'inline-source-map'; 
+webpackConf.plugins = []; 
 webpackConf.module.loaders = webpackConf.module.loaders.concat([
   {
     test: /\.scss$/,
