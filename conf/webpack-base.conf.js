@@ -21,7 +21,7 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const autoprefixer = require('autoprefixer');
 
-module.exports = {
+const base = {
   entry: {
     vendor: conf.vendors,
     app: [conf.path.src('index')],
@@ -74,7 +74,6 @@ module.exports = {
       template: conf.path.src('index.html'),
       inject: true,
     }),
-    new webpack.ProvidePlugin(conf.custom.provide),
     new CopyWebpackPlugin([
       {
         context: conf.paths.src,
@@ -94,3 +93,9 @@ module.exports = {
     }),
   ],
 };
+
+if (conf.custom.provide) {
+  base.plugins.push(new webpack.ProvidePlugin(conf.custom.provide));
+}
+
+module.exports = base;
