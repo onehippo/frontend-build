@@ -35,7 +35,8 @@ exports.exclude = {
 };
 
 exports.vendors = Object.keys(pkg.dependencies)
-  .filter(name => exports.exclude.vendors.indexOf(name) === -1);
+  .filter(name => exports.exclude.vendors.indexOf(name) === -1)
+  .filter(name => !name.startsWith('@types/'));
 
 /**
  *  The main paths of your project handle these with care
