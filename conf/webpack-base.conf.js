@@ -31,6 +31,9 @@ const base = {
     path: conf.paths.dist,
     publicPath: conf.paths.public,
   },
+  resolve: {
+    extensions: ['', '.ts', '.js']
+  },
   module: {
     preLoaders: [
       {
@@ -47,12 +50,8 @@ const base = {
         ],
       },
       {
-        test: /\.js$/,
-        exclude: /node_modules/,
-        loaders: [
-          'ng-annotate',
-          'babel',
-        ],
+        test: /\.ts$/,
+        loaders: ['ng-annotate', 'awesome-typescript-loader'],
       },
       {
         test: /\.(eot|svg|ttf|woff|woff2|png)\w*/,

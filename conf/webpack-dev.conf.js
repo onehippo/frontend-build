@@ -34,13 +34,13 @@ webpackConf.module.loaders = webpackConf.module.loaders.concat([
 webpackConf.plugins = webpackConf.plugins.concat([
   new webpack.optimize.CommonsChunkPlugin({
     name: 'vendor',
-    filename: 'vendor-[hash].js',
+    filename: 'vendor-[hash].js', 
     minChunks: Infinity,
   }),
   new webpack.HotModuleReplacementPlugin,
 ]);
 
 webpackConf.debug = true;
-webpackConf.devtool = 'inline-eval-cheap-source-map';
+webpackConf.devtool = 'inline-source-map';
 
 module.exports = webpackConf;
