@@ -16,6 +16,7 @@
 
 const conf = require('./gulp.conf');
 const karmaFixtureProxyPath = '/base/src/angularjs/';
+const customKarma = conf.custom && conf.custom.karma ? conf.custom.karma : {};
 
 module.exports = function karmaConfig(config) {
   const configuration = {
@@ -33,7 +34,7 @@ module.exports = function karmaConfig(config) {
         pattern: conf.path.src('**/*.fixture.+(js|html|css|json)'),
         included: false,
       },
-    ].concat(conf.custom.karma.files || []),
+    ].concat(customKarma.files || []),
     preprocessors: {
       [conf.path.src('index.spec.js')]: [
         'webpack',
@@ -43,10 +44,10 @@ module.exports = function karmaConfig(config) {
         'ng-html2js',
       ],
     },
-    proxies: {
+    proxies: Object.assign({
       '/spec/javascripts/fixtures/': karmaFixtureProxyPath,
       '/spec/javascripts/fixtures/json/': karmaFixtureProxyPath,
-    },
+    }, customKarma.proxies),
     ngHtml2JsPreprocessor: {
       stripPrefix: `${conf.paths.src}/`,
     },
@@ -68,8 +69,6 @@ module.exports = function karmaConfig(config) {
       noInfo: true,
     },
   };
-
-  Object.assign(configuration.proxies, conf.custom.karma.proxies); 
 
   config.set(configuration);
 };
