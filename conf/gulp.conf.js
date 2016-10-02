@@ -49,6 +49,11 @@ exports.paths = {
   tasks: 'gulp_tasks',
 };
 
+/**
+ *  Each entry in exports.paths is exposed in export.path as a helper function 
+ *  that returns a file path relative to it, e.g. if exports.paths.src = 'folder/to/src', 
+ *  then export.path.src('main', 'index.js') returns '/folder/to/src/main/index.js'
+ */
 exports.path = {};
 
 Object.keys(exports.paths).forEach(pathName => {
