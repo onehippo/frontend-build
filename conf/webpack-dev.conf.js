@@ -19,25 +19,23 @@ const baseConf = require('./webpack-base.conf');
 const clone = require('clone');
 const webpackConf = clone(baseConf);
 
-webpackConf.module.loaders = webpackConf.module.loaders.concat([
-  {
-    test: /\.scss$/,
-    loaders: [
-      'style',
-      'css?sourceMap',
-      'postcss?sourceMap',
-      'sass?sourceMap',
-    ],
-  },
-]);
+webpackConf.module.loaders.push({
+  test: /\.scss$/,
+  loaders: [
+    'style',
+    'css?sourceMap',
+    'postcss?sourceMap',
+    'sass?sourceMap',
+  ],
+});
 
-webpackConf.plugins = webpackConf.plugins.concat([
+webpackConf.plugins.push(
   new webpack.optimize.CommonsChunkPlugin({
     name: 'vendor',
     filename: 'vendor-[hash].js',
     minChunks: Infinity,
-  }),
-]);
+  })
+);
 
 webpackConf.debug = true;
 webpackConf.devtool = 'inline-eval-cheap-source-map';

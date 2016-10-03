@@ -21,17 +21,15 @@ const webpackConf = clone(baseConf);
 
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
-webpackConf.module.loaders = webpackConf.module.loaders.concat([
-  {
-    test: /\.scss$/,
-    loaders: ExtractTextPlugin.extract({
-      fallbackLoader: 'style',
-      loader: 'css?minimize!postcss!sass',
-    }),
-  },
-]);
+webpackConf.module.loaders.push({
+  test: /\.scss$/,
+  loaders: ExtractTextPlugin.extract({
+    fallbackLoader: 'style',
+    loader: 'css?minimize!postcss!sass',
+  }),
+});
 
-webpackConf.plugins = webpackConf.plugins.concat([
+webpackConf.plugins.push(
   new webpack.optimize.CommonsChunkPlugin({
     name: 'vendor',
     filename: 'vendor-[hash].js',
@@ -42,7 +40,7 @@ webpackConf.plugins = webpackConf.plugins.concat([
       warnings: false,
     },
   }),
-  new ExtractTextPlugin('[name]-[contenthash].css'),
-]);
+  new ExtractTextPlugin('[name]-[contenthash].css')
+);
 
 module.exports = webpackConf;

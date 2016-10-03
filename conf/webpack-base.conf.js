@@ -42,9 +42,7 @@ module.exports = {
     loaders: [
       {
         test: /.json$/,
-        loaders: [
-          'json',
-        ],
+        loader: 'json',
       },
       {
         test: /\.js$/,
@@ -61,9 +59,7 @@ module.exports = {
       {
         test: /.html$/,
         exclude: conf.custom.htmlExcludes || null,
-        loaders: [
-          'html',
-        ],
+        loader: 'html',
       },
     ],
   },

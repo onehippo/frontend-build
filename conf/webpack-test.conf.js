@@ -23,16 +23,13 @@ const webpackConf = clone(baseConf);
 
 webpackConf.entry = {};
 webpackConf.output = {};
-webpackConf.devtool = 'inline-source-map'; 
-webpackConf.plugins = []; 
-webpackConf.module.loaders = webpackConf.module.loaders.concat([
-  {
-    test: /\.scss$/,
-    loaders: [
-      'null',
-    ],
-  },
-]);
+webpackConf.devtool = 'inline-source-map';
+webpackConf.plugins = [];
+
+webpackConf.module.loaders.push({
+  test: /\.scss$/,
+  loader: 'null',
+});
 
 module.exports = webpackConf;
 
