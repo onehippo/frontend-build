@@ -37,7 +37,6 @@ webpackConf.plugins = webpackConf.plugins.concat([
     filename: 'vendor-[hash].js',
     minChunks: Infinity,
   }),
-  new webpack.HotModuleReplacementPlugin,
 ]);
 
 webpackConf.debug = true;

@@ -127,8 +127,7 @@ gulp.task('webpack:dist', done => {
 
 gulp.task('webpack:serve', () => {
   const prefix = `webpack-dev-server/client?http://localhost:${webpackServerConf.port}/`;
-  webpackDevConf.entry.app.unshift(prefix, 'webpack/hot/dev-server');
-  webpackServerConf.hot = true;
+  webpackDevConf.entry.app.unshift(prefix);
   webpackServerConf.inline = true;
   webpackServe({
     config: webpackDevConf,
