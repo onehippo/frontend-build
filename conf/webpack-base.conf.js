@@ -15,13 +15,14 @@
  */
 
 const webpack = require('webpack');
+const clone = require('clone');
 const conf = require('./gulp.conf');
 
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const autoprefixer = require('autoprefixer');
 
-module.exports = {
+const baseConf = {
   entry: {
     vendor: conf.vendors,
     app: [conf.path.src('index')],
@@ -90,3 +91,7 @@ module.exports = {
     }),
   ],
 };
+
+module.exports = baseConf;
+
+module.exports.clone = () => clone(baseConf);

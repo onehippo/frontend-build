@@ -17,9 +17,7 @@
 // set test environment, currently used to trigger 'istanbul' plugin in .babelrc
 process.env.ENV = process.env.NODE_ENV = 'test';
 
-const baseConf = require('./webpack-base.conf');
-const clone = require('clone');
-const webpackConf = clone(baseConf);
+const webpackConf = require('./webpack-base.conf').clone();
 
 webpackConf.entry = {};
 webpackConf.output = {};

@@ -15,9 +15,7 @@
  */
 
 const webpack = require('webpack');
-const baseConf = require('./webpack-base.conf');
-const clone = require('clone');
-const webpackConf = clone(baseConf);
+const webpackConf = require('./webpack-base.conf').clone();
 
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
