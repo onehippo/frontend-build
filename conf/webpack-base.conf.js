@@ -71,7 +71,6 @@ const baseConf = {
       template: conf.path.src('index.html'),
       inject: true,
     }),
-    new webpack.ProvidePlugin(conf.custom.provide || {}),
     new CopyWebpackPlugin([
       {
         context: conf.paths.src,
@@ -91,6 +90,15 @@ const baseConf = {
     }),
   ],
 };
+
+// Load modules (value) and bind them to a variable (key),
+// e.q. new webpack.ProvidePlugin({ $: "jquery" }) will load the jquery
+// module and make it available in a variable named $.
+// See https://webpack.github.io/docs/list-of-plugins.html#provideplugin
+if (conf.custom.provide) {
+  const providePlugin = new webpack.ProvidePlugin(conf.custom.provide);
+  baseConf.plugins.push(providePlugin);
+}
 
 module.exports = baseConf;
 
