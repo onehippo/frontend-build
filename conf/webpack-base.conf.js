@@ -54,8 +54,8 @@ const baseConf = {
         ],
       },
       {
-        test: /\.(eot|svg|ttf|woff|woff2|png)\w*/,
-        loader: 'file',
+        test: /\.(eot|svg|ttf|woff|woff2|png)$/,
+        loader: 'url',
       },
       {
         test: /.html$/,
