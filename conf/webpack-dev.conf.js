@@ -36,6 +36,6 @@ webpackConf.plugins.push(
 );
 
 webpackConf.debug = true;
-webpackConf.devtool = 'inline-eval-cheap-source-map';
+webpackConf.devtool = 'inline-source-map';
 
 module.exports = webpackConf;
