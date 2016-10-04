@@ -126,9 +126,6 @@ gulp.task('webpack:dist', done => {
 });
 
 gulp.task('webpack:serve', () => {
-  const prefix = `webpack-dev-server/client?http://localhost:${webpackServerConf.port}/`;
-  webpackDevConf.entry.app.unshift(prefix);
-  webpackServerConf.inline = true;
   webpackServe({
     config: webpackDevConf,
     progress: true,
@@ -136,6 +133,9 @@ gulp.task('webpack:serve', () => {
 });
 
 gulp.task('webpack:distServe', () => {
-  webpackServe(webpackDistConf);
+  webpackServe({
+    config: webpackDistConf,
+    progress: true,
+  });
 });
 
