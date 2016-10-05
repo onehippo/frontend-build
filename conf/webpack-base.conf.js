@@ -25,7 +25,7 @@ const autoprefixer = require('autoprefixer');
 const baseConf = {
   entry: {
     vendor: conf.vendors,
-    app: [conf.path.src('index')],
+    app: conf.path.src('index'),
   },
   output: {
     filename: '[name]-[hash].js',

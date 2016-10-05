@@ -23,11 +23,11 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 webpackConf.module.loaders = webpackConf.module.loaders.concat([
   {
-  test: /\.scss$/,
-  loaders: ExtractTextPlugin.extract({
-    fallbackLoader: 'style',
+    test: /\.scss$/,
+    loaders: ExtractTextPlugin.extract({
+      fallbackLoader: 'style',
       loader: 'css?minimize!postcss!resolve-url!sass?sourceMap',
-  }),
+    }),
   },
 ]);
 

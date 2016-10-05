@@ -21,14 +21,14 @@ const webpackConf = clone(baseConf);
 
 webpackConf.module.loaders = webpackConf.module.loaders.concat([
   {
-  test: /\.scss$/,
-  loaders: [
-    'style',
-    'css?sourceMap',
-    'postcss?sourceMap',
-    'resolve-url?sourceMap',
-    'sass?sourceMap',
-  ],
+    test: /\.scss$/,
+    loaders: [
+      'style?sourceMap',
+      'css?sourceMap',
+      'postcss?sourceMap',
+      'resolve-url?sourceMap',
+      'sass?sourceMap',
+    ],
   },
 ]);
 
