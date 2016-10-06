@@ -54,10 +54,6 @@ const baseConf = {
         ],
       },
       {
-        test: /\.(eot|svg|ttf|woff|woff2|png)$/,
-        loader: 'url',
-      },
-      {
         test: /.html$/,
         exclude: conf.custom.htmlExcludes || null,
         loader: 'html',

@@ -24,10 +24,15 @@ webpackConf.output = {};
 webpackConf.debug = true;
 webpackConf.devtool = 'inline-source-map';
 webpackConf.plugins = [];
-webpackConf.module.loaders.push({
-  test: /\.scss$/,
-  loader: 'null',
-});
+webpackConf.module.loaders.push(
+  {
+    test: /\.scss$/,
+    loader: 'null',
+  }, {
+    test: /\.(eot|svg|ttf|woff|woff2|png)$/,
+    loader: 'file',
+  }
+);
 
 module.exports = webpackConf;
 
