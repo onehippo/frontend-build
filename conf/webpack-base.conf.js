@@ -25,7 +25,7 @@ const autoprefixer = require('autoprefixer');
 const baseConf = {
   entry: {
     vendor: conf.vendors,
-    app: [conf.path.src('index')],
+    app: conf.path.src('index'),
   },
   output: {
     filename: '[name]-[hash].js',
@@ -54,8 +54,8 @@ const baseConf = {
         ],
       },
       {
-        test: /\.(eot|svg|ttf|woff|woff2|png)\w*/,
-        loader: 'file',
+        test: /\.(eot|svg|ttf|woff|woff2|png)$/,
+        loader: 'url',
       },
       {
         test: /.html$/,

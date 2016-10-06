@@ -17,6 +17,7 @@
 const conf = require('./gulp.conf');
 const karmaFixtureProxyPath = '/base/src/angularjs/';
 const customKarma = conf.custom && conf.custom.karma ? conf.custom.karma : {};
+const customKarmaFiles = customKarma.files || [];
 
 module.exports = function karmaConfig(config) {
   const configuration = {
@@ -28,13 +29,14 @@ module.exports = function karmaConfig(config) {
       'jasmine-jquery',
       'jasmine',
     ],
-    files: [
+    files: [].concat(
       conf.path.src('index.spec.js'),
       {
         pattern: conf.path.src('**/*.fixture.+(js|html|css|json)'),
         included: false,
       },
-    ].concat(customKarma.files || []),
+      customKarmaFiles
+    ),
     preprocessors: {
       [conf.path.src('index.spec.js')]: [
         'webpack',

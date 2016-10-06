@@ -1,0 +1,18 @@
+{
+  "parser": "babel-eslint",
+  "extends": ["airbnb/base"],
+  "env": {
+    "jasmine": true
+  },
+  "globals": {
+    "$": true,
+    "$j": true,
+    "angular": true,
+    "inject": true,
+    "module": true
+  },
+  "rules": {
+    "max-len": 0,
+    "no-param-reassign": 0
+  }
+}

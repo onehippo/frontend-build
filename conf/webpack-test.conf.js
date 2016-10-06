@@ -17,17 +17,21 @@
 // set test environment, currently used to trigger 'istanbul' plugin in .babelrc
 process.env.ENV = process.env.NODE_ENV = 'test';
 
-const webpackConf = require('./webpack-base.conf').clone();
+const baseConf = require('./webpack-base.conf');
+const clone = require('clone');
+const webpackConf = clone(baseConf);
 
 webpackConf.entry = {};
 webpackConf.output = {};
+webpackConf.debug = true;
 webpackConf.devtool = 'inline-source-map';
 webpackConf.plugins = [];
-
-webpackConf.module.loaders.push({
-  test: /\.scss$/,
-  loader: 'null',
-});
+webpackConf.module.loaders = webpackConf.module.loaders.concat([
+  {
+    test: /\.scss$/,
+    loader: 'null',
+  },
+]);
 
 module.exports = webpackConf;
 

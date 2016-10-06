@@ -150,6 +150,7 @@ gulp.task('webpack:serve', () => {
 gulp.task('webpack:distServe', () => {
   webpackWrapper({
     config: webpackDistConf,
+    progress: true,
     serve: true,
   });
 });

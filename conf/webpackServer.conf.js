@@ -16,7 +16,7 @@
 
 const conf = require('./gulp.conf');
 
-module.exports = {
+const webpackServerConf = {
   contentBase: conf.paths.dist,
   publicPath: conf.paths.public,
   historyApiFallback: true,
@@ -25,3 +25,9 @@ module.exports = {
   },
   port: conf.custom.serverPort || 3000,
 };
+
+if (conf.custom.proxy) {
+  webpackServerConf.proxy = conf.custom.proxy;
+}
+
+module.exports = webpackServerConf;
