@@ -43,6 +43,7 @@ webpackConf.plugins.push(
       warnings: false,
     },
   }),
+  new webpack.NoErrorsPlugin(),
   new ExtractTextPlugin('[name]-[contenthash].css')
 );
 
