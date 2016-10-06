@@ -25,9 +25,8 @@
 const path = require('path');
 const basePath = process.cwd();
 const pkg = require(`${basePath}/package.json`);
-
-// Import custom config of end project
 const customConf = require(`${basePath}/build.conf`);
+
 exports.custom = customConf;
 
 exports.exclude = {
@@ -42,7 +41,7 @@ exports.vendors = Object.keys(pkg.dependencies)
  */
 exports.paths = {
   basePath,
-  public: customConf.public || '/',
+  publicPath: customConf.publicPath || '/',
   src: `${basePath}/src`,
   dist: customConf.dist || `${basePath}/dist`,
   npmDir: `${basePath}/node_modules`,
@@ -56,7 +55,7 @@ exports.paths = {
  */
 exports.path = {};
 
-Object.keys(exports.paths).forEach(pathName => {
+Object.keys(exports.paths).forEach((pathName) => {
   exports.path[pathName] = function pathJoin(...funcArgs) {
     const pathValue = exports.paths[pathName];
     const args = [pathValue].concat(funcArgs);

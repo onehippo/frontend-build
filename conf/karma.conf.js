@@ -15,6 +15,8 @@
  */
 
 const conf = require('./gulp.conf');
+const webpackTestConf = require('./webpack-test.conf');
+
 const karmaFixtureProxyPath = '/base/src/angularjs/';
 const customKarma = conf.custom && conf.custom.karma ? conf.custom.karma : {};
 const customKarmaFiles = customKarma.files || [];
@@ -66,7 +68,7 @@ module.exports = function karmaConfig(config) {
     mochaReporter: {
       output: 'minimal',
     },
-    webpack: require('./webpack-test.conf'),
+    webpack: webpackTestConf,
     webpackMiddleware: {
       noInfo: true,
     },
