@@ -67,13 +67,18 @@ function parseOptions(options) {
       serveConfig.stats = Object.assign({}, defaultStatsOptions, serveConfig.stats, options.stats);
     }
 
-    if (options.inline) {
-      serveConfig.inline = true;
-      webpackDevConf.entry.app.unshift(`webpack-dev-server/client?http://localhost:${serveConfig.port}/`);
-    }
     if (options.hot) {
+      // Ensure entry.app is an array so we can unshift the dev-server sources
+      if (!Array.isArray(buildConfig.entry.app)) {
+        buildConfig.entry.app = [buildConfig.entry.app];
+      }
+
+      serveConfig.inline = true;
+      buildConfig.entry.app.unshift(`webpack-dev-server/client?http://localhost:${serveConfig.port}/`);
+
       serveConfig.hot = true;
-      webpackDevConf.entry.app.unshift('webpack/hot/dev-server');
+      buildConfig.entry.app.unshift('webpack/hot/dev-server');
+      buildConfig.plugins.push(new webpack.HotModuleReplacementPlugin());
     }
   }
 
@@ -142,8 +147,6 @@ gulp.task('webpack:serve', () => {
     config: webpackDevConf,
     progress: true,
     serve: true,
-    hot: true,
-    inline: true,
   });
 });
 
@@ -154,4 +157,3 @@ gulp.task('webpack:distServe', () => {
     serve: true,
   });
 });
-
