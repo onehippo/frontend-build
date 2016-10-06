@@ -18,7 +18,7 @@ const conf = require('./gulp.conf');
 
 const webpackServerConf = {
   contentBase: conf.paths.dist,
-  publicPath: conf.paths.public,
+  publicPath: conf.paths.publicPath,
   historyApiFallback: true,
   stats: {
     chunks: true,

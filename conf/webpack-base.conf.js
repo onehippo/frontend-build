@@ -30,7 +30,7 @@ const baseConf = {
   output: {
     filename: '[name]-[hash].js',
     path: conf.paths.dist,
-    publicPath: conf.paths.public,
+    publicPath: conf.paths.publicPath,
   },
   module: {
     preLoaders: [

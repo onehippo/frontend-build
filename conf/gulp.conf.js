@@ -41,7 +41,7 @@ exports.vendors = Object.keys(pkg.dependencies)
  */
 exports.paths = {
   basePath,
-  public: customConf.public || '/',
+  publicPath: customConf.publicPath || '/',
   src: `${basePath}/src`,
   dist: customConf.dist || `${basePath}/dist`,
   npmDir: `${basePath}/node_modules`,
