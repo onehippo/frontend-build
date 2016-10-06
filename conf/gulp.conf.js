@@ -25,9 +25,8 @@
 const path = require('path');
 const basePath = process.cwd();
 const pkg = require(`${basePath}/package.json`);
-
-// Import custom config of end project
 const customConf = require(`${basePath}/build.conf`);
+
 exports.custom = customConf;
 
 exports.exclude = {
@@ -56,7 +55,7 @@ exports.paths = {
  */
 exports.path = {};
 
-Object.keys(exports.paths).forEach(pathName => {
+Object.keys(exports.paths).forEach((pathName) => {
   exports.path[pathName] = function pathJoin(...funcArgs) {
     const pathValue = exports.paths[pathName];
     const args = [pathValue].concat(funcArgs);

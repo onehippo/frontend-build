@@ -16,11 +16,11 @@
 
 const webpack = require('webpack');
 const clone = require('clone');
-const conf = require('./gulp.conf');
-
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const autoprefixer = require('autoprefixer');
+
+const conf = require('./gulp.conf');
 
 const baseConf = {
   entry: {
@@ -100,6 +100,4 @@ if (conf.custom.provide) {
   baseConf.plugins.push(providePlugin);
 }
 
-module.exports = baseConf;
-
-module.exports.clone = () => clone(baseConf);
+module.exports = () => clone(baseConf);
