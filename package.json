@@ -58,6 +58,7 @@
     "postcss-loader": "0.13.0",
     "progress": "1.1.8",
     "resolve-url-loader": "1.6.0",
+    "sass-lint": "1.9.1",
     "sass-loader": "4.0.2",
     "sasslint-webpack-plugin": "1.0.4",
     "style-loader": "0.13.1",
