@@ -16,6 +16,7 @@
 
 const webpack = require('webpack');
 const clone = require('clone');
+const SassLintPlugin = require('sasslint-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const autoprefixer = require('autoprefixer');
@@ -61,10 +62,10 @@ const baseConf = {
     ],
   },
   plugins: [
-    new webpack.optimize.OccurrenceOrderPlugin(),
-    new HtmlWebpackPlugin({
-      template: conf.path.src('index.html'),
-      inject: true,
+    new SassLintPlugin({
+      context: conf.paths.src,
+      ignoreFiles: [conf.path.src('vendor.scss')],
+      ignorePlugins: ['extract-text-webpack-plugin'],
     }),
     new CopyWebpackPlugin([
       {
@@ -73,6 +74,11 @@ const baseConf = {
         to: conf.paths.dir,
       },
     ].concat(conf.custom.copyFiles || [])),
+    new webpack.optimize.OccurrenceOrderPlugin(),
+    new HtmlWebpackPlugin({
+      template: conf.path.src('index.html'),
+      inject: true,
+    }),
   ],
   postcss: [
     autoprefixer({

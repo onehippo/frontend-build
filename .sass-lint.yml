@@ -1,0 +1,10 @@
+files:
+  include: 'src/**/*.scss'
+  ignore: 'src/vendor.scss'
+rules:
+  clean-import-paths: 0
+  force-element-nesting: 0
+  force-pseudo-nesting: 0
+  hex-length: 'long'
+  empty-line-between-blocks: 0
+  include: 0
