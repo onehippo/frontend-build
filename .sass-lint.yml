@@ -8,3 +8,4 @@ rules:
   hex-length: 'long'
   empty-line-between-blocks: 0
   include: 0
+  no-important: 0
