@@ -19,7 +19,7 @@ const webpackConf = require('./webpack-base.conf')();
 
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
-webpackConf.module.loaders.push(
+webpackConf.module.rules.push(
   {
     test: /\.scss$/,
     loaders: ExtractTextPlugin.extract({

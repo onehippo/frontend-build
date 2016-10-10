@@ -21,10 +21,9 @@ const webpackConf = require('./webpack-base.conf')();
 
 webpackConf.entry = {};
 webpackConf.output = {};
-webpackConf.debug = true;
 webpackConf.devtool = 'inline-source-map';
 webpackConf.plugins = [];
-webpackConf.module.loaders.push(
+webpackConf.module.rules.push(
   {
     test: /\.scss$/,
     loader: 'null',

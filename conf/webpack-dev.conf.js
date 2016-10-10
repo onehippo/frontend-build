@@ -17,10 +17,10 @@
 const webpack = require('webpack');
 const webpackConf = require('./webpack-base.conf')();
 
-webpackConf.module.loaders.push(
+webpackConf.module.rules.push(
   {
     test: /\.scss$/,
-    loaders: [
+    use: [
       'style?sourceMap',
       'css?sourceMap',
       'postcss?sourceMap',
@@ -41,7 +41,6 @@ webpackConf.plugins.push(
   })
 );
 
-webpackConf.debug = true;
 webpackConf.devtool = 'inline-source-map';
 
 module.exports = webpackConf;

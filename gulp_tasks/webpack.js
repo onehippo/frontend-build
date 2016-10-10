@@ -43,8 +43,9 @@ const defaultStatsOptions = {
   assets: false,
 };
 
-function parseConfig(options) {
-  const config = Object.create(options.config || options);
+function parseOptions(options) {
+  const buildConfig = Object.create(options.config || options);
+  const serveConfig = options.serve ? Object.create(webpackServerConf) : null;
 
   if (options.progress) {
     const bar = new ProgressBar('[:bar] Webpack build :percent - :task', {
@@ -52,56 +53,72 @@ function parseConfig(options) {
       total: 100,
       clear: true,
     });
-    config.plugins.push(new ProgressPlugin({
+    buildConfig.plugins.push(new ProgressPlugin({
       handler: (progress, msg) => bar.update(progress, { task: msg }),
       profile: options.profile,
     }));
   }
-  config.profile = options.profile;
+  buildConfig.profile = options.profile;
 
-  return config;
-}
-
-function webpackBuild(options, done) {
-  const config = parseConfig(options);
-
-  webpack(config, (err, stats) => {
-    const details = stats.toJson();
-
-    if (err) {
-      done(new util.PluginError('webpack-build', err));
-    } else if (details.errors.length > 0) {
-      done(new util.PluginError('webpack-build', stats.toString('errors-only')));
+  if (options.serve) {
+    if (options.verbose) {
+      serveConfig.stats = 'verbose';
     } else {
-      let statsOptions = 'errors-only';
-      if (options.verbose) {
-        statsOptions = 'verbose';
-      } else if (options.stats) {
-        statsOptions = Object.assign({}, defaultStatsOptions, options.stats);
-      }
-      util.log(`Webpack build successful\n${stats.toString(statsOptions)}`);
-      done();
+      serveConfig.stats = Object.assign({}, defaultStatsOptions, serveConfig.stats, options.stats);
     }
-  });
-}
 
-function webpackServe(options) {
-  const config = parseConfig(options);
-  const serverConfig = Object.create(webpackServerConf);
+    if (options.hot) {
+      // Ensure entry.app is an array so we can unshift the dev-server sources
+      if (!Array.isArray(buildConfig.entry.app)) {
+        buildConfig.entry.app = [buildConfig.entry.app];
+      }
 
-  if (options.verbose) {
-    serverConfig.stats = 'verbose';
-  } else {
-    serverConfig.stats = Object.assign({}, defaultStatsOptions, serverConfig.stats, options.stats);
+      serveConfig.inline = true;
+      buildConfig.entry.app.unshift(`webpack-dev-server/client?http://localhost:${serveConfig.port}/`);
+
+      serveConfig.hot = true;
+      buildConfig.entry.app.unshift('webpack/hot/dev-server');
+      buildConfig.plugins.push(new webpack.HotModuleReplacementPlugin());
+    }
   }
 
-  const compiler = webpack(config);
-  const server = new WebpackDevServer(compiler, serverConfig);
-  server.listen(serverConfig.port);
+  return {
+    buildConfig,
+    serveConfig,
+  };
+}
+
+function webpackWrapper(options, done) {
+  const { buildConfig, serveConfig } = parseOptions(options);
+
+  if (options.serve) {
+    const compiler = webpack(buildConfig);
+    const server = new WebpackDevServer(compiler, serveConfig);
+    server.listen(serveConfig.port);
+  } else {
+    webpack(buildConfig, (err, stats) => {
+      const details = stats.toJson();
+
+      if (err) {
+        done(new util.PluginError('webpack-build', err));
+      } else if (details.errors.length > 0) {
+        done(new util.PluginError('webpack-build', stats.toString('errors-only')));
+      } else {
+        let statsOptions = 'errors-only';
+        if (options.verbose) {
+          statsOptions = 'verbose';
+        } else if (options.stats) {
+          statsOptions = Object.assign({}, defaultStatsOptions, options.stats);
+        }
+        util.log(`Webpack build successful\n${stats.toString(statsOptions)}`);
+        done();
+      }
+    });
+  }
 }
 
 gulp.task('webpack:dev', done => {
-  webpackBuild({
+  webpackWrapper({
     config: webpackDevConf,
     progress: true,
     stats: {
@@ -113,7 +130,7 @@ gulp.task('webpack:dev', done => {
 });
 
 gulp.task('webpack:profile', done => {
-  webpackBuild({
+  webpackWrapper({
     config: webpackDevConf,
     progress: true,
     verbose: true,
@@ -122,20 +139,21 @@ gulp.task('webpack:profile', done => {
 });
 
 gulp.task('webpack:dist', done => {
-  webpackBuild(webpackDistConf, done);
+  webpackWrapper(webpackDistConf, done);
 });
 
 gulp.task('webpack:serve', () => {
-  webpackServe({
+  webpackWrapper({
     config: webpackDevConf,
     progress: true,
+    serve: true,
   });
 });
 
 gulp.task('webpack:distServe', () => {
-  webpackServe({
+  webpackWrapper({
     config: webpackDistConf,
     progress: true,
+    serve: true,
   });
 });
-

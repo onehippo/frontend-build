@@ -34,14 +34,13 @@ const baseConf = {
     publicPath: conf.paths.publicPath,
   },
   module: {
-    preLoaders: [
+    rules: [
       {
         test: /\.js$/,
+        enforce: 'pre',
         exclude: /node_modules/,
         loader: 'eslint',
       },
-    ],
-    loaders: [
       {
         test: /.json$/,
         loader: 'json',
@@ -49,7 +48,7 @@ const baseConf = {
       {
         test: /\.js$/,
         exclude: /node_modules/,
-        loaders: [
+        use: [
           'ng-annotate',
           'babel',
         ],
@@ -74,20 +73,27 @@ const baseConf = {
         to: conf.paths.dir,
       },
     ].concat(conf.custom.copyFiles || [])),
-    new webpack.optimize.OccurrenceOrderPlugin(),
     new HtmlWebpackPlugin({
       template: conf.path.src('index.html'),
       inject: true,
     }),
-  ],
-  postcss: [
-    autoprefixer({
-      browsers: [
-        'last 1 Chrome versions',
-        'last 1 Firefox versions',
-        'Safari >= 8',
-        'Explorer >= 11',
-      ],
+    new webpack.LoaderOptionsPlugin({
+      options: {
+        context: conf.paths.dist,
+        output: {
+          path: conf.paths.dist,
+        },
+        postcss: [
+          autoprefixer({
+            browsers: [
+              'last 1 Chrome versions',
+              'last 1 Firefox versions',
+              'Safari >= 8',
+              'Explorer >= 11',
+            ],
+          }),
+        ],
+      },
     }),
   ],
 };
