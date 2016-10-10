@@ -64,7 +64,7 @@ const baseConf = {
     new SassLintPlugin({
       context: conf.paths.src,
       ignoreFiles: [conf.path.src('vendor.scss')],
-      ignorePlugins: ['extract-text-webpack-plugin'],
+      ignorePlugins: ['extract-text-webpack-plugin', 'html-webpack-plugin'],
     }),
     new CopyWebpackPlugin([
       {
