@@ -117,7 +117,7 @@ function webpackWrapper(options, done) {
   }
 }
 
-gulp.task('webpack:dev', done => {
+gulp.task('webpack:dev', (done) => {
   webpackWrapper({
     config: webpackDevConf,
     progress: true,
@@ -129,7 +129,7 @@ gulp.task('webpack:dev', done => {
   }, done);
 });
 
-gulp.task('webpack:profile', done => {
+gulp.task('webpack:profile', (done) => {
   webpackWrapper({
     config: webpackDevConf,
     progress: true,
@@ -138,7 +138,7 @@ gulp.task('webpack:profile', done => {
   }, done);
 });
 
-gulp.task('webpack:dist', done => {
+gulp.task('webpack:dist', (done) => {
   webpackWrapper(webpackDistConf, done);
 });
 
