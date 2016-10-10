@@ -25,7 +25,14 @@
 const path = require('path');
 const basePath = process.cwd();
 const pkg = require(`${basePath}/package.json`);
-const customConf = require(`${basePath}/build.conf`);
+let customConf = {};
+
+// Wrap this in try/catch so frontend-build can work without build.config.js present
+try {
+  customConf = require(`${basePath}/build.conf`);
+} catch (err) {
+  console.log('No custom config present: ', err);
+}
 
 exports.custom = customConf;
 
