@@ -39,7 +39,7 @@ const baseConf = {
         test: /\.js$/,
         enforce: 'pre',
         exclude: /node_modules/,
-        loader: 'eslint',
+        loader: 'eslint?cache=true',
       },
       {
         test: /.json$/,
