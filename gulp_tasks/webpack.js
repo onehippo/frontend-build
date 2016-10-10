@@ -26,21 +26,21 @@ const webpackDistConf = require('../conf/webpack-dist.conf');
 const webpackServerConf = require('../conf/webpackServer.conf');
 
 const defaultStatsOptions = {
-  colors: util.colors.supportsColor,
-  hash: false,
-  children: false,
-  version: false,
-  chunkModules: false,
-  timings: false,
-  chunks: false,
-  chunkOrigins: false,
-  modules: false,
+  assets: false,
   cached: false,
   cachedAssets: false,
+  children: false,
+  chunkModules: false,
+  chunkOrigins: false,
+  chunks: false,
+  colors: util.colors.supportsColor,
+  errorDetails: false,
+  hash: false,
+  modules: false,
   reasons: false,
   source: false,
-  errorDetails: false,
-  assets: false,
+  timings: false,
+  version: false,
 };
 
 function parseOptions(options) {
