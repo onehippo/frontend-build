@@ -21,6 +21,7 @@ const WebpackDevServer = require('webpack-dev-server');
 const ProgressBar = require('progress');
 const ProgressPlugin = require('webpack/lib/ProgressPlugin');
 
+const conf = require('../conf/gulp.conf');
 const webpackDevConf = require('../conf/webpack-dev.conf');
 const webpackDistConf = require('../conf/webpack-dist.conf');
 const webpackServerConf = require('../conf/webpackServer.conf');
@@ -67,7 +68,7 @@ function parseOptions(options) {
       serveConfig.stats = Object.assign({}, defaultStatsOptions, serveConfig.stats, options.stats);
     }
 
-    if (options.hot) {
+    if (options.hmr) {
       // Ensure entry.app is an array so we can unshift the dev-server sources
       if (!Array.isArray(buildConfig.entry.app)) {
         buildConfig.entry.app = [buildConfig.entry.app];
@@ -147,6 +148,7 @@ gulp.task('webpack:serve', () => {
     config: webpackDevConf,
     progress: true,
     serve: true,
+    hmr: conf.custom.hmr,
   });
 });
 
@@ -155,5 +157,6 @@ gulp.task('webpack:distServe', () => {
     config: webpackDistConf,
     progress: true,
     serve: true,
+    hmr: conf.custom.hmr,
   });
 });
