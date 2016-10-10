@@ -17,16 +17,21 @@
 const webpack = require('webpack');
 const webpackConf = require('./webpack-base.conf')();
 
-webpackConf.module.rules.push({
-  test: /\.scss$/,
-  use: [
-    'style?sourceMap',
-    'css?sourceMap',
-    'postcss?sourceMap',
-    'resolve-url?sourceMap',
-    'sass?sourceMap',
-  ],
-});
+webpackConf.module.rules.push(
+  {
+    test: /\.scss$/,
+    use: [
+      'style?sourceMap',
+      'css?sourceMap',
+      'postcss?sourceMap',
+      'resolve-url?sourceMap',
+      'sass?sourceMap',
+    ],
+  }, {
+    test: /\.(eot|svg|ttf|woff|woff2|png)$/,
+    loader: 'url',
+  }
+);
 
 webpackConf.plugins.push(
   new webpack.optimize.CommonsChunkPlugin({

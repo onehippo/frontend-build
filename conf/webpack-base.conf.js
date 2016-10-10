@@ -16,6 +16,7 @@
 
 const webpack = require('webpack');
 const clone = require('clone');
+const SassLintPlugin = require('sasslint-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const autoprefixer = require('autoprefixer');
@@ -53,10 +54,6 @@ const baseConf = {
         ],
       },
       {
-        test: /\.(eot|svg|ttf|woff|woff2|png)$/,
-        loader: 'url',
-      },
-      {
         test: /.html$/,
         exclude: conf.custom.htmlExcludes || null,
         loader: 'html',
@@ -64,10 +61,10 @@ const baseConf = {
     ],
   },
   plugins: [
-    new webpack.NoErrorsPlugin(),
-    new HtmlWebpackPlugin({
-      template: conf.path.src('index.html'),
-      inject: true,
+    new SassLintPlugin({
+      context: conf.paths.src,
+      ignoreFiles: [conf.path.src('vendor.scss')],
+      ignorePlugins: ['extract-text-webpack-plugin'],
     }),
     new CopyWebpackPlugin([
       {
@@ -76,6 +73,10 @@ const baseConf = {
         to: conf.paths.dir,
       },
     ].concat(conf.custom.copyFiles || [])),
+    new HtmlWebpackPlugin({
+      template: conf.path.src('index.html'),
+      inject: true,
+    }),
     new webpack.LoaderOptionsPlugin({
       options: {
         context: conf.paths.dist,

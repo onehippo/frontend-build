@@ -23,10 +23,15 @@ webpackConf.entry = {};
 webpackConf.output = {};
 webpackConf.devtool = 'inline-source-map';
 webpackConf.plugins = [];
-webpackConf.module.rules.push({
-  test: /\.scss$/,
-  loader: 'null',
-});
+webpackConf.module.rules.push(
+  {
+    test: /\.scss$/,
+    loader: 'null',
+  }, {
+    test: /\.(eot|svg|ttf|woff|woff2|png)$/,
+    loader: 'file',
+  }
+);
 
 module.exports = webpackConf;
 

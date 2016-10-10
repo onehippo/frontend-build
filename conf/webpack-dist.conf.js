@@ -19,13 +19,18 @@ const webpackConf = require('./webpack-base.conf')();
 
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
-webpackConf.module.rules.push({
-  test: /\.scss$/,
-  loaders: ExtractTextPlugin.extract({
-    fallbackLoader: 'style',
-    loader: 'css?minimize!postcss!resolve-url!sass?sourceMap',
-  }),
-});
+webpackConf.module.rules.push(
+  {
+    test: /\.scss$/,
+    loaders: ExtractTextPlugin.extract({
+      fallbackLoader: 'style',
+      loader: 'css?minimize!postcss!resolve-url!sass?sourceMap',
+    }),
+  }, {
+    test: /\.(eot|svg|ttf|woff|woff2|png)$/,
+    loader: 'file',
+  }
+);
 
 webpackConf.plugins.push(
   new webpack.optimize.CommonsChunkPlugin({
@@ -38,6 +43,7 @@ webpackConf.plugins.push(
       warnings: false,
     },
   }),
+  new webpack.NoErrorsPlugin(),
   new ExtractTextPlugin('[name]-[contenthash].css')
 );
 
