@@ -62,21 +62,26 @@ function parseOptions(options) {
   buildConfig.profile = options.profile;
 
   if (options.serve) {
+    // use inline mode unless disabled in end project
+    const useInline = options.inline || true;
+
+    // Ensure entry.app is an array so we can unshift the dev-server sources
+    if (!Array.isArray(buildConfig.entry.app)) {
+      buildConfig.entry.app = [buildConfig.entry.app];
+    }
+
     if (options.verbose) {
       serveConfig.stats = 'verbose';
     } else {
       serveConfig.stats = Object.assign({}, defaultStatsOptions, serveConfig.stats, options.stats);
     }
 
-    if (options.hmr) {
-      // Ensure entry.app is an array so we can unshift the dev-server sources
-      if (!Array.isArray(buildConfig.entry.app)) {
-        buildConfig.entry.app = [buildConfig.entry.app];
-      }
-
+    if (useInline) {
       serveConfig.inline = true;
       buildConfig.entry.app.unshift(`webpack-dev-server/client?http://localhost:${serveConfig.port}/`);
+    }
 
+    if (options.hmr) {
       serveConfig.hot = true;
       buildConfig.entry.app.unshift('webpack/hot/dev-server');
       buildConfig.plugins.push(new webpack.HotModuleReplacementPlugin());
