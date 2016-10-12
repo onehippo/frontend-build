@@ -9,3 +9,7 @@ rules:
   empty-line-between-blocks: 0
   include: 0
   no-important: 0
+  no-qualifying-elements:
+    allow-element-with-attribute: false
+    allow-element-with-class: true
+    allow-element-with-id: false
