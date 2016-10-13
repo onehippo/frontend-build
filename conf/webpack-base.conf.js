@@ -77,6 +77,7 @@ const baseConf = {
       template: conf.path.src('index.html'),
       inject: true,
     }),
+    new webpack.NamedModulesPlugin(),
     new webpack.LoaderOptionsPlugin({
       options: {
         context: conf.paths.dist,
