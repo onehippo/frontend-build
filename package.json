@@ -63,7 +63,7 @@
     "sasslint-webpack-plugin": "1.0.4",
     "style-loader": "0.13.1",
     "url-loader": "0.5.7",
-    "webpack": "webpack/webpack#9c5c6df64f7c53f014be058fa18afde03fe6b77f",
-    "webpack-dev-server": "2.1.0-beta.6"
+    "webpack": "2.1.0-beta.25",
+    "webpack-dev-server": "2.1.0-beta.9"
   }
 }
