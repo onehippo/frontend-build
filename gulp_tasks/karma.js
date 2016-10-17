@@ -18,6 +18,7 @@ const { Server } = require('karma');
 
 function karmaRun(config, singleRun) {
   const configFile = require.resolve('../conf/karma.conf');
+
   return (done) => {
     new Server({
       configFile,
@@ -33,14 +34,14 @@ function karmaRun(config, singleRun) {
   };
 }
 
-function karmaSingleRun() {
+function karmaSingleRun(done) {
   const singleRun = true;
-  return karmaRun('karma.conf.js', singleRun);
+  karmaRun('karma.conf.js', singleRun)(done);
 }
 
-function karmaAutoRun() {
+function karmaAutoRun(done) {
   const singleRun = false;
-  return karmaRun('karma.conf.js', singleRun);
+  karmaRun('karma.conf.js', singleRun)(done);
 }
 
 module.exports = {
