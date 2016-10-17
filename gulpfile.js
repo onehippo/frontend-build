@@ -14,21 +14,16 @@
  * limitations under the License.
  */
 
-const del = require('del');
 const gulp = require('gulp');
-const conf = require('./conf/gulp.conf');
 
 const webpackTasks = require('./gulp_tasks/webpack');
 const karmaTasks = require('./gulp_tasks/karma');
+const utilTasks = require('./gulp_tasks/utils');
 
-function clean() {
-  return del([conf.paths.dist]);
-}
-
-gulp.task(clean);
-gulp.task('build', gulp.series('clean', webpackTasks.webpackBuildDist));
-gulp.task('buildDev', gulp.series('clean', webpackTasks.webpackBuildDev));
-gulp.task('buildProfile', gulp.series('clean', webpackTasks.webpackBuildProfile));
+gulp.task('clean', utilTasks.clean);
+gulp.task('build', gulp.series(utilTasks.clean, webpackTasks.webpackBuildDist));
+gulp.task('buildDev', gulp.series(utilTasks.clean, webpackTasks.webpackBuildDev));
+gulp.task('buildProfile', gulp.series(utilTasks.clean, webpackTasks.webpackBuildProfile));
 gulp.task('start', webpackTasks.webpackServeDev);
 gulp.task('startDist', webpackTasks.webpackServeDist);
 gulp.task('testOnce', karmaTasks.karmaSingleRun);
