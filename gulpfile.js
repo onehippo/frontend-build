@@ -16,26 +16,20 @@
 
 const del = require('del');
 const gulp = require('gulp');
-const HubRegistry = require('gulp-hub');
 const conf = require('./conf/gulp.conf');
 
-// Load tasks into the registry
-const hub = new HubRegistry([conf.path.tasks('*.js')]);
-
-// Tell gulp to use the tasks just loaded
-gulp.registry(hub);
+const webpackTasks = require('./gulp_tasks/webpack');
+const karmaTasks = require('./gulp_tasks/karma');
 
 function clean() {
   return del([conf.paths.dist]);
 }
 
-gulp.task('test', gulp.series('karma:single-run'));
-gulp.task('test:auto', gulp.series('karma:auto-run'));
-gulp.task('clean', clean);
-gulp.task('build', gulp.series('clean', 'webpack:dist'));
-gulp.task('serve', gulp.series('webpack:serve'));
-gulp.task('serveDist', gulp.series('webpack:distServe'));
-
-gulp.task('default', gulp.series('build'));
-
-module.exports = gulp;
+gulp.task(clean);
+gulp.task('build', gulp.series('clean', webpackTasks.webpackBuildDist));
+gulp.task('buildDev', gulp.series('clean', webpackTasks.webpackBuildDev));
+gulp.task('buildProfile', gulp.series('clean', webpackTasks.webpackBuildProfile));
+gulp.task('start', webpackTasks.webpackServeDev);
+gulp.task('startDist', webpackTasks.webpackServeDist);
+gulp.task('testOnce', karmaTasks.karmaSingleRun);
+gulp.task('test', karmaTasks.karmaAutoRun);

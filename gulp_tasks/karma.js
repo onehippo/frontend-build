@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-const gulp = require('gulp');
 const { Server } = require('karma');
 
 function karmaRun(config, singleRun) {
@@ -24,7 +23,7 @@ function karmaRun(config, singleRun) {
       configFile,
       singleRun,
       autoWatch: !singleRun,
-    }, failCount => {
+    }, (failCount) => {
       if (failCount === 0) {
         done();
       } else {
@@ -34,5 +33,17 @@ function karmaRun(config, singleRun) {
   };
 }
 
-gulp.task('karma:single-run', karmaRun('karma.conf.js', true));
-gulp.task('karma:auto-run', karmaRun('karma.conf.js', false));
+function karmaSingleRun() {
+  const singleRun = true;
+  return karmaRun('karma.conf.js', singleRun);
+}
+
+function karmaAutoRun() {
+  const singleRun = false;
+  return karmaRun('karma.conf.js', singleRun);
+}
+
+module.exports = {
+  karmaSingleRun,
+  karmaAutoRun,
+};

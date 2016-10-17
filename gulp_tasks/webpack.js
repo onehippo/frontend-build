@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-const gulp = require('gulp');
 const util = require('gulp-util');
 const webpack = require('webpack');
 const WebpackDevServer = require('webpack-dev-server');
@@ -123,7 +122,7 @@ function webpackWrapper(options, done) {
   }
 }
 
-gulp.task('webpack:dev', (done) => {
+function webpackBuildDev(done) {
   webpackWrapper({
     config: webpackDevConf,
     progress: true,
@@ -133,35 +132,43 @@ gulp.task('webpack:dev', (done) => {
       hash: true,
     },
   }, done);
-});
+}
 
-gulp.task('webpack:profile', (done) => {
+function webpackBuildProfile(done) {
   webpackWrapper({
     config: webpackDevConf,
     progress: true,
     verbose: true,
     profile: true,
   }, done);
-});
+}
 
-gulp.task('webpack:dist', (done) => {
+function webpackBuildDist(done) {
   webpackWrapper(webpackDistConf, done);
-});
+}
 
-gulp.task('webpack:serve', () => {
+function webpackServeDev() {
   webpackWrapper({
     config: webpackDevConf,
     progress: true,
     serve: true,
     hmr: conf.custom.hmr,
   });
-});
+}
 
-gulp.task('webpack:distServe', () => {
+function webpackServeDist() {
   webpackWrapper({
     config: webpackDistConf,
     progress: true,
     serve: true,
     hmr: conf.custom.hmr,
   });
-});
+}
+
+module.exports = {
+  webpackBuildDev,
+  webpackBuildDist,
+  webpackBuildProfile,
+  webpackServeDev,
+  webpackServeDist,
+};
