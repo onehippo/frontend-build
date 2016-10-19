@@ -1,6 +1,6 @@
 {
   "parser": "babel-eslint",
-  "extends": ["airbnb/base"],
+  "extends": "airbnb/base",
   "env": {
     "browser": true,
     "jasmine": true
@@ -13,11 +13,12 @@
     "module": true
   },
   "rules": {
-    "max-len": 0,
-    "no-param-reassign": 0,
-    "no-underscore-dangle": 0,
-    "class-methods-use-this": 0,
-    "no-prototype-builtins": 0,
+    "class-methods-use-this": "off",
     "import/no-extraneous-dependencies": ["error", {"devDependencies": ["**/*.spec.js"]}],
+    "linebreak-style": "off",
+    "max-len": "off",
+    "no-param-reassign": "off",
+    "no-prototype-builtins": "off",
+    "no-underscore-dangle": "off",
   }
 }
