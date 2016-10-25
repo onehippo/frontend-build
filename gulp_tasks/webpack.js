@@ -189,6 +189,13 @@ function webpackBuildDev(done) {
   }).then(done, err => done(err));
 }
 
+function webpackBuildProfile(done) {
+  build(webpackDevConf, {
+    verbose: true,
+    profile: true,
+  }).then(done, err => done(err));
+}
+
 function webpackBuildDist(done) {
   build(webpackDistConf, {
     progress: false,
@@ -210,6 +217,7 @@ function webpackServeDist() {
 
 module.exports = {
   webpackBuildDev,
+  webpackBuildProfile,
   webpackBuildDist,
   webpackServeDev,
   webpackServeDist,
