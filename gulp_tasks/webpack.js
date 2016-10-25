@@ -126,7 +126,7 @@ function parseOptions(opts, buildConf, serveConf) {
 
     if (options.inline) {
       serveConfig.inline = true;
-      buildConfig.entry.app.unshift(`webpack-dev-server/client?http://localhost:${serveConfig.port}/`);
+      buildConfig.entry.app.unshift(`webpack-dev-server/client?http://${serveConfig.host}:${serveConfig.port}/`);
     }
 
     if (options.hmr) {
@@ -163,6 +163,7 @@ function build(buildConf, opts) {
 
 function serve(buildConf, serveConf, opts) {
   const { buildConfig, serveConfig } = parseOptions(opts, buildConf, serveConf);
+  util.log(util.colors.green(`Development server is booting on http://${serveConfig.host}:${serveConfig.port}`));
 
   const compiler = webpack(buildConfig);
   const server = new WebpackDevServer(compiler, serveConfig);

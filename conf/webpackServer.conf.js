@@ -20,9 +20,7 @@ const webpackServerConf = {
   contentBase: conf.paths.dist,
   publicPath: conf.paths.publicPath,
   historyApiFallback: true,
-  stats: {
-    chunks: true,
-  },
+  host: conf.custom.serverHost || 'localhost',
   port: conf.custom.serverPort || 3000,
 };
 
