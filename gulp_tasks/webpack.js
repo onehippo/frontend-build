@@ -15,6 +15,7 @@
  */
 
 const util = require('gulp-util');
+const minimist = require('minimist');
 const webpack = require('webpack');
 const WebpackDevServer = require('webpack-dev-server');
 const ProgressBar = require('progress');
@@ -56,9 +57,15 @@ const defaultServeStats = {
 const defaultOptions = {
   inline: true,
   progress: true,
-  verbose: false,
-  profile: false,
 };
+
+const cliOptions = minimist(process.argv.slice(2), {
+  boolean: ['verbose', 'profile'],
+  default: {
+    verbose: false,
+    profile: false,
+  },
+});
 
 function isObject(o) {
   return o !== undefined && o !== null && typeof o === 'object';
@@ -89,6 +96,9 @@ function parseOptions(opts, buildConf, serveConf) {
   const options = Object.assign({}, defaultOptions, opts);
   const buildConfig = Object.create(buildConf);
   const serveConfig = serveConf ? Object.create(serveConf) : null;
+
+  options.profile = options.profile || cliOptions.profile;
+  options.verbose = options.verbose || cliOptions.verbose;
 
   if (options.progress) {
     const bar = new ProgressBar('[:bar] Webpack build :percent - :task', {
