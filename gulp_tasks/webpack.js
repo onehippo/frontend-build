@@ -46,9 +46,9 @@ const defaultBuildStats = {
 const defaultServeStats = {
   assets: true,
   colors: util.colors.supportsColor,
-  version: true,
-  hash: true,
-  timings: true,
+  version: false,
+  hash: false,
+  timings: false,
   chunks: false,
   chunkModules: false,
 };
@@ -174,6 +174,7 @@ function webpackBuildDev(done) {
   build(webpackDevConf, {
     stats: {
       assets: true,
+      timings: true,
     },
   }).then(done, err => done(err));
 }
