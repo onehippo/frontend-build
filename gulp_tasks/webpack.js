@@ -15,6 +15,7 @@
  */
 
 const util = require('gulp-util');
+const minimist = require('minimist');
 const webpack = require('webpack');
 const WebpackDevServer = require('webpack-dev-server');
 const ProgressBar = require('progress');
@@ -25,7 +26,7 @@ const webpackDevConf = require('../conf/webpack-dev.conf');
 const webpackDistConf = require('../conf/webpack-dist.conf');
 const webpackServerConf = require('../conf/webpackServer.conf');
 
-const defaultStatsOptions = {
+const defaultBuildStats = {
   assets: false,
   cached: false,
   cachedAssets: false,
@@ -35,17 +36,69 @@ const defaultStatsOptions = {
   chunks: false,
   colors: util.colors.supportsColor,
   errorDetails: false,
-  hash: false,
+  hash: true,
   modules: false,
   reasons: false,
   source: false,
   timings: false,
-  version: false,
+  version: true,
 };
 
-function parseOptions(options) {
-  const buildConfig = Object.create(options.config || options);
-  const serveConfig = options.serve ? Object.create(webpackServerConf) : null;
+const defaultServeStats = {
+  assets: true,
+  colors: util.colors.supportsColor,
+  version: false,
+  hash: false,
+  timings: false,
+  chunks: false,
+  chunkModules: false,
+};
+
+const defaultOptions = {
+  inline: true,
+  progress: true,
+};
+
+const cliOptions = minimist(process.argv.slice(2), {
+  boolean: ['verbose', 'profile'],
+  default: {
+    verbose: false,
+    profile: false,
+  },
+});
+
+function isObject(o) {
+  return o !== undefined && o !== null && typeof o === 'object';
+}
+
+function isString(o) {
+  return typeof o === 'string';
+}
+
+function getStats(defaultStats, optionStats) {
+  if (isString(optionStats)) {
+    return optionStats;
+  }
+  if (isObject(optionStats)) {
+    return Object.assign({}, isObject(defaultStats) ? defaultStats : null, optionStats);
+  }
+  if (isString(defaultStats)) {
+    return defaultStats;
+  }
+  return isObject(defaultStats) ? Object.assign({}, defaultStats) : null;
+}
+
+function parseOptions(opts, buildConf, serveConf) {
+  if (!isObject(buildConf)) {
+    throw new Error('No webpack build configuration specified, please check your task definition.');
+  }
+
+  const options = Object.assign({}, defaultOptions, opts);
+  const buildConfig = Object.create(buildConf);
+  const serveConfig = serveConf ? Object.create(serveConf) : null;
+
+  options.profile = options.profile || cliOptions.profile;
+  options.verbose = options.verbose || cliOptions.verbose;
 
   if (options.progress) {
     const bar = new ProgressBar('[:bar] Webpack build :percent - :task', {
@@ -60,9 +113,15 @@ function parseOptions(options) {
   }
   buildConfig.profile = options.profile;
 
-  if (options.serve) {
-    // use inline mode unless disabled in end project
-    const useInline = options.inline || true;
+  if (serveConfig === null) {
+    // setup build stats
+    if (options.verbose) {
+      options.stats = 'verbose';
+    } else {
+      options.stats = getStats(defaultBuildStats, options.stats);
+    }
+  } else {
+    // setup dev server
 
     // Ensure entry.app is an array so we can unshift the dev-server sources
     if (!Array.isArray(buildConfig.entry.app)) {
@@ -72,12 +131,12 @@ function parseOptions(options) {
     if (options.verbose) {
       serveConfig.stats = 'verbose';
     } else {
-      serveConfig.stats = Object.assign({}, defaultStatsOptions, serveConfig.stats, options.stats);
+      serveConfig.stats = getStats(defaultServeStats, options.stats);
     }
 
-    if (useInline) {
+    if (options.inline) {
       serveConfig.inline = true;
-      buildConfig.entry.app.unshift(`webpack-dev-server/client?http://localhost:${serveConfig.port}/`);
+      buildConfig.entry.app.unshift(`webpack-dev-server/client?http://${serveConfig.host}:${serveConfig.port}/`);
     }
 
     if (options.hmr) {
@@ -88,87 +147,78 @@ function parseOptions(options) {
   }
 
   return {
+    options,
     buildConfig,
     serveConfig,
   };
 }
 
-function webpackWrapper(options, done) {
-  const { buildConfig, serveConfig } = parseOptions(options);
+function build(buildConf, opts) {
+  const { options, buildConfig } = parseOptions(opts, buildConf);
 
-  if (options.serve) {
-    const compiler = webpack(buildConfig);
-    const server = new WebpackDevServer(compiler, serveConfig);
-    server.listen(serveConfig.port);
-  } else {
+  return new Promise((resolve, reject) => {
     webpack(buildConfig, (err, stats) => {
       const details = stats.toJson();
-
       if (err) {
-        done(new util.PluginError('webpack-build', err));
+        reject(new util.PluginError('webpack-build', err));
       } else if (details.errors.length > 0) {
-        done(new util.PluginError('webpack-build', stats.toString('errors-only')));
+        reject(new util.PluginError('webpack-build', stats.toString('errors-only')));
       } else {
-        let statsOptions = 'errors-only';
-        if (options.verbose) {
-          statsOptions = 'verbose';
-        } else if (options.stats) {
-          statsOptions = Object.assign({}, defaultStatsOptions, options.stats);
-        }
-        util.log(`Webpack build successful\n${stats.toString(statsOptions)}`);
-        done();
+        util.log(`Webpack build successful\n${stats.toString(options.stats)}`);
+        resolve();
       }
     });
-  }
+  });
+}
+
+function serve(buildConf, serveConf, opts) {
+  const { buildConfig, serveConfig } = parseOptions(opts, buildConf, serveConf);
+  util.log(util.colors.green(`Development server is booting on http://${serveConfig.host}:${serveConfig.port}`));
+
+  const compiler = webpack(buildConfig);
+  const server = new WebpackDevServer(compiler, serveConfig);
+  server.listen(serveConfig.port, serveConfig.host);
 }
 
 function webpackBuildDev(done) {
-  webpackWrapper({
-    config: webpackDevConf,
-    progress: true,
+  build(webpackDevConf, {
     stats: {
       assets: true,
-      version: true,
-      hash: true,
+      timings: true,
     },
-  }, done);
+  }).then(done, err => done(err));
 }
 
 function webpackBuildProfile(done) {
-  webpackWrapper({
-    config: webpackDevConf,
-    progress: true,
+  build(webpackDevConf, {
     verbose: true,
     profile: true,
-  }, done);
+  }).then(done, err => done(err));
 }
 
 function webpackBuildDist(done) {
-  webpackWrapper(webpackDistConf, done);
+  build(webpackDistConf, {
+    progress: false,
+  })
+  .then(done, err => done(err));
 }
 
 function webpackServeDev() {
-  webpackWrapper({
-    config: webpackDevConf,
-    progress: true,
-    serve: true,
+  serve(webpackDevConf, webpackServerConf, {
     hmr: conf.custom.hmr,
   });
 }
 
 function webpackServeDist() {
-  webpackWrapper({
-    config: webpackDistConf,
-    progress: true,
-    serve: true,
+  serve(webpackDistConf, webpackServerConf, {
     hmr: conf.custom.hmr,
   });
 }
 
 module.exports = {
   webpackBuildDev,
-  webpackBuildDist,
   webpackBuildProfile,
+  webpackBuildDist,
   webpackServeDev,
   webpackServeDist,
 };
