@@ -46,12 +46,13 @@ const defaultBuildStats = {
 
 const defaultServeStats = {
   assets: true,
-  colors: util.colors.supportsColor,
-  version: false,
-  hash: false,
-  timings: false,
+  children: false,
   chunks: false,
   chunkModules: false,
+  colors: util.colors.supportsColor,
+  hash: false,
+  timings: false,
+  version: false,
 };
 
 const defaultOptions = {
@@ -60,10 +61,10 @@ const defaultOptions = {
 };
 
 const cliOptions = minimist(process.argv.slice(2), {
-  boolean: ['verbose', 'profile'],
+  boolean: ['profile', 'verbose'],
   default: {
-    verbose: false,
     profile: false,
+    verbose: false,
   },
 });
 
@@ -102,9 +103,9 @@ function parseOptions(opts, buildConf, serveConf) {
 
   if (options.progress) {
     const bar = new ProgressBar('[:bar] Webpack build :percent - :task', {
-      width: 8,
-      total: 100,
       clear: true,
+      total: 100,
+      width: 8,
     });
     buildConfig.plugins.push(new ProgressPlugin({
       handler: (progress, msg) => bar.update(progress, { task: msg }),
