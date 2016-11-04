@@ -159,14 +159,16 @@ function build(buildConf, opts) {
 
   return new Promise((resolve, reject) => {
     webpack(buildConfig, (err, stats) => {
-      const details = stats.toJson();
       if (err) {
         reject(new util.PluginError('webpack-build', err));
-      } else if (details.errors.length > 0) {
-        reject(new util.PluginError('webpack-build', stats.toString('errors-only')));
       } else {
-        util.log(`Webpack build successful\n${stats.toString(options.stats)}`);
-        resolve();
+        const details = stats.toJson();
+        if (details.errors.length > 0) {
+          reject(new util.PluginError('webpack-build', stats.toString('errors-only')));
+        } else {
+          util.log(`Webpack build successful\n${stats.toString(options.stats)}`);
+          resolve();
+        }
       }
     });
   });
