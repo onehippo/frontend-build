@@ -16,6 +16,7 @@
 
 const webpack = require('webpack');
 const webpackConf = require('./webpack-base.conf')();
+const conf = require('./gulp.conf');
 
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
@@ -24,7 +25,17 @@ webpackConf.module.rules.push(
     test: /\.scss$/,
     loaders: ExtractTextPlugin.extract({
       fallbackLoader: 'style',
-      loader: 'css?minimize!postcss!resolve-url!sass?sourceMap',
+      loader: [
+        'css?minimize',
+        'postcss',
+        'resolve-url',
+        {
+          loader: 'sass',
+          query: {
+            includePaths: [`${conf.paths.src}/styles/`],
+          },
+        },
+      ],
     }),
   }, {
     test: /\.(eot|svg|ttf|woff|woff2|png)$/,

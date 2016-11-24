@@ -16,6 +16,7 @@
 
 const webpack = require('webpack');
 const webpackConf = require('./webpack-base.conf')();
+const conf = require('./gulp.conf');
 
 webpackConf.module.rules.push(
   {
@@ -25,7 +26,13 @@ webpackConf.module.rules.push(
       'css?sourceMap',
       'postcss?sourceMap',
       'resolve-url?sourceMap',
-      'sass?sourceMap',
+      {
+        loader: 'sass',
+        options: {
+          sourceMap: true,
+          includePaths: [`${conf.paths.src}/styles/`],
+        },
+      },
     ],
   }, {
     test: /\.(eot|svg|ttf|woff|woff2|png)$/,
