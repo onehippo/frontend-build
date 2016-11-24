@@ -35,7 +35,7 @@
     "extract-text-webpack-plugin": "2.0.0-beta.4",
     "file-loader": "0.9.0",
     "gulp": "gulpjs/gulp#4.0",
-    "gulp-hub": "frankwallis/gulp-hub#4.0",
+    "gulp-hub": "frankwallis/gulp-hub#4.1.0",
     "gulp-util": "3.0.7",
     "html-loader": "0.4.4",
     "html-webpack-plugin": "2.22.0",
