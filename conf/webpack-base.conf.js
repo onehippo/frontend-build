@@ -25,7 +25,6 @@ const conf = require('./gulp.conf');
 
 const baseConf = {
   entry: {
-    vendor: conf.vendors,
     app: conf.path.src('index'),
   },
   output: {
@@ -98,6 +97,11 @@ const baseConf = {
     }),
   ],
 };
+
+// allow dependencies to be empty in package.json
+if (conf.vendors) {
+  baseConf.entry.vendors = conf.vendors;
+}
 
 // Load modules (value) and bind them to a variable (key),
 // e.q. new webpack.ProvidePlugin({ $: "jquery" }) will load the jquery

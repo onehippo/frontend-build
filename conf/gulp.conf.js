@@ -46,8 +46,10 @@ exports.exclude = {
   vendors: [].concat(customConf.vendorExcludes),
 };
 
-exports.vendors = Object.keys(pkg.dependencies)
-  .filter(name => exports.exclude.vendors.indexOf(name) === -1);
+if (pkg.dependencies) {
+  exports.vendors = Object.keys(pkg.dependencies)
+    .filter(name => exports.exclude.vendors.indexOf(name) === -1);
+}
 
 /**
  *  The main paths of your project handle these with care
