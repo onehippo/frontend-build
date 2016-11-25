@@ -17,6 +17,7 @@
 const util = require('gulp-util');
 const minimist = require('minimist');
 const webpack = require('webpack');
+const webpackStats = require('webpack/lib/Stats');
 const WebpackDevServer = require('webpack-dev-server');
 const ProgressBar = require('progress');
 const ProgressPlugin = require('webpack/lib/ProgressPlugin');
@@ -26,23 +27,17 @@ const webpackDevConf = require('../conf/webpack-dev.conf');
 const webpackDistConf = require('../conf/webpack-dist.conf');
 const webpackServerConf = require('../conf/webpackServer.conf');
 
-const defaultBuildStats = {
-  assets: false,
-  cached: false,
-  cachedAssets: false,
+const defaultBuildStats = Object.assign(webpackStats.presetToOptions('minimal'), {
   children: false,
-  chunkModules: false,
   chunkOrigins: false,
-  chunks: false,
   colors: util.colors.supportsColor,
-  errorDetails: false,
-  hash: true,
   modules: false,
-  reasons: false,
-  source: false,
-  timings: false,
-  version: true,
-};
+});
+
+const defaultErrorStats = Object.assign(webpackStats.presetToOptions('errors-only'), {
+  colors: util.colors.supportsColor,
+  children: false,
+});
 
 const defaultServeStats = {
   assets: true,
@@ -155,20 +150,16 @@ function parseOptions(opts, buildConf, serveConf) {
 }
 
 function build(buildConf, opts) {
-  const { options, buildConfig } = parseOptions(opts, buildConf);
-
   return new Promise((resolve, reject) => {
+    const { options, buildConfig } = parseOptions(opts, buildConf);
     webpack(buildConfig, (err, stats) => {
       if (err) {
         reject(new util.PluginError('webpack-build', err));
+      } else if (stats.hasErrors()) {
+        reject(new util.PluginError('webpack-build', stats.toString(defaultErrorStats)));
       } else {
-        const details = stats.toJson();
-        if (details.errors.length > 0) {
-          reject(new util.PluginError('webpack-build', stats.toString('errors-only')));
-        } else {
-          util.log(`Webpack build successful\n${stats.toString(options.stats)}`);
-          resolve();
-        }
+        util.log(`Webpack build successful\n${stats.toString(options.stats)}`);
+        resolve();
       }
     });
   });
