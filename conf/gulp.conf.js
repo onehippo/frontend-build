@@ -25,21 +25,16 @@
 const path = require('path');
 const basePath = process.cwd();
 const pkg = require(`${basePath}/package.json`);
-let customConf = {};
 
-function moduleAvailable(name) {
+function requireIfAvailable(name, def) {
   try {
     require.resolve(name);
-    return true;
+    return require(name);
   } catch (e) {
-    return false;
+    return def;
   }
 }
-
-if (moduleAvailable(`${basePath}/build.conf`)) {
-  customConf = require(`${basePath}/build.conf`);
-}
-
+const customConf = requireIfAvailable(`${basePath}/build.conf`, {});
 exports.custom = customConf;
 
 exports.exclude = {
@@ -77,4 +72,3 @@ Object.keys(exports.paths).forEach((pathName) => {
     return path.join.apply(this, args);
   };
 });
-
