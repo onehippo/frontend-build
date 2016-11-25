@@ -21,9 +21,9 @@ const karmaTasks = require('./gulp_tasks/karma');
 const utilTasks = require('./gulp_tasks/utils');
 
 gulp.task('clean', utilTasks.clean);
-gulp.task('build', gulp.series(utilTasks.clean, webpackTasks.webpackBuildDist));
-gulp.task('buildDev', gulp.series(utilTasks.clean, webpackTasks.webpackBuildDev));
-gulp.task('buildProfile', gulp.series(utilTasks.clean, webpackTasks.webpackBuildProfile));
+gulp.task('build', webpackTasks.webpackBuildDist);
+gulp.task('buildDev', webpackTasks.webpackBuildDev);
+gulp.task('buildProfile', webpackTasks.webpackBuildProfile);
 gulp.task('start', webpackTasks.webpackServeDev);
 gulp.task('startDist', webpackTasks.webpackServeDist);
 gulp.task('testOnce', karmaTasks.karmaSingleRun);

@@ -18,6 +18,8 @@ const webpack = require('webpack');
 const webpackConf = require('./webpack-base.conf')();
 const conf = require('./gulp.conf');
 
+const CleanWebpackPlugin = require('clean-webpack-plugin');
+
 webpackConf.module.rules.push(
   {
     test: /\.scss$/,
@@ -41,6 +43,10 @@ webpackConf.module.rules.push(
 );
 
 webpackConf.plugins.push(
+  new CleanWebpackPlugin([conf.paths.dist], {
+    root: conf.paths.basePath,
+    verbose: false,
+  }),
   new webpack.optimize.CommonsChunkPlugin({
     name: 'vendor',
     filename: 'vendor-[hash].js',
