@@ -183,27 +183,26 @@ function serve(buildConf, serveConf, opts) {
   server.listen(serveConfig.port, serveConfig.host);
 }
 
-function webpackBuildDev(done) {
-  build(webpackDevConf, {
+function webpackBuildDev() {
+  return build(webpackDevConf, {
     stats: {
       assets: true,
       timings: true,
     },
-  }).then(done, err => done(err));
+  });
 }
 
-function webpackBuildProfile(done) {
-  build(webpackDevConf, {
+function webpackBuildProfile() {
+  return build(webpackDevConf, {
     verbose: true,
     profile: true,
-  }).then(done, err => done(err));
+  });
 }
 
-function webpackBuildDist(done) {
-  build(webpackDistConf, {
+function webpackBuildDist() {
+  return build(webpackDistConf, {
     progress: false,
-  })
-  .then(done, err => done(err));
+  });
 }
 
 function webpackServeDev() {
