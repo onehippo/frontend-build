@@ -13,6 +13,10 @@
   "engines": {
     "node": "6"
   },
+  "peerDependencies": {
+    "gulp": "gulpjs/gulp#4.0",
+    "gulp-hub": "frankwallis/gulp-hub#4.1.0"
+  },
   "dependencies": {
     "autoprefixer": "6.5.0",
     "babel-core": "6.17.0",
