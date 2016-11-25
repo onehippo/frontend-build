@@ -2,13 +2,22 @@
   "name": "frontend-build",
   "version": "4.0.3",
   "license": "Apache-2.0",
-  "publishConfig": {
-    "registry": "https://maven.onehippo.com/npm-public/"
-  },
   "repository": {
     "type": "git",
     "url": "https://github.com/onehippo/frontend-build"
   },
+  "publishConfig": {
+    "registry": "https://maven.onehippo.com/npm-public/"
+  },
+  "files": [
+    "conf/",
+    "gulp_tasks/",
+    ".babelrc",
+    ".eslintrc",
+    ".sass-lint.yml",
+    "gulpfile.js",
+    "NOTICE"
+  ],
   "engines": {
     "node": "6"
   },
