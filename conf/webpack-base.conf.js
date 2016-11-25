@@ -100,7 +100,7 @@ const baseConf = {
 
 // allow dependencies to be empty in package.json
 if (conf.vendors) {
-  baseConf.entry.vendors = conf.vendors;
+  baseConf.entry.vendor = conf.vendors;
 }
 
 // Load modules (value) and bind them to a variable (key),
