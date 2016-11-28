@@ -15,7 +15,7 @@
     ".babelrc",
     ".eslintrc",
     ".sass-lint.yml",
-    "gulpfile.js",
+    "index.js",
     "NOTICE"
   ],
   "engines": {
