@@ -33,6 +33,7 @@ webpackConf.module.rules.push(
         {
           loader: 'sass',
           query: {
+            sourceMap: true,
             includePaths: [`${conf.paths.src}/styles/`],
           },
         },
